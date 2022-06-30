@@ -22,10 +22,11 @@ export const RegisterOfElectrictFactura = () => {
   // Factura
   // Finalizar
   return (
-    <Stack>
-      <Heading mt="10px" mb="15px">
-        Registro de facturación electrónico
-      </Heading>
+    <Stack
+    w="100%"
+    // border='1px' borderColor='gray.200'
+    >
+      
       <InputField
         name="RFC"
         placeholder="Ingresa RFC"
@@ -63,6 +64,28 @@ export const RegisterOfElectrictFactura = () => {
         name="correo"
         placeholder="Ingresa correo electrónico"
         formControlProps={{ label: 'E-mail', isRequired: true }}
+      />
+      <InputField
+      type="number"
+        name="codigo_postal"
+        placeholder="Ingresa codigo postal"
+        formControlProps={{ label: 'Codigo postal', isRequired: true }}
+      />
+      <InputField
+      type="number"
+        name="telefono"
+        placeholder="Ingresa telefono"
+        formControlProps={{ label: 'Telefono', isRequired: true }}
+      />
+      <InputField
+        name="ciudad"
+        placeholder="Ingresa Ciudad"
+        formControlProps={{ label: 'Ciudad', isRequired: true }}
+      />
+      <InputField
+        name="estado"
+        placeholder="Ingresa Estado"
+        formControlProps={{ label: 'Estado', isRequired: true }}
       />
       <Button type="submit" disabled={isSubmitting}>
         Registrar

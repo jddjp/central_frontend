@@ -11,6 +11,7 @@ export const DashboardSeller = () => {
     {name: 'Historial de venta', route: '/sales'},
     {name: 'Promociones', route: '/promotions'},
     {name: 'Cátalogo', route: '/catalogue'},
+    // {name: 'Articulos', route: '/articulos'},
   ];
 
   const redirectTo = (route: string) => () => navigate(route);

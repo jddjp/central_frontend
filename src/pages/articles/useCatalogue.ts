@@ -18,7 +18,7 @@ export const useCatalogue = <T extends SearchArticle>() => {
   } = usePaginatedFetch(listArticlesAtPage);
   const totalPages = useRef<number>();
 
-  console.log({ allArticles });
+  // console.log({ allArticles });
 
   useEffect(() => {
     if (lastResponse) {

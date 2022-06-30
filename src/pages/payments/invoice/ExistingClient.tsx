@@ -50,23 +50,23 @@ export default function ExistingClient() {
 
   return (
     <Stack
-      spacing="3"
-      alignItems="center"
-      w="80%"
-      mx="auto"
-      my="5"
-      justifyContent="center"
+      // spacing="3"
+      // alignItems="center"
+      w="100%"
+      // mx="auto"
+      mb="10"
+      // justifyContent="center"
     >
-      <Heading mt="10px" mb="15px">
+      {/* <Heading mt="10px" mb="15px">
         Buscar Cliente
-      </Heading>
+      </Heading> */}
       <HStack
-        spacing="3"
-        alignItems="center"
-        w="80%"
-        mx="auto"
-        my="5"
-        justifyContent="center"
+        // spacing="3"
+        // alignItems="center"
+        w="100%"
+        // mx="auto"
+        // my="5"
+        // justifyContent="center"
       >
         <Select
           ref={selectRef as any}
@@ -82,10 +82,10 @@ export default function ExistingClient() {
           getOptionValue={getUserValue}
           styles={asyncSelectAppStyles}
           hideSelectedOptions
-          placeholder="Ingresa tu nombre"
+          placeholder=""
           loadingMessage={() => `Buscando...`}
           noOptionsMessage={() =>
-            'No se encontro ningún empleado con este nombre'
+            'No se encontro ningún cliente con este nombre'
           }
           autoFocus
         />
