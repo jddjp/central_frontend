@@ -19,7 +19,7 @@ const getUserLabel = (user: any) =>
 const getUserValue = (user: any) => user.id.toString();
 
 const handleAutocomplete = async (search: string) => {
-  if (search.length < 2) return [];
+  if (search.length < 1) return [];
 
   return await autocompleteByCliente({ search });
 };
@@ -53,7 +53,7 @@ export default function ExistingClient() {
       // spacing="3"
       // alignItems="center"
       w="100%"
-      // mx="auto"
+      mx="auto"
       mb="10"
       // justifyContent="center"
     >
@@ -64,7 +64,7 @@ export default function ExistingClient() {
         // spacing="3"
         // alignItems="center"
         w="100%"
-        // mx="auto"
+        mx="auto"
         // my="5"
         // justifyContent="center"
       >

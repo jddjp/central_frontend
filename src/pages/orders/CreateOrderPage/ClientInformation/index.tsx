@@ -34,20 +34,7 @@ export const ClientInformation = (props: ClientInformationProps) => {
       </InformationAreaGroup>
       
 	  
-	  <Button onClick={onOpen}>Nuevo CLiente</Button>
 
-<Modal isOpen={isOpen} onClose={onClose} size="lg">
-  <ModalOverlay />
-  <ModalContent>
-    <ModalHeader>Registro de facturación electrónico</ModalHeader>
-    <ModalCloseButton />
-    <ModalBody>
-      <NewClient/>
-    </ModalBody>
-
-    
-  </ModalContent>
-</Modal> 
     </Stack>
     
   )

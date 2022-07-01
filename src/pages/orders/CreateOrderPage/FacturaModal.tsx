@@ -66,13 +66,13 @@ export const RegisterOfElectrictFactura = () => {
         formControlProps={{ label: 'E-mail', isRequired: true }}
       />
       <InputField
-      type="number"
+      
         name="codigo_postal"
         placeholder="Ingresa codigo postal"
         formControlProps={{ label: 'Codigo postal', isRequired: true }}
       />
       <InputField
-      type="number"
+      
         name="telefono"
         placeholder="Ingresa telefono"
         formControlProps={{ label: 'Telefono', isRequired: true }}
