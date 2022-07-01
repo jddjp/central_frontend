@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-export const baseMediaUrl = 'https://centralapi.oficinadigital.mx';
-export const baseUrl = 'https://centralapi.oficinadigital.mx';
+export const baseMediaUrl = 'http://localhost:1337';
+export const baseUrl = 'http://localhost:1337';
 export const baseApiUrl = `${baseUrl}/api/`;
 
 export const appAxios = axios.create({ baseURL: baseApiUrl });

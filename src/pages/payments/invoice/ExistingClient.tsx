@@ -19,7 +19,7 @@ const getUserLabel = (user: any) =>
 const getUserValue = (user: any) => user.id.toString();
 
 const handleAutocomplete = async (search: string) => {
-  if (search.length < 2) return [];
+  if (search.length < 1) return [];
 
   return await autocompleteByCliente({ search });
 };
@@ -50,23 +50,23 @@ export default function ExistingClient() {
 
   return (
     <Stack
-      spacing="3"
-      alignItems="center"
-      w="80%"
+      // spacing="3"
+      // alignItems="center"
+      w="100%"
       mx="auto"
-      my="5"
-      justifyContent="center"
+      mb="10"
+      // justifyContent="center"
     >
-      <Heading mt="10px" mb="15px">
+      {/* <Heading mt="10px" mb="15px">
         Buscar Cliente
-      </Heading>
+      </Heading> */}
       <HStack
-        spacing="3"
-        alignItems="center"
-        w="80%"
+        // spacing="3"
+        // alignItems="center"
+        w="100%"
         mx="auto"
-        my="5"
-        justifyContent="center"
+        // my="5"
+        // justifyContent="center"
       >
         <Select
           ref={selectRef as any}
@@ -82,10 +82,10 @@ export default function ExistingClient() {
           getOptionValue={getUserValue}
           styles={asyncSelectAppStyles}
           hideSelectedOptions
-          placeholder="Ingresa tu nombre"
+          placeholder=""
           loadingMessage={() => `Buscando...`}
           noOptionsMessage={() =>
-            'No se encontro ningún empleado con este nombre'
+            'No se encontro ningún cliente con este nombre'
           }
           autoFocus
         />

@@ -33,18 +33,23 @@ const initialValues: client = {
   calle: '',
   colonia: '',
   correo: '',
+  codigo_postal:'',
+  telefono:'',
+  ciudad: '',
+  estado:''
 };
 
 export default function NewClient() {
   const toast = useToast();
   return (
     <Stack
-      spacing="3"
-      alignItems="center"
-      w="80%"
-      mx="auto"
-      my="5"
-      justifyContent="center"
+      // spacing="3"
+      // alignItems="center"
+      w="100%"
+      // mx="auto"
+      // my="5"
+      // justifyContent="center"
+      // border='1px' borderColor='gray.200'
     >
       <Formik
         initialValues={initialValues}

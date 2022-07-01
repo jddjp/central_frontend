@@ -1,6 +1,7 @@
 import { appAxios } from 'config/api';
 import { ListResponse } from './types';
 
+
 export interface client {
   RFC: string;
   nombre: string;
@@ -9,6 +10,10 @@ export interface client {
   calle: string;
   colonia: string;
   correo: string;
+  codigo_postal: string;
+  telefono: string;
+  ciudad: string;
+  estado: string;
 }
 
 export const newCliente = async (payload: client) => {
@@ -30,6 +35,6 @@ export const autocompleteByCliente = async (config: {
   };
   const response = (await appAxios.get(`/clientes`, { params: queryParams }))
     .data;
-  // console.log('hola', response.data);
+  console.log('hola', response.data);
   return response.data;
 };
