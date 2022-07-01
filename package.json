@@ -3,14 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/react": "^1.8.7",
-    "@emotion/react": "^11.0.0",
-    "@emotion/styled": "^11.0.0",
+    "@chakra-ui/react": "^1.8.8",
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
     "axios": "^0.25.0",
+    "docker-nodemon": "^1.11.0",
     "formik": "^2.2.9",
-    "framer-motion": "^4.0.0",
+    "framer-motion": "^4.1.17",
     "intersection-observer": "^0.12.0",
     "just-debounce-it": "3.0.1",
+    "moment": "^2.29.3",
+    "primeicons": "^5.0.0",
+    "primereact": "^8.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^3.0.0",
@@ -18,6 +22,7 @@
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react-select": "^5.2.2",
+    "react-table": "7.7.0",
     "web-vitals": "^0.2.2",
     "yup": "^0.32.11"
   },
@@ -47,6 +52,8 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
-    "typescript": "^4.3.5"
+    "react-time-format": "0.0.5",
+    "typescript": "^4.3.5",
+    "nodemon": "^2.0.15"
   }
 }
