@@ -101,6 +101,7 @@ export const App = () => {
                 <TypeNote />
               </RequiredAuthentication>
             }
+            exact={true}
           />
           <Route
             path="/orders/typeInvoice"

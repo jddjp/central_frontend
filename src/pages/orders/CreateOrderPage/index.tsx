@@ -29,7 +29,7 @@ const initialPayment = {
 
 export const CreateOrderPage = () => {
   const navigate = useNavigate();
-  const redirectTo = (route: string) => () => navigate(route);
+  const redirectTo = (route: string, cart) => () => navigate(route,{state:cart});
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();
   const {
@@ -82,6 +82,7 @@ export const CreateOrderPage = () => {
         <OrderMenu
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
+          cart={cart}
         />
 
         <Header
@@ -111,7 +112,7 @@ export const CreateOrderPage = () => {
             fontSize="md"
             rightIcon={<ArrowRightIcon />}
             disabled={cart.items.length === 0}
-            onClick={redirectTo('/orders/typeNote')}
+            onClick={redirectTo('/orders/typeNote', cart)}
           >
             Pagar
           </Button>

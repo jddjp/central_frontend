@@ -16,6 +16,7 @@ export const CartItem = (props: CartItemProps) => {
   const { amount, customPrice } = item;
   const { descripcion, nombre, precio_lista, foto, unidad_de_medida } =
     item.article.attributes;
+  //const imageUrl = foto.data.attributes.url;
   const imageUrl = foto.data.attributes.url;
 
   const handleChangeAmount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +53,7 @@ export const CartItem = (props: CartItemProps) => {
             onChange={handleChangeAmount}
           />
           <Text display="inline" ml="2">
-            {unidad_de_medida!.data.attributes.nombre ||
+            {//unidad_de_medida!.data.attributes.nombre ||
               "No hay una unidad de medida disponible."}
           </Text>
         </Box>
