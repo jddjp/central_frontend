@@ -1,5 +1,7 @@
+import {useState} from 'react';
 import { FixedMenuProps, FixedMenu } from "components/FixedMenu";
 import { IconAction } from "components/IconAction";
+import {FileUpload} from "primereact/fileupload";
 import { CatalogueIcon, SaveIcon, ClearIcon, PlusIcon } from "components/icons";
 import {
   Stack,
@@ -15,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import NewClient from "pages/payments/invoice/NewClient";
 
-import { newOrder, newItem } from "services/api/orders";
+import { newOrder, newItem, uploadFile } from "services/api/orders";
 import { Order, Item } from "types/Order";
 
 export interface OrderMenuProps extends FixedMenuProps {
@@ -59,9 +61,23 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
 
     props.cart.items.forEach((item) => {});
   };
+  
+  const [selectedFile, setSelectedFile] = useState(null);
+  const myUploader = (event) => {
+    setSelectedFile(event.files[0]);
+}
+
+const handlerUploadFile = () => {
+  uploadFile(selectedFile).then((response) => {
+    console.log("-----------RESPUESTA----");
+    console.log(response);
+  });
+}
 
   return (
     <FixedMenu right="3" top="30vh">
+      <button onClick={handlerUploadFile}>Send image</button>
+      <FileUpload name="demo" url="./upload" onSelect={myUploader} mode="basic" />
       <IconAction
         aria-label="Guardar orden"
         icon={<SaveIcon />}

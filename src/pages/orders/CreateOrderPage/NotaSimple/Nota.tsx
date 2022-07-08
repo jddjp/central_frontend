@@ -15,7 +15,11 @@ export const Nota = ({ items }, props: Nota) => {
     { field: "article.attributes.nombre", header: "Producto" },
     { field: "article.attributes.precio_lista", header: "Precio" },
   ];
-  const [products, setProducts] = useState(items.items);
+  const [products, setProducts] = useState(items.cart.items);
+  const [client, setClient] = useState(items.client);
+  console.log("client---");
+  console.log(client);
+  
 
   function calculateTotal(products: any) {
     let total = 0;
@@ -90,7 +94,7 @@ export const Nota = ({ items }, props: Nota) => {
         </p>
         <p>{date}</p>
         <SimpleGrid columns={2} spacing={10}>
-          <Box height="40px">Cliente:</Box>
+          <Box height="40px">Cliente:{client.attributes.nombre + " " + client.attributes.apellido_paterno + " " + client.attributes.apellido_materno}</Box>
           <Box height="40px">Vendedor:</Box>
         </SimpleGrid>
         <div>

@@ -24,7 +24,7 @@ const handleAutocomplete = async (search: string) => {
   return await autocompleteByCliente({ search });
 };
 
-export default function ExistingClient() {
+export default function ExistingClient(props: any) {
   const [user, setUser] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const selectRef = useRef();
@@ -42,11 +42,21 @@ export default function ExistingClient() {
   ) => {
     setUser(option as any);
     setInputValue(option ? getUserLabel(option as any) : '');
+    props.setClient(option);
+    console.log(option);
+    
   };
 
   const handleFocus = () => {
     user && (selectRef.current as any).select?.inputRef?.select();
   };
+
+  const handleClick = () => {
+    alert("Co!");
+    console.log(user);
+    
+    props.setClient(user);
+  }
 
   return (
     <Stack
@@ -56,7 +66,7 @@ export default function ExistingClient() {
       mx="auto"
       mb="10"
       // justifyContent="center"
-    >
+    ><button type="submit" onClick={handleClick}>llll</button>
       {/* <Heading mt="10px" mb="15px">
         Buscar Cliente
       </Heading> */}
