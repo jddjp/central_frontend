@@ -16,6 +16,10 @@ export interface ClientInformationProps extends StackProps {
 const n = (v: number | string) => typeof(v) === 'string' ? 0 : v;
 
 export const ClientInformation = (props: ClientInformationProps) => {
+  console.log("------.......");
+  //console.log(props.displayBasic);
+
+  
   
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [client, setClient] = useState<client|null>(null);
@@ -23,11 +27,12 @@ export const ClientInformation = (props: ClientInformationProps) => {
   const handleSubmit = () => {
     onFinishUser(client!);
   }
+
   return (
     <Stack border=''>
       <InformationAreaGroup>
         <InformationArea title='Cliente'>
-          <ExistingClient/>
+          <ExistingClient setClient={props.setClient}/>
         </InformationArea>
 
         
