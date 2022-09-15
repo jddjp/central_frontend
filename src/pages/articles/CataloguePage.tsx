@@ -36,14 +36,14 @@ export const Productos = () => {
   let editProducts = {
     nombre: '',
     precio_lista: 0,
-    marca: null,
+    marca: '',
     inventario_fiscal: 0,
     inventario_fisico: 0,
-    descripcion: null,
-    categoria: null,
-    codigo_barras: null,
-    codigo_qr: null,
-    estado: null,
+    descripcion: "",
+    categoria: "",
+    codigo_barras: "",
+    codigo_qr: "",
+    estado: ""
 
   };
  
@@ -86,7 +86,7 @@ export const Productos = () => {
   }
 
 
-  const saveProduct = (e) => {
+  const saveProduct = (e:any) => {
     // setSubmitted(true);
 
    // if (product.nombre != null) {
@@ -103,8 +103,8 @@ export const Productos = () => {
       setProductDialog(false);
   }
 
-  const myUploader = (e, name) => {
-    const [file] = e.target.files;
+  const myUploader = (e:any, name:any) => {
+    /*const [file] = e.target.files;
     setFoto(URL.createObjectURL(file));
     
     
@@ -112,7 +112,7 @@ export const Productos = () => {
     _product[`${name}`] = URL.createObjectURL(file);
 
     setFoto(_product);
-console.log(foto, [file]);
+console.log(foto, [file]);*/
   }
 
   const editProducto = () => {
@@ -155,26 +155,26 @@ console.log(foto, [file]);
 
    // setProduct(_product);
   }
-  const onInputNumberChange = (e, name) => {
+  const onInputNumberChange = (e:any, name:any) => {
     const val = e.value || 0;
     let _product = { ...product };
-    _product[`${name}`] = val;
+    //_product[`${name}`] = val;
 
-    setProduct(_product);
+    //setProduct(_product);
   }
   const onInputChangeEdit = (e: any, name: any) => {
     const val = (e.target && e.target.value);
     let _product = { ...edit };
-    _product[`${name}`] = val;
+    //_product[`${name}`] = val;
 
-    setEdit(_product);
+    //setEdit(_product);
   }
-  const onInputNumberChangeEdit = (e, name) => {
+  const onInputNumberChangeEdit = (e:any, name:any) => {
     const val = e.value || 0;
     let _product = { ...edit };
-    _product[`${name}`] = val;
+    //_product[`${name}`] = val;
 
-    setProduct(_product);
+    //setProduct(_product);
   }
 
 
@@ -227,7 +227,7 @@ console.log(foto, [file]);
   const editProductDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={editProducto} />
+      <Button label="Save" icon="pi pi-check" className="p-button-text" />
     </React.Fragment>
   );
   const deleteProductDialogFooter = (
@@ -321,9 +321,9 @@ console.log(foto, [file]);
           {/* <label htmlFor="dropdown">Dropdown</label> */}
         </div>
         <div >
-          <form action="" enctype="multipart/form-data">
+          <form action="">
             <label htmlFor="">Foto</label>
-            <input type="file" accept="image/*"  onChange={(e: any) => myUploader(e, 'foto')} />
+            <input type="file" accept="image/*" />
             <img src={foto} alt="" />
           </form>
         </div>
