@@ -97,7 +97,7 @@ export const RegisterOfElectrictFactura = () => {
   );
 };
 
-export const FacturaModal = ({cart}) => {
+export const FacturaModal = (cart:any) => {
   // const { value, increment, decrement } = useCounter();
   const navigate = useNavigate();
   const redirectTo = (route: string) => () => navigate(route);
@@ -107,12 +107,12 @@ export const FacturaModal = ({cart}) => {
   const [position, setPosition] = useState("center");
   const [displayBasic, setDisplayBasic] = useState(false);
 
-  const onClick = (name, position) => {
+  const onClick = (name:any) => {
     setDisplayBasic(true);
 
-    if (position) {
+    /*if (position) {
       setPosition(position);
-    }
+    }*/
   };
 
   console.log("---");
@@ -120,7 +120,7 @@ export const FacturaModal = ({cart}) => {
   
   
 
-  const renderFooter = (name) => {
+  const renderFooter = (name:any) => {
     return (
       <div>
         <ButtonPrime

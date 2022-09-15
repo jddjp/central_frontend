@@ -17,7 +17,7 @@ import { OrderMenu } from './OrderMenu';
 import { ShoppingCartArticle } from './types';
 
 
-import { client } from '../../../../services/api/cliente';
+import { client } from 'services/api/cliente';
 
 import { useState } from 'react';
 
@@ -34,7 +34,7 @@ const initialPayment = {
 
 export const CreateOrderPage = () => {
   const navigate = useNavigate();
-  const redirectTo = (route: string, cart, client) => () => navigate(route,{state:{cart,client}});
+  const redirectTo = (route: string, cart: any, client:any) => () => navigate(route,{state:{cart,client}});
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();
   const {
@@ -106,7 +106,7 @@ export const CreateOrderPage = () => {
         />
 
         
-        <ClientInformation setClient={setClient} />
+        <ClientInformation />
 
         <Cart
           minH="85vh"

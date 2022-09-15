@@ -18,16 +18,16 @@ import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 export const Productos = () => {
   let emptyProduct = {
-    nombre: null,
-    precio_lista: null,
-    marca: null,
-    inventario_fiscal: null,
-    inventario_fisico: null,
-    descripcion: null,
-    categoria: null,
-    codigo_barras: null,
-    codigo_qr: null,
-    estado: null
+    nombre: '',
+    precio_lista: 0,
+    marca: '',
+    inventario_fiscal: 0,
+    inventario_fisico: 0,
+    descripcion: "",
+    categoria: "",
+    codigo_barras: "",
+    codigo_qr: "",
+    estado: ""
   };
   const [sales, setSales] = useState([])
   const [product, setProduct] = useState(emptyProduct);
@@ -85,7 +85,8 @@ export const Productos = () => {
   const saveProduct = () => {
     setSubmitted(true);
 
-    if (product.nombre.trim()) {
+   // if (product.nombre != null) {
+      if (product.nombre.trim()) {
       //     let _products = [...products];
       // let _product = {...product};
       // if(product.)
@@ -101,6 +102,7 @@ export const Productos = () => {
       setProductDialog(false);
 
     }
+  //}
   }
 
   const editProduct = (data: any) => {
@@ -130,9 +132,9 @@ export const Productos = () => {
   const onInputChange = (e: any, name: any) => {
     const val = (e.target && e.target.value) || '';
     let _product = { ...product };
-    _product[`${name}`] = val;
+  //  _product[`${name}`] = val;
 
-    setProduct(_product);
+   // setProduct(_product);
   }
 
 
@@ -176,7 +178,7 @@ export const Productos = () => {
       <div className="card container">
         <DataTable value={ped} paginator className="p-datatable-customers" showGridlines rows={10} header={header} filters={filters} editMode="row">
           <Column field="attributes.nombre" header="Nombre" />
-          <Column field="attributes.precio_lista" header="Presio" />
+          <Column field="attributes.precio_lista" header="Precio" />
           <Column field="attributes.marca" header="Marca" />
           <Column field="attributes.inventario_fiscal" header="inventario_fiscal" style={{ width: "5%" }} />
           <Column field="attributes.inventario_fisico" header="Inventario fisico" style={{ width: "5%" }} />
@@ -208,7 +210,7 @@ export const Productos = () => {
         </div>
         <div className="field">
           <label htmlFor="name">Marca</label>
-          <InputText value={'' || product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
+          <InputText value={product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">

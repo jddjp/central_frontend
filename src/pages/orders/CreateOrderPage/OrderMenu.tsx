@@ -17,19 +17,21 @@ import {
 } from "@chakra-ui/react";
 import NewClient from "pages/payments/invoice/NewClient";
 
-import { newOrder, newItem, uploadFile } from "services/api/orders";
+//import { newOrder, newItem, uploadFile } from "services/api/orders";
 import { Order, Item } from "types/Order";
+import { ShoppingCart } from './types';
 
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
   onOpenConfirmationClear: VoidFunction;
+  cart: ShoppingCart
 }
 
 export const OrderMenu = (props: OrderMenuProps, cart: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { onOpenCatalogueModal, onOpenConfirmationClear } = props;
 
-  const handleNewOrder = () => {
+  /*const handleNewOrder = () => {
     var date = new Date();
     var order: Order = {
       fecha_pedido: date.toISOString(),
@@ -42,7 +44,7 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
       estatus: "pendiente",
     };
 
-    /*Crear orden con sus items*/
+    /*-Crear orden con sus items*-/
     var responseNewOrder = newOrder(order);
     responseNewOrder.then((response) => {
       props.cart.items.forEach((item) => {
@@ -60,28 +62,27 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
     });
 
     props.cart.items.forEach((item) => {});
-  };
+  };*/
   
   const [selectedFile, setSelectedFile] = useState(null);
-  const myUploader = (event) => {
+  /*const myUploader = (event) => {
     setSelectedFile(event.files[0]);
-}
+}*/
 
 const handlerUploadFile = () => {
-  uploadFile(selectedFile).then((response) => {
+  /*uploadFile(selectedFile).then((response) => {
     console.log("-----------RESPUESTA----");
     console.log(response);
-  });
+  });*/
 }
 
   return (
     <FixedMenu right="3" top="30vh">
       <button onClick={handlerUploadFile}>Send image</button>
-      <FileUpload name="demo" url="./upload" onSelect={myUploader} mode="basic" />
+      <FileUpload name="demo" url="./upload"  mode="basic" />
       <IconAction
         aria-label="Guardar orden"
         icon={<SaveIcon />}
-        onClick={handleNewOrder}
       />
       <IconAction
         variant="outline"

@@ -22,7 +22,7 @@ import TypeNote from 'pages/payments/TypeNote';
 import TypeInvoices from 'pages/payments/invoice/TypeInvoices';
 import NewClient from 'pages/payments/invoice/NewClient';
 import ExistingClient from 'pages/payments/invoice/ExistingClient';
-import Articulos from 'pages/articles/articulos';
+//import Articulos from 'pages/articles/articulos';
 
 export const App = () => {
   useAuthInterceptors();
@@ -100,8 +100,7 @@ export const App = () => {
               <RequiredAuthentication>
                 <TypeNote />
               </RequiredAuthentication>
-            }
-            exact={true}
+            } 
           />
           <Route
             path="/orders/typeInvoice"

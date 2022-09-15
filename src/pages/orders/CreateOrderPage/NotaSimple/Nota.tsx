@@ -3,14 +3,14 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { SimpleGrid } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
-import styles from "./DataTableTicket.css";
+//import styles from "./DataTableTicket.css";
 import { Button } from "primereact/button";
 
 type Nota = {
   src: string;
 };
 
-export const Nota = ({ items }, props: Nota) => {
+export const Nota = ( items:any, props: Nota) => {
   const columns = [
     { field: "article.attributes.nombre", header: "Producto" },
     { field: "article.attributes.precio_lista", header: "Precio" },
@@ -23,9 +23,9 @@ export const Nota = ({ items }, props: Nota) => {
 
   function calculateTotal(products: any) {
     let total = 0;
-    products.forEach((product) => {
+    /*products.forEach((product) => {
       total += (product.article.attributes.precio_lista * product.amount);
-    });
+    });*/
     return total;
   }
 
@@ -101,15 +101,14 @@ export const Nota = ({ items }, props: Nota) => {
           <DataTable
             value={products}
             responsiveLayout="scroll"
-            bodyStyle={{ textAlign: "center", overflow: "visible" }}
           >
             {dynamicColumns}
           </DataTable>
 
-          <SimpleGrid columns={2} spacing={2} style={{ "padding-top": "15px" }}>
+          <SimpleGrid columns={2} spacing={2} >
             
             <Box height="30px">Total:</Box>
-            <Box height="30px" style={{ width: "100%", textAlign: "right" }}>
+            <Box height="30px" >
               ${calculateTotal(products)}
             </Box>
           </SimpleGrid>
