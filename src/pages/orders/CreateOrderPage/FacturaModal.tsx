@@ -1,10 +1,16 @@
-import { Button, Heading, Input, Stack } from '@chakra-ui/react';
-import { useFormikContext } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { Button, Heading, Input, Stack } from "@chakra-ui/react";
+import { useFormikContext } from "formik";
+import { useNavigate } from "react-router-dom";
 
-import { Menu } from 'components/Menu';
-import { Option } from 'components/Option';
-import { InputField } from 'components/InputField';
+import React, { useState, useRef } from "react";
+
+import { Menu } from "components/Menu";
+import { Option } from "components/Option";
+import { InputField } from "components/InputField";
+import ReactToPrint from "react-to-print";
+import { Nota } from "./NotaSimple/Nota";
+import { Dialog } from "primereact/dialog";
+import { Button as ButtonPrime } from "primereact/button";
 
 export const SearchClientStage = () => {
   return (
@@ -23,69 +29,66 @@ export const RegisterOfElectrictFactura = () => {
   // Finalizar
   return (
     <Stack
-    w="100%"
-    // border='1px' borderColor='gray.200'
+      w="100%"
+      // border='1px' borderColor='gray.200'
     >
-      
       <InputField
         name="RFC"
         placeholder="Ingresa RFC"
         formControlProps={{
-          label: 'RFC',
+          label: "RFC",
           isRequired: true,
         }}
       />
       <InputField
         name="nombre"
         placeholder="Ingresa nombre"
-        formControlProps={{ label: 'Nombre', isRequired: true }}
+        formControlProps={{ label: "Nombre", isRequired: true }}
       />
       <InputField
         name="apellido_paterno"
         placeholder="Ingresa apellido paterno"
-        formControlProps={{ label: 'Apellido Paterno', isRequired: true }}
+        formControlProps={{ label: "Apellido Paterno", isRequired: true }}
       />
       <InputField
         name="apellido_materno"
         placeholder="Ingresa apellido materno"
-        formControlProps={{ label: 'Apellido Materno', isRequired: true }}
+        formControlProps={{ label: "Apellido Materno", isRequired: true }}
       />
       <InputField
         name="calle"
         placeholder="Ingresa calle"
-        formControlProps={{ label: 'Calle', isRequired: true }}
+        formControlProps={{ label: "Calle", isRequired: true }}
       />
       <InputField
         name="colonia"
         placeholder="Ingresa colonia"
-        formControlProps={{ label: 'Colonia', isRequired: true }}
+        formControlProps={{ label: "Colonia", isRequired: true }}
       />
       <InputField
         name="correo"
         placeholder="Ingresa correo electrónico"
-        formControlProps={{ label: 'E-mail', isRequired: true }}
+        formControlProps={{ label: "E-mail", isRequired: true }}
       />
       <InputField
-      
         name="codigo_postal"
         placeholder="Ingresa codigo postal"
-        formControlProps={{ label: 'Codigo postal', isRequired: true }}
+        formControlProps={{ label: "Codigo postal", isRequired: true }}
       />
       <InputField
-      
         name="telefono"
         placeholder="Ingresa telefono"
-        formControlProps={{ label: 'Telefono', isRequired: true }}
+        formControlProps={{ label: "Telefono", isRequired: true }}
       />
       <InputField
         name="ciudad"
         placeholder="Ingresa Ciudad"
-        formControlProps={{ label: 'Ciudad', isRequired: true }}
+        formControlProps={{ label: "Ciudad", isRequired: true }}
       />
       <InputField
         name="estado"
         placeholder="Ingresa Estado"
-        formControlProps={{ label: 'Estado', isRequired: true }}
+        formControlProps={{ label: "Estado", isRequired: true }}
       />
       <Button type="submit" disabled={isSubmitting}>
         Registrar
@@ -94,10 +97,52 @@ export const RegisterOfElectrictFactura = () => {
   );
 };
 
-export const FacturaModal = () => {
+export const FacturaModal = (cart:any) => {
   // const { value, increment, decrement } = useCounter();
   const navigate = useNavigate();
   const redirectTo = (route: string) => () => navigate(route);
+  const [millisegundos, setMillisegundos] = useState("1000");
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const [position, setPosition] = useState("center");
+  const [displayBasic, setDisplayBasic] = useState(false);
+
+  const onClick = (name:any) => {
+    setDisplayBasic(true);
+
+    /*if (position) {
+      setPosition(position);
+    }*/
+  };
+
+  console.log("---");
+  console.log(cart);
+  
+  
+
+  const renderFooter = (name:any) => {
+    return (
+      <div>
+        <ButtonPrime
+          label="Cancelar"
+          icon="pi pi-times"
+          onClick={() => setDisplayBasic(false)}
+          className="p-button-text"
+        />
+        <ReactToPrint
+          trigger={() => (
+            <ButtonPrime
+              label="Imprimir"
+              icon="pi pi-print"
+              onClick={() => setDisplayBasic(false)}
+              autoFocus
+            />
+          )}
+          content={() => componentRef.current}
+        />
+      </div>
+    );
+  };
 
   return (
     <>
@@ -105,9 +150,21 @@ export const FacturaModal = () => {
       <Heading fontWeight="light">Se requiere de:</Heading>
 
       <Menu w="80%">
-        <Option onClick={redirectTo('/orders/typeInvoice')}>Factura</Option>
-        <Option onClick={() => console.log('hola')}>Nota simple</Option>
+        <Option onClick={redirectTo("/orders/typeInvoice")}>Factura</Option>
+
+        <Option onClick={() => onClick("displayBasic")}>Nota simple</Option>
       </Menu>
+
+      <Dialog
+        visible={displayBasic}
+        style={{ width: "50vw" }}
+        footer={renderFooter("displayBasic")}
+        onHide={() => setDisplayBasic(false)}
+      >
+        <div ref={componentRef}>
+          <Nota items={cart}/>
+        </div>
+      </Dialog>
     </>
   );
 };
@@ -120,10 +177,10 @@ export const TypeInvoice = () => {
       <Heading fontWeight="bold">Factura</Heading>
 
       <Menu w="80%">
-        <Option onClick={redirectTo('/orders/typeInvoice/ExistingClient')}>
+        <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
           Cliente existente
         </Option>
-        <Option onClick={redirectTo('/orders/typeInvoice/newCliente')}>
+        <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
           Registrar Nuevo Cliente
         </Option>
       </Menu>

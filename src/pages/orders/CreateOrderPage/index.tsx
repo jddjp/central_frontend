@@ -16,6 +16,11 @@ import { PaymentDetails } from './PaymentDetails';
 import { OrderMenu } from './OrderMenu';
 import { ShoppingCartArticle } from './types';
 
+
+import { client } from 'services/api/cliente';
+
+import { useState } from 'react';
+
 const initialClient = {
   name: '',
 };
@@ -29,7 +34,7 @@ const initialPayment = {
 
 export const CreateOrderPage = () => {
   const navigate = useNavigate();
-  const redirectTo = (route: string) => () => navigate(route);
+  const redirectTo = (route: string, cart: any, client:any) => () => navigate(route,{state:{cart,client}});
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();
   const {
@@ -60,6 +65,10 @@ export const CreateOrderPage = () => {
   };
 
   const handleConfirmClearCart = () => {
+    alert();
+    console.log('handleConfirmClearCart');
+    console.log(client);
+    
     clear();
     onCloseConfirmationClear();
   };
@@ -71,17 +80,24 @@ export const CreateOrderPage = () => {
     } else {
       setArticle(article);
     }
-  };
+  };  
+
+
+  
+  const [displayBasic, setDisplayBasic] = useState(true);
+
+  const [client, setClient] = useState<client|null>(null);
 
   return (
     <Formik
-      initialValues={{ client: initialClient, payment: initialPayment }}
+      initialValues={{ client: initialClient, payment: initialPayment }}  
       onSubmit={() => {}}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
         <OrderMenu
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
+          cart={cart}
         />
 
         <Header
@@ -90,7 +106,7 @@ export const CreateOrderPage = () => {
         />
 
         
-        <ClientInformation  />
+        <ClientInformation />
 
         <Cart
           minH="85vh"
@@ -111,7 +127,7 @@ export const CreateOrderPage = () => {
             fontSize="md"
             rightIcon={<ArrowRightIcon />}
             disabled={cart.items.length === 0}
-            onClick={redirectTo('/orders/typeNote')}
+            onClick={redirectTo('/orders/typeNote', cart, client)}
           >
             Pagar
           </Button>

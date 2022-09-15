@@ -10,24 +10,29 @@ import ExistingClient from "pages/payments/invoice/ExistingClient";
 
 
 export interface ClientInformationProps extends StackProps {
-  onFinishUser: (client: client) => void,
+  //onFinishUser: (client: client) => void
 }
 
 const n = (v: number | string) => typeof(v) === 'string' ? 0 : v;
 
 export const ClientInformation = (props: ClientInformationProps) => {
+  console.log("------.......");
+  //console.log(props.displayBasic);
+
+  
   
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [client, setClient] = useState<client|null>(null);
+  /*const [client, setClient] = useState<client|null>(null);
   const { onFinishUser, ...rest } = props;
   const handleSubmit = () => {
     onFinishUser(client!);
-  }
+  }*/
+
   return (
     <Stack border=''>
       <InformationAreaGroup>
         <InformationArea title='Cliente'>
-          <ExistingClient/>
+          <ExistingClient />
         </InformationArea>
 
         

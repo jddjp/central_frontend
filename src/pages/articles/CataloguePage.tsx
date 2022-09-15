@@ -3,39 +3,62 @@ import { useCatalogue } from "./useCatalogue";
 import { CatalogueGrid } from "features/articles/CatalogueGrid";
 import { CatalogueArticle } from "features/articles/CatalogueArticle";
 
-import React, { useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { appAxios, baseMediaUrl } from 'config/api';
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";
+import "./style.css"
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
+import { FileUpload } from 'primereact/fileupload';
+import { ProgressBar } from 'primereact/progressbar';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 export const Productos = () => {
   let emptyProduct = {
-    nombre: null,
-    precio_lista: null,
-    marca: null,
-    inventario_fiscal: null,
-    inventario_fisico: null,
-    descripcion: null,
-    categoria: null,
-    codigo_barras: null,
-    codigo_qr: null,
-    estado: null
+    nombre: '',
+    precio_lista: 0,
+    marca: '',
+    inventario_fiscal: 0,
+    inventario_fisico: 0,
+    descripcion: "",
+    categoria: "",
+    codigo_barras: "",
+    codigo_qr: "",
+    estado: ""
   };
+  let editProducts = {
+    nombre: '',
+    precio_lista: 0,
+    marca: '',
+    inventario_fiscal: 0,
+    inventario_fisico: 0,
+    descripcion: "",
+    categoria: "",
+    codigo_barras: "",
+    codigo_qr: "",
+    estado: ""
+
+  };
+ 
   const [sales, setSales] = useState([])
   const [product, setProduct] = useState(emptyProduct);
   const [productDialog, setProductDialog] = useState(false);
+  const [editProductDialog, seteditroductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [edit, setEdit] = useState([])
+  const [edit, setEdit] = useState(editProducts)
+  const [id, setId] = useState();
+
+  const [selectedFile, setSelectedFile] = useState();
+  const [foto, setFoto] = useState();
   useEffect(() => {
     appAxios.get(`/articulos?populate=foto`).then((response: { data: any; }) => {
       const data = response.data
@@ -47,27 +70,7 @@ export const Productos = () => {
   const ped = sales.map((data: any) => {
     return data
   })
-  const id = sales.map((data: any) => {
-    return data.id
-  })
 
-  // const pro = ped.map((data: any) => {
-  //   produc = {
-  //     nombre: data.nombre,
-  //     marca: data.marca
-  //   }
-
-  // })
-
-
-  const onGlobalFilterChange1 = (e: any) => {
-    const value = e.target.value;
-    setGlobalFilterValue1(value);
-  }
-  const filters = {
-
-    'nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
-  }
   const openNew = () => {
     setProduct(emptyProduct);
     setSubmitted(false);
@@ -79,36 +82,54 @@ export const Productos = () => {
   const hideDialog = () => {
     setSubmitted(false);
     setProductDialog(false);
+    seteditroductDialog(false)
   }
 
 
-  const saveProduct = () => {
-    setSubmitted(true);
+  const saveProduct = (e:any) => {
+    // setSubmitted(true);
 
-    if (product.nombre.trim()) {
+   // if (product.nombre != null) {
+      if (product.nombre.trim()) {
       //     let _products = [...products];
       // let _product = {...product};
       // if(product.)
       let data = {
-        data: { ...product },
+        data: { ...product},
       };
+      console.log(data);
+      
       appAxios.post(`/articulos`, data);
-
-      console.log(edit);
-
-
-      // setProducts(_products);
       setProductDialog(false);
-
-    }
   }
 
-  const editProduct = (data: any) => {
-    setProduct({ ...data.attributes });
-    setEdit(data.id)
-    console.log(data.id);
+  const myUploader = (e:any, name:any) => {
+    /*const [file] = e.target.files;
+    setFoto(URL.createObjectURL(file));
+    
+    
+    let _product = { ...foto };
+    _product[`${name}`] = URL.createObjectURL(file);
 
-    setProductDialog(true);
+    setFoto(_product);
+console.log(foto, [file]);*/
+  }
+
+  const editProducto = () => {
+    setSubmitted(true);
+    let data = {
+      data: { ...edit },
+    };
+    appAxios.put(`/articulos/${id}`, data);
+
+    }
+  //}
+  }
+  const editProduct = (data: any) => {
+    setEdit(data.attributes)
+    setId(data.id);
+
+    seteditroductDialog(true);
   }
   const deleteProduct = () => {
 
@@ -130,10 +151,42 @@ export const Productos = () => {
   const onInputChange = (e: any, name: any) => {
     const val = (e.target && e.target.value) || '';
     let _product = { ...product };
-    _product[`${name}`] = val;
+  //  _product[`${name}`] = val;
 
-    setProduct(_product);
+   // setProduct(_product);
   }
+  const onInputNumberChange = (e:any, name:any) => {
+    const val = e.value || 0;
+    let _product = { ...product };
+    //_product[`${name}`] = val;
+
+    //setProduct(_product);
+  }
+  const onInputChangeEdit = (e: any, name: any) => {
+    const val = (e.target && e.target.value);
+    let _product = { ...edit };
+    //_product[`${name}`] = val;
+
+    //setEdit(_product);
+  }
+  const onInputNumberChangeEdit = (e:any, name:any) => {
+    const val = e.value || 0;
+    let _product = { ...edit };
+    //_product[`${name}`] = val;
+
+    //setProduct(_product);
+  }
+
+
+  const chooseOptions = { label: 'Choose', icon: 'pi pi-fw pi-plus' };
+  const uploadOptions = { className: 'p-hidden' };
+  const cancelOptions = { label: 'hrh', icon: 'pi pi-times', className: 'p-hidden' };
+
+
+
+  
+
+
 
 
 
@@ -152,15 +205,29 @@ export const Productos = () => {
       </div>
     )
   }
+  const onGlobalFilterChange1 = (e: any) => {
+    const value = e.target.value;
+    setGlobalFilterValue1(value);
+  }
+  const filters = {
+
+    'attributes.nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
+  }
 
   const header = renderHeader1();
   // console.log(id);
 
-  const estado = [{label:'bueno', value:'bueno'}];
+  const estado = [{ name: 'bueno', value: 'bueno' }];
   const productDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveProduct} />
+      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={(e: any) => saveProduct(e)} />
+    </React.Fragment>
+  );
+  const editProductDialogFooter = (
+    <React.Fragment>
+      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
+      <Button label="Save" icon="pi pi-check" className="p-button-text" />
     </React.Fragment>
   );
   const deleteProductDialogFooter = (
@@ -173,10 +240,11 @@ export const Productos = () => {
 
   return (
     <>
+
       <div className="card container">
         <DataTable value={ped} paginator className="p-datatable-customers" showGridlines rows={10} header={header} filters={filters} editMode="row">
           <Column field="attributes.nombre" header="Nombre" />
-          <Column field="attributes.precio_lista" header="Presio" />
+          <Column field="attributes.precio_lista" header="Precio" />
           <Column field="attributes.marca" header="Marca" />
           <Column field="attributes.inventario_fiscal" header="inventario_fiscal" style={{ width: "5%" }} />
           <Column field="attributes.inventario_fisico" header="Inventario fisico" style={{ width: "5%" }} />
@@ -185,8 +253,11 @@ export const Productos = () => {
           <Column field="attributes.codigo_barras" header="Cod. Barra" />
           <Column field="attributes.codigo_qr" header="Cod. Qr" />
           <Column field="attributes.estado" header="EStado" />
-          {/* <Column header="attributes.Foto" body={(data: any) => {
+          {/* <Column header="Foto" body={(data) => {
           return <img src={baseMediaUrl + data.attributes.foto.data.attributes.url} alt="producto" width="25" />
+          // return <p>{data.attributes.nombre}</p>
+          console.log(data.attributes.foto.data.attributes.url);
+          
         }} /> */}
           <Column body={(data: any) => {
             return <div>
@@ -198,32 +269,33 @@ export const Productos = () => {
       </div>
 
 
+      {/* new */}
 
+      <Dialog visible={productDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
 
-      <Dialog visible={productDialog} style={{ width: '450px' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
         <div className="field">
           <label htmlFor="name">Nombre</label>
-          <InputText value={product.nombre} onChange={(e: any) => onInputChange(e, 'nombre')} required autoFocus />
+          <InputText value={product.nombre} onChange={(e: any) => onInputChange(e, 'nombre')} autoFocus />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
           <label htmlFor="name">Marca</label>
-          <InputText value={'' || product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
+          <InputText value={product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
           <label htmlFor="name">Precio</label>
-          <InputText value={product.precio_lista} onChange={(e: any) => onInputChange(e, 'precio_lista')} required />
+          <InputNumber value={product.precio_lista} onChange={(e: any) => onInputNumberChange(e, 'precio_lista')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
           <label htmlFor="name">Inventario fiscal</label>
-          <InputText value={product.inventario_fiscal} onChange={(e: any) => onInputChange(e, 'inventario_fiscal')} required />
+          <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
           <label htmlFor="name">Inventario fisico</label>
-          <InputText value={product.inventario_fisico} onChange={(e: any) => onInputChange(e, 'inventario_fisico')} required />
+          <InputNumber value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
@@ -242,16 +314,72 @@ export const Productos = () => {
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
-          <label htmlFor="name">Estado</label> 
-        <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required />
+          <label htmlFor="name">Estado</label>
+          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required /> */}
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          {/* <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" /> */}
+          <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" />
           {/* <label htmlFor="dropdown">Dropdown</label> */}
+        </div>
+        <div >
+          <form action="">
+            <label htmlFor="">Foto</label>
+            <input type="file" accept="image/*" />
+            <img src={foto} alt="" />
+          </form>
         </div>
       </Dialog>
 
+      {/* edit */}
+      <Dialog visible={editProductDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={editProductDialogFooter} onHide={hideDialog}>
+        <div className="field">
+          <label htmlFor="name">Nombre</label>
+          <InputText value={edit.nombre} onChange={(e: any) => onInputChangeEdit(e, 'nombre')} autoFocus />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Marca</label>
+          <InputText value={edit.marca} onChange={(e: any) => onInputChangeEdit(e, 'marca')} />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Precio</label>
+          <InputNumber value={edit.precio_lista} onChange={(e: any) => onInputNumberChangeEdit(e, 'precio_lista')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Inventario fiscal</label>
+          <InputNumber value={edit.inventario_fiscal} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fiscal')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Inventario fisico</label>
+          <InputNumber value={edit.inventario_fisico} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fisico')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Descripcion</label>
+          <InputText value={edit.descripcion} onChange={(e: any) => onInputChangeEdit(e, 'descripcion')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">cod. barras</label>
+          <InputText value={edit.codigo_barras} onChange={(e: any) => onInputChangeEdit(e, 'codigo_barras')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Cod. Qr</label>
+          <InputText value={edit.codigo_qr} onChange={(e: any) => onInputChangeEdit(e, 'codigo_qr')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Estado</label>
+          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} required /> */}
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          <Dropdown inputId="dropdown" value={edit.estado} options={estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} optionLabel="name" />
+          {/* <label htmlFor="dropdown">Dropdown</label> */}
+        </div>
 
-
+      </Dialog>
 
       <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
         <div className="confirmation-content">
@@ -259,6 +387,8 @@ export const Productos = () => {
           <span>Are you sure you want to delete ?</span>
         </div>
       </Dialog>
+
+
     </>
   );
 }

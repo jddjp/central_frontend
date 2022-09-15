@@ -15,8 +15,10 @@ export interface InformationAreaProps extends AccordionItemProps {
 export const InformationArea = (props: InformationAreaProps) => {
   const { title, children, ...rest } = props;
 
+  
+
   return (
-    <AccordionItem {...rest}>
+    <AccordionItem {...rest}> 
       <AccordionButton fontWeight="bold" >
         {title}
       </AccordionButton>

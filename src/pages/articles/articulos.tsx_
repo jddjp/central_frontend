@@ -52,6 +52,7 @@ export const Productos = () => {
     'nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
   }
   const openNew = () => {
+    alert();
     setProduct(produc);
     setSubmitted(false);
     setProductDialog(true);
@@ -115,7 +116,7 @@ export const Productos = () => {
       <div className="card container">
         <DataTable value={ped} paginator className="p-datatable-customers" showGridlines rows={10} header={header} filters={filters} editMode="row">
           <Column field="nombre" header="Nombre" />
-          <Column field="precio_lista" header="Presio" />
+          <Column field="precio_lista" header="Preio" />
           <Column field="marca" header="Marca" />
           <Column field="inventario_fiscal" header="inventario_fiscal" style={{ width: "5%" }} />
           <Column field="inventario_fisico" header="Inventario fisico" style={{ width: "5%" }} />
