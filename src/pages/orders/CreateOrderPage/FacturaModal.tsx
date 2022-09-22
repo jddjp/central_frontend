@@ -11,7 +11,8 @@ import ReactToPrint from "react-to-print";
 import { Nota } from "./NotaSimple/Nota";
 import { Dialog } from "primereact/dialog";
 import { Button as ButtonPrime } from "primereact/button";
-
+import { client } from 'services/api/cliente';
+import {TiPrinter } from 'react-icons/ti';
 export const SearchClientStage = () => {
   return (
     <>
@@ -98,7 +99,8 @@ export const RegisterOfElectrictFactura = () => {
 };
 
 export const FacturaModal = (cart:any) => {
-  // const { value, increment, decrement } = useCounter();
+
+  const [cartTemp, setCart] = useState(cart);
   const navigate = useNavigate();
   const redirectTo = (route: string) => () => navigate(route);
   const [millisegundos, setMillisegundos] = useState("1000");
@@ -115,28 +117,24 @@ export const FacturaModal = (cart:any) => {
     }*/
   };
 
-  console.log("---");
-  console.log(cart);
+  console.log("FacturaModal:");
+  console.log(cart.cart.cart.items);
+  console.log(cartTemp.cart.client);
+  
   
   
 
   const renderFooter = (name:any) => {
     return (
       <div>
-        <ButtonPrime
-          label="Cancelar"
-          icon="pi pi-times"
+        
+        <Button
           onClick={() => setDisplayBasic(false)}
-          className="p-button-text"
-        />
+          variant='outline'
+        >Cancelar</Button>
         <ReactToPrint
           trigger={() => (
-            <ButtonPrime
-              label="Imprimir"
-              icon="pi pi-print"
-              onClick={() => setDisplayBasic(false)}
-              autoFocus
-            />
+            <Button leftIcon={<TiPrinter  />} onClick={() => setDisplayBasic(false)}>Ingresar</Button>
           )}
           content={() => componentRef.current}
         />
@@ -162,7 +160,7 @@ export const FacturaModal = (cart:any) => {
         onHide={() => setDisplayBasic(false)}
       >
         <div ref={componentRef}>
-          <Nota items={cart}/>
+          <Nota client={cart.cart.client}  items={cart.cart.cart.items}/>
         </div>
       </Dialog>
     </>

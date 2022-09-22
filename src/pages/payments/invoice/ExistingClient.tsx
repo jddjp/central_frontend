@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Heading, HStack, Stack } from '@chakra-ui/react';
+import React, { useState, useRef, Dispatch, SetStateAction } from 'react';
+import { Heading, HStack, Stack,StackProps } from '@chakra-ui/react';
 import { asyncSelectAppStyles } from 'theme';
 import {
   ActionMeta,
@@ -9,7 +9,7 @@ import {
   SingleValue,
 } from 'react-select';
 import Select from 'react-select/async';
-import { autocompleteByCliente } from 'services/api/cliente';
+import { autocompleteByCliente, client } from 'services/api/cliente';
 
 const Input = (props: any) => <components.Input {...props} isHidden={false} />;
 
@@ -24,7 +24,12 @@ const handleAutocomplete = async (search: string) => {
   return await autocompleteByCliente({ search });
 };
 
-export default function ExistingClient(props: any) {
+export interface ClientInformationProps extends StackProps {
+  //onFinishUser: (client: client) => void
+  setCliente: Dispatch<SetStateAction<client | undefined>>
+}
+
+export default function ExistingClient(props: ClientInformationProps) {
   const [user, setUser] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const selectRef = useRef();
@@ -33,6 +38,22 @@ export default function ExistingClient(props: any) {
     if (action === 'input-change') {
       setInputValue(newValue);
       setUser(null);
+      let cliente : client = {
+        RFC: 'string',
+        nombre: newValue,
+        apellido_paterno: '',
+        apellido_materno: '',
+        calle: '',
+        colonia: '',
+        correo: '',
+        codigo_postal: '',
+        telefono: '',
+        ciudad: '',
+        estado: '',
+      };
+      props.setCliente(cliente);
+      console.log("-----------------------------");
+      console.log(cliente);
     }
   };
 
@@ -42,8 +63,8 @@ export default function ExistingClient(props: any) {
   ) => {
     setUser(option as any);
     setInputValue(option ? getUserLabel(option as any) : '');
-    props.setClient(option);
-    console.log(option);
+    console.log(option.attributes);
+    props.setCliente(option.attributes);
     
   };
 
@@ -52,10 +73,7 @@ export default function ExistingClient(props: any) {
   };
 
   const handleClick = () => {
-    alert("Co!");
-    console.log(user);
     
-    props.setClient(user);
   }
 
   return (

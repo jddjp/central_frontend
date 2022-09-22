@@ -178,7 +178,7 @@ console.log(foto, [file]);*/
   }
 
 
-  const chooseOptions = { label: 'Choose', icon: 'pi pi-fw pi-plus' };
+
   const uploadOptions = { className: 'p-hidden' };
   const cancelOptions = { label: 'hrh', icon: 'pi pi-times', className: 'p-hidden' };
 

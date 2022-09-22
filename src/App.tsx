@@ -23,9 +23,12 @@ import TypeInvoices from 'pages/payments/invoice/TypeInvoices';
 import NewClient from 'pages/payments/invoice/NewClient';
 import ExistingClient from 'pages/payments/invoice/ExistingClient';
 //import Articulos from 'pages/articles/articulos';
+import { useState } from 'react';
+import { client } from 'services/api/cliente';
 
 export const App = () => {
   useAuthInterceptors();
+  const [cliente, setCliente] = useState<client>();
 
   return (
     <ChakraProvider theme={theme}>
@@ -114,7 +117,7 @@ export const App = () => {
             path="/orders/typeInvoice/newCliente"
             element={
               <RequiredAuthentication>
-                <NewClient />
+                <NewClient/>
               </RequiredAuthentication>
             }
           />
@@ -122,7 +125,7 @@ export const App = () => {
             path="/orders/typeInvoice/ExistingClient"
             element={
               <RequiredAuthentication>
-                <ExistingClient />
+                <ExistingClient setCliente={setCliente}/>
               </RequiredAuthentication>
             }
           />

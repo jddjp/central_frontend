@@ -1,4 +1,4 @@
-import { Portal, Stack, useDisclosure, Button} from '@chakra-ui/react';
+import { Portal, Stack, useDisclosure, Button, useToast} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 import { Header } from './Header';
@@ -22,7 +22,7 @@ import { client } from 'services/api/cliente';
 import { useState } from 'react';
 
 const initialClient = {
-  name: '',
+  name: 'ss',
 };
 
 const initialPayment = {
@@ -31,10 +31,25 @@ const initialPayment = {
   creditCardAmount: 0,
   creditAmount: 0,
 };
-
 export const CreateOrderPage = () => {
+
+  const toast = useToast();
+  const [cliente, setCliente] = useState<client>();
   const navigate = useNavigate();
-  const redirectTo = (route: string, cart: any, client:any) => () => navigate(route,{state:{cart,client}});
+  const redirectTo = (route: string, cart: any, client:any) => () => {
+    if(cliente == null){
+      toast({
+        title: 'Indicar cliente',
+        description: 'Se requiere el nombre del cliente para poder indentificar el pedido',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    
+    navigate(route,{state:{cart,client}});
+  };
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();
   const {
@@ -65,10 +80,6 @@ export const CreateOrderPage = () => {
   };
 
   const handleConfirmClearCart = () => {
-    alert();
-    console.log('handleConfirmClearCart');
-    console.log(client);
-    
     clear();
     onCloseConfirmationClear();
   };
@@ -85,8 +96,6 @@ export const CreateOrderPage = () => {
 
   
   const [displayBasic, setDisplayBasic] = useState(true);
-
-  const [client, setClient] = useState<client|null>(null);
 
   return (
     <Formik
@@ -106,7 +115,7 @@ export const CreateOrderPage = () => {
         />
 
         
-        <ClientInformation />
+        <ClientInformation setCliente={setCliente} />
 
         <Cart
           minH="85vh"
@@ -127,7 +136,7 @@ export const CreateOrderPage = () => {
             fontSize="md"
             rightIcon={<ArrowRightIcon />}
             disabled={cart.items.length === 0}
-            onClick={redirectTo('/orders/typeNote', cart, client)}
+            onClick={redirectTo('/orders/typeNote', cart, cliente)}
           >
             Pagar
           </Button>
