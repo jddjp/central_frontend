@@ -35,7 +35,6 @@ export const searchArticles = async (
   ).data;
   response.data = response.data.map(fixArticleMediaUrls);
 
-  console.log('holas', response.data);
   return response;
 };
 

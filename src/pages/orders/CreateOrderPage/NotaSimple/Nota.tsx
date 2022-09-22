@@ -1,36 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
+import {  Dispatch, SetStateAction } from 'react';
 import { Column } from "primereact/column";
-import { SimpleGrid } from "@chakra-ui/react";
+import { SimpleGrid, StackProps } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 //import styles from "./DataTableTicket.css";
 import { Button } from "primereact/button";
+import { client } from "services/api/cliente";
+import { ShoppingCartItem } from "../types";
 
-type Nota = {
-  src: string;
-};
+export interface NotaProps extends StackProps {
+  client: client
+  items: any
+}
 
-export const Nota = ( items:any, props: Nota) => {
+export const Nota = ( props: NotaProps) => {
   const columns = [
     { field: "article.attributes.nombre", header: "Producto" },
+    { field: "article.amount", header: " " },
     { field: "article.attributes.precio_lista", header: "Precio" },
   ];
-  const [products, setProducts] = useState(items.cart.items);
-  const [client, setClient] = useState(items.client);
+  console.log("items---");
+  const [products, setProducts] = useState(props.items);
+  //const [client, setClient] = useState<client | undefined>(props.client);
   console.log("client---");
-  console.log(client);
+  console.log(props);
   
 
-  function calculateTotal(products: any) {
+  function calculateTotal(products: ShoppingCartItem[]) {
     let total = 0;
-    /*products.forEach((product) => {
+    products.forEach((product) => {
       total += (product.article.attributes.precio_lista * product.amount);
-    });*/
+    });
     return total;
   }
 
   const dynamicColumns = columns.map((col, i) => {
-    if (col.field == "article.attributes.nombre") {
+    console.log("..............");
+    console.log(col);
+    
+    
+    if (col.field == "article.amount") {
       return (
         <Column
           key={col.field}
@@ -39,10 +49,7 @@ export const Nota = ( items:any, props: Nota) => {
           headerStyle={{ width: "4%", textColor: "blue" }}
           body={(data, props) => (
             <div>
-              {" "}
-              {products[props.rowIndex].article.attributes.nombre}{" "}
-              {products[props.rowIndex].amount} x $
-              {products[props.rowIndex].article.attributes.precio_lista}
+              {products[props.rowIndex].article.attributes.precio_lista} x {products[props.rowIndex].amount}
             </div>
           )}
         />
@@ -83,7 +90,7 @@ export const Nota = ( items:any, props: Nota) => {
       ? "0" + current.getMinutes()
       : current.getMinutes()
   }`;
-  console.log(".....");
+  console.log(".....-");
   console.log(products);
 
   return (
@@ -94,8 +101,8 @@ export const Nota = ( items:any, props: Nota) => {
         </p>
         <p>{date}</p>
         <SimpleGrid columns={2} spacing={10}>
-          <Box height="40px">Cliente:{client.attributes.nombre + " " + client.attributes.apellido_paterno + " " + client.attributes.apellido_materno}</Box>
-          <Box height="40px">Vendedor:</Box>
+          {/*<Box height="40px">Cliente:{client.attributes.nombre + " " + client.attributes.apellido_paterno + " " + client.attributes.apellido_materno}</Box>*/}
+          <Box height="40px">Cliente: {props.client.nombre+ " " + props.client.apellido_paterno + " " + props.client.apellido_materno} </Box>
         </SimpleGrid>
         <div>
           <DataTable
@@ -107,8 +114,8 @@ export const Nota = ( items:any, props: Nota) => {
 
           <SimpleGrid columns={2} spacing={2} >
             
-            <Box height="30px">Total:</Box>
-            <Box height="30px" >
+            <Box height="30px" style={{paddingLeft: "15px"}}>Total:</Box>
+            <Box height="30px;" style={{textAlign: "center"}}>
               ${calculateTotal(products)}
             </Box>
           </SimpleGrid>

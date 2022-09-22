@@ -1,5 +1,5 @@
 import { Stack, StackProps, useDisclosure, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton} from "@chakra-ui/react"
-  import { useState } from 'react';
+  import { useState, Dispatch, SetStateAction } from 'react';
 import { InputField } from "components/InputField"
 import { useFormikContext } from "formik"
 import NewClient from "pages/payments/invoice/NewClient"
@@ -11,6 +11,7 @@ import ExistingClient from "pages/payments/invoice/ExistingClient";
 
 export interface ClientInformationProps extends StackProps {
   //onFinishUser: (client: client) => void
+  setCliente: Dispatch<SetStateAction<client | undefined>>
 }
 
 const n = (v: number | string) => typeof(v) === 'string' ? 0 : v;
@@ -32,7 +33,7 @@ export const ClientInformation = (props: ClientInformationProps) => {
     <Stack border=''>
       <InformationAreaGroup>
         <InformationArea title='Cliente'>
-          <ExistingClient />
+          <ExistingClient setCliente={props.setCliente}/>
         </InformationArea>
 
         

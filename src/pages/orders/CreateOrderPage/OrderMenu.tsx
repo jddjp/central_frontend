@@ -14,12 +14,14 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  useToast
 } from "@chakra-ui/react";
 import NewClient from "pages/payments/invoice/NewClient";
 
 //import { newOrder, newItem, uploadFile } from "services/api/orders";
 import { Order, Item } from "types/Order";
 import { ShoppingCart } from './types';
+import { newItem, newOrder } from 'services/api/orders';
 
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
@@ -31,57 +33,73 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { onOpenCatalogueModal, onOpenConfirmationClear } = props;
 
-  /*const handleNewOrder = () => {
+  const toast = useToast();
+  const handleNewOrder = () => {
+
+    if(props.cart.items.length == 0) {
+      toast({
+        title: 'Agregar productos',
+        description: 'Se requiere al menos un producto para poder guardar la orden',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     var date = new Date();
     var order: Order = {
-      fecha_pedido: date.toISOString(),
-      hora_pedido:
-        (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
-        ":" +
-        (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
-        ":" +
-        (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
-      estatus: "pendiente",
+      id: 0,
+      attributes:{
+        fecha_pedido: date.toISOString(),
+        hora_pedido:
+          (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+          ":" +
+          (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+          ":" +
+          (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
+        estatus: "pendiente",
+      }
     };
-
-    /*-Crear orden con sus items*-/
-    var responseNewOrder = newOrder(order);
+    console.log(order);
+    console.log(props.cart);
+    
+    /*-Crear orden con sus items*/
+    var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
       props.cart.items.forEach((item) => {
         var itemNew: Item = {
+          id: 0,
+          attributes: {
           cantidad: item.amount,
           pesado: 0,
           cantidad_real: item.amount,
           precio_venta: item.article.attributes.precio_lista,
           pedido: response.data.id,
+          }
         };
 
         console.log(response.data.id);
+        console.log(itemNew);
+        
         newItem(itemNew);
       });
     });
 
     props.cart.items.forEach((item) => {});
-  };*/
+  };
   
   const [selectedFile, setSelectedFile] = useState(null);
   /*const myUploader = (event) => {
     setSelectedFile(event.files[0]);
 }*/
 
-const handlerUploadFile = () => {
-  /*uploadFile(selectedFile).then((response) => {
-    console.log("-----------RESPUESTA----");
-    console.log(response);
-  });*/
-}
-
   return (
     <FixedMenu right="3" top="30vh">
-      <button onClick={handlerUploadFile}>Send image</button>
-      <FileUpload name="demo" url="./upload"  mode="basic" />
+      
       <IconAction
         aria-label="Guardar orden"
+        onClick={handleNewOrder}
         icon={<SaveIcon />}
       />
       <IconAction
