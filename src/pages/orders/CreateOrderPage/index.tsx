@@ -47,6 +47,10 @@ export const CreateOrderPage = () => {
       });
       return;
     }
+    console.log("----------------------------------------------------------------");
+    
+    console.log(cliente);
+    
     
     navigate(route,{state:{cart,client}});
   };
@@ -107,6 +111,7 @@ export const CreateOrderPage = () => {
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
           cart={cart}
+          cliente={cliente}
         />
 
         <Header

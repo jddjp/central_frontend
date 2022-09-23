@@ -14,6 +14,7 @@ export interface client {
   telefono: string;
   ciudad: string;
   estado: string;
+  id: number
 }
 
 export const newCliente = async (payload: client) => {

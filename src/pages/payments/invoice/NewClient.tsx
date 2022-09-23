@@ -36,7 +36,8 @@ const initialValues: client = {
   codigo_postal:'',
   telefono:'',
   ciudad: '',
-  estado:''
+  estado:'',
+  id: 0
 };
 
 export default function NewClient() {

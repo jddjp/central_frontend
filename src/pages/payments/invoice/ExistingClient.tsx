@@ -50,10 +50,9 @@ export default function ExistingClient(props: ClientInformationProps) {
         telefono: '',
         ciudad: '',
         estado: '',
+        id: 0
       };
       props.setCliente(cliente);
-      console.log("-----------------------------");
-      console.log(cliente);
     }
   };
 
@@ -63,8 +62,8 @@ export default function ExistingClient(props: ClientInformationProps) {
   ) => {
     setUser(option as any);
     setInputValue(option ? getUserLabel(option as any) : '');
-    console.log(option.attributes);
-    props.setCliente(option.attributes);
+    console.log(option);
+    props.setCliente(option);
     
   };
 
