@@ -6,7 +6,11 @@ import { Menu } from 'components/Menu';
 
 export const HomePage = () => {
   const navigate = useNavigate();
-  const redirectToLogin = () => navigate('/login');
+  const redirectToLogin = (role: string) => () => {
+    navigate('/login');
+    localStorage.removeItem('role');
+    localStorage.setItem('role', role);
+  }
 
   const roles = [
     'Supervisor',
@@ -27,7 +31,7 @@ export const HomePage = () => {
       <Menu w="full">
         {roles.map(
           (role) =>
-            <Option key={role} onClick={redirectToLogin}>{role}</Option>
+            <Option key={role} onClick={redirectToLogin(role)}>{role}</Option>
         )}
       </Menu>
     </VStack>
