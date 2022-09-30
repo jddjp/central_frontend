@@ -1,4 +1,5 @@
 import { appAxios } from 'config/api';
+import { ContentType } from 'types/core';
 import { ListResponse } from './types';
 
 
@@ -14,7 +15,10 @@ export interface client {
   telefono: string;
   ciudad: string;
   estado: string;
+  id: number
 }
+
+export type Cliente = ContentType<client>;
 
 export const newCliente = async (payload: client) => {
   let data = {

@@ -6,6 +6,9 @@ export interface IOrderAttributes {
     "fecha_pedido": string;
     "hora_pedido": string;
     "estatus": string;
+
+"cliente":number,
+
 }
 
 export type Order = ContentType<IOrderAttributes>;
@@ -17,6 +20,7 @@ export interface IItemsAttributes {
     "cantidad_real": number;
     "precio_venta": number;
     "pedido": number;
+    "articulos": number
 }
 
 export type Item = ContentType<IItemsAttributes>;

@@ -10,6 +10,11 @@ export const newItem = async (payload: Item) => {
     return response.data;
 }
 
+export const getItems = async () => {
+    const response = await appAxios.get('/items?populate=articulos');
+    return response.data;
+}
+
 export const uploadFile = async (selectedFile: File) => {
     let file = new FormData();
     file.append("files", selectedFile);

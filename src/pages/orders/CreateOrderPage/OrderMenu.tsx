@@ -22,11 +22,13 @@ import NewClient from "pages/payments/invoice/NewClient";
 import { Order, Item } from "types/Order";
 import { ShoppingCart } from './types';
 import { newItem, newOrder } from 'services/api/orders';
+import { client } from 'services/api/cliente';
 
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
   onOpenConfirmationClear: VoidFunction;
   cart: ShoppingCart
+  cliente: client | undefined
 }
 
 export const OrderMenu = (props: OrderMenuProps, cart: any) => {
@@ -47,6 +49,20 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
       return;
     }
 
+    if(props.cliente == null){
+      toast({
+        title: 'Indicar cliente',
+        description: 'Se requiere indicar el cliente para poder indentificar el pedido',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    console.log("Order");
+    
+    console.log(props.cliente);
+
     var date = new Date();
     var order: Order = {
       id: 0,
@@ -59,6 +75,7 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
+        "cliente":props.cliente.id,
       }
     };
     console.log(order);
@@ -76,13 +93,17 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
           cantidad_real: item.amount,
           precio_venta: item.article.attributes.precio_lista,
           pedido: response.data.id,
+          articulos: item.article.id
           }
         };
 
+        console.log("----------");
         console.log(response.data.id);
-        console.log(itemNew);
+        console.log(item.article.id);
         
         newItem(itemNew);
+        order = response.data;
+        
       });
     });
 
