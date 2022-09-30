@@ -7,7 +7,8 @@ export interface IOrderAttributes {
     "hora_pedido": string;
     "estatus": string;
 
-"cliente":number
+"cliente":number,
+
 }
 
 export type Order = ContentType<IOrderAttributes>;

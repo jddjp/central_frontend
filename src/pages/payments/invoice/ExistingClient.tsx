@@ -1,4 +1,4 @@
-import React, { useState, useRef, Dispatch, SetStateAction } from 'react';
+import React, { useState, useRef, useImperativeHandle, Dispatch, SetStateAction } from 'react';
 import { Heading, HStack, Stack,StackProps } from '@chakra-ui/react';
 import { asyncSelectAppStyles } from 'theme';
 import {
@@ -9,7 +9,9 @@ import {
   SingleValue,
 } from 'react-select';
 import Select from 'react-select/async';
-import { autocompleteByCliente, client } from 'services/api/cliente';
+import { autocompleteByCliente, client, Cliente } from 'services/api/cliente';
+import { forwardRef } from "react";
+
 
 const Input = (props: any) => <components.Input {...props} isHidden={false} />;
 
@@ -29,7 +31,8 @@ export interface ClientInformationProps extends StackProps {
   setCliente: Dispatch<SetStateAction<client | undefined>>
 }
 
-export default function ExistingClient(props: ClientInformationProps) {
+//export default function ExistingClient(props: ClientInformationProps) {
+  export const ExistingClient = forwardRef((props : ClientInformationProps, ref) => {
   const [user, setUser] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const selectRef = useRef();
@@ -38,7 +41,7 @@ export default function ExistingClient(props: ClientInformationProps) {
     if (action === 'input-change') {
       setInputValue(newValue);
       setUser(null);
-      let cliente : client = {
+      /*let cliente : client = {
         RFC: 'string',
         nombre: newValue,
         apellido_paterno: '',
@@ -52,7 +55,7 @@ export default function ExistingClient(props: ClientInformationProps) {
         estado: '',
         id: 0
       };
-      props.setCliente(cliente);
+      props.setCliente(cliente);*/
     }
   };
 
@@ -71,9 +74,17 @@ export default function ExistingClient(props: ClientInformationProps) {
     user && (selectRef.current as any).select?.inputRef?.select();
   };
 
-  const handleClick = () => {
-    
+  const handleClick2 = (cli: Cliente) => {
+
+    setUser(cli as any);
+    setInputValue(cli ? getUserLabel(cli as any) : '');
   }
+
+  useImperativeHandle(ref, () => {
+    return {
+      handleClick2
+    }
+  })
 
   return (
     <Stack
@@ -83,7 +94,7 @@ export default function ExistingClient(props: ClientInformationProps) {
       mx="auto"
       mb="10"
       // justifyContent="center"
-    ><button type="submit" onClick={handleClick}>llll</button>
+    >
       {/* <Heading mt="10px" mb="15px">
         Buscar Cliente
       </Heading> */}
@@ -119,4 +130,5 @@ export default function ExistingClient(props: ClientInformationProps) {
       </HStack>
     </Stack>
   );
-}
+//}
+});

@@ -21,7 +21,7 @@ import CataloguePage from 'pages/articles/CataloguePage';
 import TypeNote from 'pages/payments/TypeNote';
 import TypeInvoices from 'pages/payments/invoice/TypeInvoices';
 import NewClient from 'pages/payments/invoice/NewClient';
-import ExistingClient from 'pages/payments/invoice/ExistingClient';
+import {ExistingClient} from 'pages/payments/invoice/ExistingClient';
 //import Articulos from 'pages/articles/articulos';
 import { useState } from 'react';
 import { client } from 'services/api/cliente';

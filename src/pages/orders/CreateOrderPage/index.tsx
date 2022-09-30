@@ -14,12 +14,15 @@ import { Cart } from './Cart';
 import { ClientInformation } from './ClientInformation';
 import { PaymentDetails } from './PaymentDetails';
 import { OrderMenu } from './OrderMenu';
-import { ShoppingCartArticle } from './types';
+import { ShoppingCartArticle, ShoppingCartItem } from './types';
 
 
+import {useLocation} from 'react-router-dom';
 import { client } from 'services/api/cliente';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ShoppingCart } from 'pages/orders/CreateOrderPage/types';
+import { Order } from 'types/Order';
 
 const initialClient = {
   name: 'ss',
@@ -30,8 +33,22 @@ const initialPayment = {
   paycheckAmount: 0,
   creditCardAmount: 0,
   creditAmount: 0,
-};
+}; export interface LocationOrdenEdit {
+    client: client,
+    editCart: Boolean,
+    cart: Order[]
+  }
+
+  interface CustomizedState {
+    client: client,
+  }
+  
+  
 export const CreateOrderPage = () => {
+ 
+  const location = useLocation();
+  const state = location.state as LocationOrdenEdit;
+  
 
   const toast = useToast();
   const [cliente, setCliente] = useState<client>();
@@ -78,6 +95,10 @@ export const CreateOrderPage = () => {
   const handleSelectArticleOnCatalogueModal = (
     article: ShoppingCartArticle
   ) => {
+    console.log("--");
+    
+    //console.log(state);
+    //setCliente(state.client)
     setArticle(article);
     onCloseCatalogueModal();
     onOpenAddItemModal();
@@ -89,6 +110,7 @@ export const CreateOrderPage = () => {
   };
 
   const handleSelectArticle = (article: ShoppingCartArticle | null) => {
+    
     if (article) {
       setArticle(article);
       onOpenAddItemModal();
@@ -100,6 +122,19 @@ export const CreateOrderPage = () => {
 
   
   const [displayBasic, setDisplayBasic] = useState(true);
+  
+  useEffect(() => {
+    console.log("useEffect");
+    console.log(state);
+    if(state != null){
+
+    setCliente(state.client);
+    console.log(state.cart[0].attributes);
+    //setArticle(state.cart[0]);
+
+    }
+    
+  });
 
   return (
     <Formik
@@ -120,7 +155,7 @@ export const CreateOrderPage = () => {
         />
 
         
-        <ClientInformation setCliente={setCliente} />
+        <ClientInformation setCliente={setCliente} cliente={cliente} />
 
         <Cart
           minH="85vh"

@@ -49,7 +49,14 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
       return;
     }
 
-    if(props.cliente == null) {
+    if(props.cliente == null){
+      toast({
+        title: 'Indicar cliente',
+        description: 'Se requiere indicar el cliente para poder indentificar el pedido',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
       return;
     }
     console.log("Order");
@@ -68,7 +75,7 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
-        "cliente":props.cliente.id
+        "cliente":props.cliente.id,
       }
     };
     console.log(order);
