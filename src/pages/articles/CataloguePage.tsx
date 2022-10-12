@@ -252,7 +252,7 @@ console.log(foto, [file]);*/
           <Column field="attributes.categoria" header="Categoria" />
           <Column field="attributes.codigo_barras" header="Cod. Barra" />
           <Column field="attributes.codigo_qr" header="Cod. Qr" />
-          <Column field="attributes.estado" header="EStado" />
+          <Column field="attributes.estado" header="Estado" />
           {/* <Column header="Foto" body={(data) => {
           return <img src={baseMediaUrl + data.attributes.foto.data.attributes.url} alt="producto" width="25" />
           // return <p>{data.attributes.nombre}</p>

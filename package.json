@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/react": "^1.8.8",
+    "@chakra-ui/react": "^1.8.9",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@material-ui/core": "^4.12.4",
     "axios": "^0.25.0",
     "docker-nodemon": "^1.11.0",
     "formik": "^2.2.9",
@@ -51,10 +52,10 @@
   "devDependencies": {
     "@testing-library/react-hooks": "^7.0.2",
     "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
+    "@types/react": "^16.14.32",
     "@types/react-dom": "^16.9.0",
+    "nodemon": "^2.0.15",
     "react-time-format": "0.0.5",
-    "typescript": "^4.3.5",
-    "nodemon": "^2.0.15"
+    "typescript": "^4.3.5"
   }
 }
