@@ -101,8 +101,7 @@ export const Nota = ( props: NotaProps) => {
         </p>
         <p>{date}</p>
         <SimpleGrid columns={2} spacing={10}>
-          {/*<Box height="40px">Cliente:{client.attributes.nombre + " " + client.attributes.apellido_paterno + " " + client.attributes.apellido_materno}</Box>*/}
-          <Box height="40px">Cliente: {props.client.nombre+ " " + props.client.apellido_paterno + " " + props.client.apellido_materno} </Box>
+          <Box height="40px">Cliente: {props.client.attributes.nombre} {props.client.attributes.apellido_paterno} {props.client.attributes.apellido_materno}</Box>
         </SimpleGrid>
         <div>
           <DataTable

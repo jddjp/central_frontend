@@ -26,6 +26,7 @@ import {ExistingClient} from 'pages/payments/invoice/ExistingClient';
 import { useState } from 'react';
 import { client } from 'services/api/cliente';
 import PromotionsPage from 'pages/articles/PromotionsPage';
+import AccountsPage from 'pages/accounts';
 
 export const App = () => {
   useAuthInterceptors();
@@ -155,7 +156,14 @@ export const App = () => {
             }
           />
 
-
+          <Route
+            path="/accounts"
+            element={
+              <RequiredAuthentication>
+                <AccountsPage />
+              </RequiredAuthentication>
+            }
+          />
 
         </Route>
 

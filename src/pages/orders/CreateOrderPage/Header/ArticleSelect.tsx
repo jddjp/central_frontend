@@ -54,6 +54,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
     setInputValue(
       option ? (option as ShoppingCartArticle).attributes.nombre : ''
     );
+    setInputValue('')
   };
 
   return (

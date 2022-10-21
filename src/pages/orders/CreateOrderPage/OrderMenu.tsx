@@ -75,7 +75,7 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
-        "cliente":props.cliente.id,
+        "cliente":props.cliente.attributes.id,
       }
     };
     console.log(order);

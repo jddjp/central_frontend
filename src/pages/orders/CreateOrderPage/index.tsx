@@ -134,7 +134,7 @@ export const CreateOrderPage = () => {
 
     }
     
-  });
+  }, [state]);
 
   return (
     <Formik

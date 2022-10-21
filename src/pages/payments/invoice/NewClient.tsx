@@ -1,11 +1,12 @@
 import React from 'react';
 import { Stack, useToast } from '@chakra-ui/react';
 import { Formik, Form } from 'formik';
+import { useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios';
 import * as yup from 'yup';
 
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
-import { client, newCliente } from '../../../services/api/cliente';
+import { newCliente } from '../../../services/api/cliente';
 import { RegisterOfElectrictFactura } from 'pages/orders/CreateOrderPage/FacturaModal';
 
 const validateSchema = yup.object({
@@ -25,7 +26,7 @@ const validateSchema = yup.object({
     .email('El correo no es válido'),
 });
 
-const initialValues: client = {
+const initialValues = {
   RFC: '',
   nombre: '',
   apellido_paterno: '',
@@ -41,12 +42,13 @@ const initialValues: client = {
 };
 
 export default function NewClient() {
+  const navigate = useNavigate()
   const toast = useToast();
   return (
     <Stack
       // spacing="3"
-      // alignItems="center"
       w="100%"
+      p='20'
       // mx="auto"
       // my="5"
       // justifyContent="center"

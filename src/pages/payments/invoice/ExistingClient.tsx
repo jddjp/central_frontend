@@ -90,9 +90,10 @@ export interface ClientInformationProps extends StackProps {
     <Stack
       // spacing="3"
       // alignItems="center"
-      w="100%"
+      w="90%"
       mx="auto"
       mb="10"
+      mt='3'
       // justifyContent="center"
     >
       {/* <Heading mt="10px" mb="15px">
