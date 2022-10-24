@@ -57,7 +57,7 @@ export const CreateOrderPage = () => {
     if(cliente == null){
       toast({
         title: 'Indicar cliente',
-        description: 'Se requiere el nombre del cliente para poder indentificar el pedido',
+        description: 'Se requiere el nombre del cliente para poder identificar el pedido',
         status: 'warning',
         duration: 9000,
         isClosable: true,
@@ -201,8 +201,8 @@ export const CreateOrderPage = () => {
             isOpen={isOpenConfirmationClear}
             title="Confirmación"
             message={
-              '¿Desear eliminar todos los elementos de la orden?.' +
-              'Una vez realizada está acción no sera posible revertirla.'
+              '¿Desear eliminar todos los elementos de la orden? ' +
+              'Una vez realizada está acción no será posible revertirla.'
             }
           />
         </Portal>

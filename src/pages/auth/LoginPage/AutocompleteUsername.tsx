@@ -74,7 +74,7 @@ export const AutocompleteUsername = (props: AutocompleteUsernameProps) => {
         placeholder="Ingresa tu nombre"
         loadingMessage={() => `Buscando...`}
         noOptionsMessage={() =>
-          'No se encontro ningún empleado con este nombre'
+          'No se encontró ningún empleado con este nombre'
         }
         autoFocus
       />

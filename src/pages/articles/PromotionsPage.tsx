@@ -90,7 +90,7 @@ const PromotionsPage = () =>{
                       >
                       <Box>
                           <Img src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Botella_La_Botanera_370g.jpg/220px-Botella_La_Botanera_370g.jpg'></Img>
-                          <Text textColor="black" textAlign="center" fontFamily="mono" fontSize="16px">Salsa botanera despues de 6 cajas.</Text>
+                          <Text textColor="black" textAlign="center" fontFamily="mono" fontSize="16px">Salsa botanera después de 6 cajas.</Text>
                           <Text textColor="red" textAlign="center" fontFamily="mono" fontSize="16px">$43.00</Text>
                       </Box>                    
                       </Card>

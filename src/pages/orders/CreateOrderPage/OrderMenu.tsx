@@ -139,7 +139,7 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
       />
       <IconAction
         variant="outline"
-        aria-label="Nuevo CLiente"
+        aria-label="Nuevo Cliente"
         fontSize="20px"
         icon={<PlusIcon />}
         onClick={onOpen}

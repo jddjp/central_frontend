@@ -43,42 +43,42 @@ export const RegisterOfElectrictFactura = () => {
       />
       <InputField
         name="nombre"
-        placeholder="Ingresa nombre"
+        placeholder="Ingresa Nombre"
         formControlProps={{ label: "Nombre", isRequired: true }}
       />
       <InputField
         name="apellido_paterno"
-        placeholder="Ingresa apellido paterno"
+        placeholder="Ingresa Apellido Paterno"
         formControlProps={{ label: "Apellido Paterno", isRequired: true }}
       />
       <InputField
         name="apellido_materno"
-        placeholder="Ingresa apellido materno"
+        placeholder="Ingresa Apellido Materno"
         formControlProps={{ label: "Apellido Materno", isRequired: true }}
       />
       <InputField
         name="calle"
-        placeholder="Ingresa calle"
+        placeholder="Ingresa Calle"
         formControlProps={{ label: "Calle", isRequired: true }}
       />
       <InputField
         name="colonia"
-        placeholder="Ingresa colonia"
+        placeholder="Ingresa Colonia"
         formControlProps={{ label: "Colonia", isRequired: true }}
       />
       <InputField
         name="correo"
-        placeholder="Ingresa correo electrónico"
+        placeholder="Ingresa Correo Electrónico"
         formControlProps={{ label: "E-mail", isRequired: true }}
       />
       <InputField
         name="codigo_postal"
-        placeholder="Ingresa codigo postal"
+        placeholder="Ingresa Código Postal"
         formControlProps={{ label: "Codigo postal", isRequired: true }}
       />
       <InputField
         name="telefono"
-        placeholder="Ingresa telefono"
+        placeholder="Ingresa Teléfono"
         formControlProps={{ label: "Telefono", isRequired: true }}
       />
       <InputField

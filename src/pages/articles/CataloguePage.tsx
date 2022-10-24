@@ -299,12 +299,12 @@ console.log(foto, [file]);*/
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
-          <label htmlFor="name">Descripcion</label>
+          <label htmlFor="name">Descripción</label>
           <InputText value={product.descripcion} onChange={(e: any) => onInputChange(e, 'descripcion')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
-          <label htmlFor="name">cod. barras</label>
+          <label htmlFor="name">Cod. barras</label>
           <InputText value={product.codigo_barras} onChange={(e: any) => onInputChange(e, 'codigo_barras')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
@@ -357,12 +357,12 @@ console.log(foto, [file]);*/
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
-          <label htmlFor="name">Descripcion</label>
+          <label htmlFor="name">Descripción</label>
           <InputText value={edit.descripcion} onChange={(e: any) => onInputChangeEdit(e, 'descripcion')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div className="field">
-          <label htmlFor="name">cod. barras</label>
+          <label htmlFor="name">Cod. barras</label>
           <InputText value={edit.codigo_barras} onChange={(e: any) => onInputChangeEdit(e, 'codigo_barras')} required />
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
@@ -384,7 +384,7 @@ console.log(foto, [file]);*/
       <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-          <span>Are you sure you want to delete ?</span>
+          <span>¿Estas seguro que quieres que eliminarlo? </span>
         </div>
       </Dialog>
 
