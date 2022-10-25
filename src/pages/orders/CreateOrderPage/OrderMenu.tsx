@@ -22,13 +22,13 @@ import NewClient from "pages/payments/invoice/NewClient";
 import { Order, Item } from "types/Order";
 import { ShoppingCart } from './types';
 import { newItem, newOrder } from 'services/api/orders';
-import { client } from 'services/api/cliente';
+// import { client } from 'services/api/cliente';
 
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
   onOpenConfirmationClear: VoidFunction;
   cart: ShoppingCart
-  cliente: client | undefined
+  cliente: any
 }
 
 export const OrderMenu = (props: OrderMenuProps, cart: any) => {
@@ -59,9 +59,9 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
       });
       return;
     }
-    console.log("Order");
+    // console.log("Order");
     
-    console.log(props.cliente);
+    // console.log(props.cliente);
 
     var date = new Date();
     var order: Order = {
@@ -75,11 +75,11 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
-        "cliente":props.cliente.attributes.id,
+        cliente: props.cliente.id,
       }
     };
-    console.log(order);
-    console.log(props.cart);
+    // console.log(order);
+    // console.log(props.cart);
     
     /*-Crear orden con sus items*/
     var responseNewOrder = newOrder(order.attributes);
@@ -97,9 +97,9 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
           }
         };
 
-        console.log("----------");
-        console.log(response.data.id);
-        console.log(item.article.id);
+        // console.log("----------");
+        // console.log(response.data.id);
+        // console.log(item.article.id);
         
         newItem(itemNew);
         order = response.data;
@@ -110,7 +110,7 @@ export const OrderMenu = (props: OrderMenuProps, cart: any) => {
     props.cart.items.forEach((item) => {});
   };
   
-  const [selectedFile, setSelectedFile] = useState(null);
+  // const [selectedFile, setSelectedFile] = useState(null);
   /*const myUploader = (event) => {
     setSelectedFile(event.files[0]);
 }*/
