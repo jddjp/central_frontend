@@ -26,8 +26,7 @@ export const uploadFile = async (selectedFile: File) => {
     return response.data;
 }
 
-export const deleteOrder = async () => {
-
-    const response = await axios.delete(`${baseApiUrl}/pedidos`);
+export const deleteOrder = async (id: number) => {
+    const response = await axios.delete(`${baseApiUrl}pedidos/${id}`);
     return response.data;
 }

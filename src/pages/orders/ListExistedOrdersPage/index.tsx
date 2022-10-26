@@ -10,8 +10,10 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { appAxios } from "config/api";
-import { getItems } from "../../../services/api/orders";
+import { baseApiUrl } from "config/api";
+import axios from 'axios'
+import { getItems, deleteOrder } from "../../../services/api/orders";
+
 export const SearchBar = (props: StackProps) => {
   return <HStack {...props} />;
 };
@@ -22,21 +24,17 @@ export const Sales = () => {
   const [sales, setSales] = useState([]);
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   useEffect(() => {
-    appAxios
-      .get(`/pedidos?populate=cliente&filters[estatus]=pendiente`)
-      .then((response: { data: any }) => {
-        const data = response.data;
-        setSales(data.data);
-      });
+    axios.get(`${baseApiUrl}pedidos?populate=cliente&filters[estatus]=pendiente`)
+    .then((response: { data: any }) => {
+      const data = response.data;
+      setSales(data.data);
+    });
   }, []);
-  const ped = sales.map((data: any) => {
-    return data.attributes;
-  });
-  const items = ped.map((data: any) => {
-    console.log(data.hora_pedido);
-  });
-  // console.log(ped.hora_pedido);
 
+  const ped = sales?.map((order:any) => {
+    order.attributes.id = order.id
+    return order.attributes;
+  })
   const onGlobalFilterChange1 = (e: any) => {
     const value = e.target.value;
     setGlobalFilterValue1(value);
@@ -44,18 +42,11 @@ export const Sales = () => {
 
   const navigate = useNavigate();
   const redirectTo = (route: string, cart: any, client: any) => () => {
-    console.log("CLIENTE----");
-
-    console.log(client);
     getItems().then((response) => {
-      console.log("items----");
-      console.log(response);
       cart = response.data;
-      console.log(cart);
       setCart(response.data);
     navigate(route, { state: { cart, client } });
     });
-
   };
 
   const filters = {
@@ -133,7 +124,7 @@ export const Sales = () => {
   );
 };
 
-export const ListExistedOrdersPage = (props: StackProps) => {
+export const ListExistedOrdersPage = () => {
   return (
     <Stack w="80%" mx="auto" mt="10" spacing="5">
       <Sales />
