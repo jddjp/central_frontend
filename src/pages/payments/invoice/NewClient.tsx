@@ -22,8 +22,8 @@ const validateSchema = yup.object({
   colonia: yup.string().required('La Colonia es requerida'),
   correo: yup
     .string()
-    .required('El correo es requerido')
-    .email('El correo no es válido'),
+    .required('El Correo es requerido')
+    .email('El Correo no es válido'),
 });
 
 const initialValues = {

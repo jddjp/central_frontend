@@ -70,6 +70,9 @@ export const Sales = () => {
       </div>
     );
   };
+  const handleClick = (id:number) => {
+    deleteOrder(id)
+  };
   const header1 = renderHeader1();
   return (
     <>
@@ -101,6 +104,7 @@ export const Sales = () => {
 
           <Column
             body={(data: any) => {
+             console.log(data.id);
               return (
                 <div>
                   <Button
@@ -111,6 +115,8 @@ export const Sales = () => {
                   <Button
                     icon="pi pi-trash"
                     className="p-button-rounded p-button-warning p-button-text"
+                    onClick={() => handleClick(data.id)}
+                   
                   />
                 </div>
               );

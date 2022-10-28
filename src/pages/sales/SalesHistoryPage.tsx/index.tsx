@@ -34,7 +34,7 @@ export const Sales = () => {
   useEffect(() => {
     appAxios.get(`/pedidos?populate=cliente&filters[estatus]=entregado`).then((response: { data: any; }) => {
         const data = response.data
-        setSales(data.data)
+        setSales(data.data)   
       })
     
     
@@ -75,20 +75,20 @@ const renderHeader1 = () => {
 const header1 = renderHeader1();
   return (
     <>
-<div className="card">
-  <DataTable value={ped}  paginator className="p-datatable-customers" showGridlines rows={10} header={header1} filters={filters}> 
-<Column field="estatus" header="Estatu22s" />
-<Column field="fecha_pedido" header="Fecha Pedido" sortable  />
-<Column  header="Hora Pedido"  body={(data:any) => {
-  return moment(data.hora_pedido, 'hhmm ').format('hh:mm a')
-}}/>
-<Column field="comentario" header="Comentario" style={{width: '50%'}}/>
-{/* <Column field="cliente.data.attributes.nombre" header="name"/> */}
-</DataTable>
-    
-</div>
+        <div className="card">
+          <DataTable value={ped}  paginator className="p-datatable-customers" showGridlines rows={10} header={header1} filters={filters}> 
+        <Column field="estatus" header="Estatus" />
+        <Column field="fecha_pedido" header="Fecha Pedido" sortable  />
+        <Column  header="Hora Pedido"  body={(data:any) => {
+          return moment(data.hora_pedido, 'hhmm ').format('hh:mm a')
+        }}/>
+        <Column field="comentario" header="Comentario" style={{width: '50%'}}/>
+        {/* <Column field="cliente.data.attributes.nombre" header="name"/> */}
+        </DataTable>
+            
+        </div>
 
-</>
+    </>
 
 
 
