@@ -32,7 +32,7 @@ export const Sales = () => {
   const [sales, setSales] = useState([])
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
   useEffect(() => {
-    appAxios.get(`/pedidos?populate=cliente&filters[estatus]=entregado`).then((response: { data: any; }) => {
+    appAxios.get(`/pedidos?populate=cliente&filters[estatus]=pendiente`).then((response: { data: any; }) => {
         const data = response.data
         setSales(data.data)   
       })
@@ -82,8 +82,8 @@ const header1 = renderHeader1();
         <Column  header="Hora Pedido"  body={(data:any) => {
           return moment(data.hora_pedido, 'hhmm ').format('hh:mm a')
         }}/>
-        <Column field="comentario" header="Comentario" style={{width: '50%'}}/>
-        {/* <Column field="cliente.data.attributes.nombre" header="name"/> */}
+        <Column field="comentario" header="Comentario" style={{width: '35%'}}/>
+        {<Column field="cliente.data.attributes.nombre" header="Cliente"/>}
         </DataTable>
             
         </div>
