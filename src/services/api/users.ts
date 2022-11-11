@@ -1,5 +1,6 @@
-import { appAxios } from 'config/api';
+import axios from 'axios';
 import { User } from 'types/User';
+const API_URL = process.env.REACT_APP_API_URL
 
 export const autocompleteByName = async (config: {search: string}): Promise<User>  => {
   const { search } = config;
@@ -7,5 +8,5 @@ export const autocompleteByName = async (config: {search: string}): Promise<User
     'filters[nombre][$contains]': search
   };
 
-  return (await appAxios.get('/users', {params})).data;
+  return (await axios.get(`${API_URL}/users`, {params})).data;
 } 

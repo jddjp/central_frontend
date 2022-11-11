@@ -1,8 +1,6 @@
-import { baseApiUrl } from 'config/api';
-import { ContentType } from 'types/core';
-// import { ListResponse } from './types';
 import axios from 'axios'
-
+import { ContentType } from 'types/core';
+const API_URL = process.env.REACT_APP_API_URL
 
 export interface client {
   attributes: {
@@ -25,13 +23,13 @@ export type Cliente = ContentType<client>;
 
 export const newCliente = async (payload: any) => {
 
-  const response = await axios.post(`${baseApiUrl}clientes`, {data: payload});
+  const response = await axios.post(`${API_URL}/clientes`, {data: payload});
   return response.data;
 };
 
 export const autocompleteByCliente = async (config: {search: string}) => {
   const { search } = config;
 
-  const { data: response } = await axios.get(`${baseApiUrl}clientes?filters[nombre][$contains]=${search}`)
+  const { data: response } = await axios.get(`${API_URL}/clientes?filters[nombre][$contains]=${search}`)
   return response.data
 }

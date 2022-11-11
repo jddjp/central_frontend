@@ -1,6 +1,8 @@
-import { appAxios } from 'config/api';
+import axios from 'axios';
 import { renameKey } from 'helpers/objects';
 import { User } from 'types/User';
+const API_URL = process.env.REACT_APP_API_URL
+
 
 export interface AuthKey {
   username: string;
@@ -14,5 +16,5 @@ export interface UserData {
 
 export const login = async (data: AuthKey): Promise<UserData>  => {
   const payload = renameKey(data, 'username', 'identifier');
-  return (await appAxios.post('/auth/local', payload)).data;
+  return (await axios.post(`${API_URL}/auth/local`, payload)).data;
 }

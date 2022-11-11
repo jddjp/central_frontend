@@ -1,9 +1,10 @@
-import { appAxios, baseMediaUrl } from "config/api";
+import axios from "axios";
 import { Article, ArticleAttributes, PriceBreakage } from "types/Article";
 import { ContentType } from "types/core";
 import { WithRequired } from "types/utils";
 import { ListResponse, PaginationConfig } from "./types";
 import { buildFilter, defaultPaginationConfig } from "./utils";
+const API_URL = process.env.REACT_APP_API_URL
 
 export type SearchArticle = ContentType<
   WithRequired<ArticleAttributes, "foto" | "unidad_de_medida">
@@ -17,7 +18,7 @@ const fixArticleMediaUrls = <
   console.log(article);
   
   article.attributes.foto.data.attributes.url =
-    baseMediaUrl + article.attributes.foto.data.attributes.url;
+    `${API_URL}/${article.attributes.foto.data.attributes.url}`;
 
   return article;
 };
@@ -31,7 +32,7 @@ export const searchArticles = async (
   };
 
   const response: ListResponse<SearchArticle> = (
-    await appAxios.get("/articulos", { params: queryParams })
+    await axios.get(`${API_URL}/articulos`, { params: queryParams })
   ).data;
   response.data = response.data.map(fixArticleMediaUrls);
 
@@ -47,7 +48,7 @@ export const listArticles = async (
   };
 
   const response: ListResponse<SearchArticle> = (
-    await appAxios.get("/articulos", { params: queryParams })
+    await axios.get(`${API_URL}/articulos`, { params: queryParams })
   ).data;
   response.data = response.data.map(fixArticleMediaUrls);
 
@@ -61,6 +62,6 @@ export const getArticlePrices = async (
     [buildFilter(["article", "id"], "eq")]: article.id,
   };
 
-  return (await appAxios.get("/rupturaprecios", { params: queryParams })).data;
+  return (await axios.get(`${API_URL}/rupturaprecios`, { params: queryParams })).data;
 };
 
