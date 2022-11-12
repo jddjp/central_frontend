@@ -18,9 +18,10 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react'
-import { appAxios } from 'config/api';
+
 import axios from 'axios'
 import { formatHour } from "helpers/format";
+const API_URL = process.env.REACT_APP_API_URL
 export const SearchBar = (props: StackProps) => {
   return <HStack {...props} />;
 };
@@ -32,15 +33,17 @@ export const Sales = () => {
   const [sales, setSales] = useState([])
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
   useEffect(() => {
-    appAxios.get(`/pedidos?populate=cliente&filters[estatus]=pendiente`).then((response: { data: any; }) => {
+    axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=entregado`).then((response: { data: any; }) => {
         const data = response.data
         setSales(data.data)   
       })
-    
-    
+      
+      
   }, []);
-  const ped = sales.map((data: any) => {
+ const ped = sales.map((data: any) => {
+    console.log(data.attributes)
     return data.attributes
+    
   })
 
 
