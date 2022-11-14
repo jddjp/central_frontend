@@ -1,10 +1,10 @@
 import { Center, Heading, VStack } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-
 import { Option } from 'components/Option';
 import { Menu } from 'components/Menu';
 
-export const HomePage = () => {
+const HomePage = () => {
+
   const navigate = useNavigate();
   const redirectToLogin = (role: string) => () => {
     navigate('/login');
@@ -37,3 +37,5 @@ export const HomePage = () => {
     </VStack>
   );
 }
+
+export default HomePage

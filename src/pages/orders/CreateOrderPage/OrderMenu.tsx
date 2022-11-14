@@ -31,7 +31,7 @@ export interface OrderMenuProps extends FixedMenuProps {
   cliente: any
 }
 
-export const OrderMenu = (props: OrderMenuProps, cart: any) => {
+export const OrderMenu = (props: OrderMenuProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { onOpenCatalogueModal, onOpenConfirmationClear } = props;
 

@@ -74,7 +74,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Unidad</Text>
                 <Text>
-                  {unidad_de_medida?.data.attributes.nombre ||
+                  {unidad_de_medida?.data?.attributes.nombre ??
                     "No hay una unidad de medida asignada."}
                 </Text>
               </Stack>

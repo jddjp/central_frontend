@@ -15,7 +15,6 @@ const fixArticleMediaUrls = <
 >(
   article: T
 ) => {
-  console.log(article);
   
   article.attributes.foto.data.attributes.url =
     `${API_URL}/${article.attributes.foto.data.attributes.url}`;

@@ -1,6 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Portal, Stack, useDisclosure, Button, useToast} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-
 import { Header } from './Header';
 import { useCart } from './useCart';
 import { CatalogueModal } from './CatalogueModal';
@@ -14,45 +14,33 @@ import { Cart } from './Cart';
 import { ClientInformation } from './ClientInformation';
 import { PaymentDetails } from './PaymentDetails';
 import { OrderMenu } from './OrderMenu';
-import { ShoppingCartArticle, ShoppingCartItem } from './types';
-
-
-import {useLocation} from 'react-router-dom';
+import { ShoppingCartArticle } from './types';
+import { useLocation, useParams } from 'react-router-dom';
 import { client } from 'services/api/cliente';
-
-import { useState, useEffect } from 'react';
-import { ShoppingCart } from 'pages/orders/CreateOrderPage/types';
 import { Order } from 'types/Order';
 
-const initialClient = {
-  name: 'ss',
-};
-
+const initialClient = { name: 'ss' };
 const initialPayment = {
   effectiveAmount: 0,
   paycheckAmount: 0,
   creditCardAmount: 0,
   creditAmount: 0,
-}; export interface LocationOrdenEdit {
-    client: client,
-    editCart: Boolean,
-    cart: Order[]
-  }
+}; 
+export interface LocationOrdenEdit {
+  client: client,
+  editCart: Boolean,
+  cart: Order[]
+}
 
-  interface CustomizedState {
-    client: client,
-  }
-  
-  
 export const CreateOrderPage = () => {
- 
-  const location = useLocation();
-  const state = location.state as LocationOrdenEdit;
-  
 
+  const location = useLocation();
+  const { id } = useParams()
+  const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<client>();
-  const navigate = useNavigate();
+  
+  const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
     if(cliente == null){
       toast({
@@ -64,11 +52,6 @@ export const CreateOrderPage = () => {
       });
       return;
     }
-    console.log("----------------------------------------------------------------");
-    
-    console.log(cliente);
-    
-    
     navigate(route,{state:{cart,client}});
   };
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
@@ -95,10 +78,6 @@ export const CreateOrderPage = () => {
   const handleSelectArticleOnCatalogueModal = (
     article: ShoppingCartArticle
   ) => {
-    console.log("--");
-    
-    //console.log(state);
-    //setCliente(state.client)
     setArticle(article);
     onCloseCatalogueModal();
     onOpenAddItemModal();
@@ -110,7 +89,6 @@ export const CreateOrderPage = () => {
   };
 
   const handleSelectArticle = (article: ShoppingCartArticle | null) => {
-    
     if (article) {
       setArticle(article);
       onOpenAddItemModal();
@@ -119,21 +97,10 @@ export const CreateOrderPage = () => {
     }
   };  
 
-
-  
-  const [displayBasic, setDisplayBasic] = useState(true);
-  
   useEffect(() => {
-    console.log("useEffect");
-    console.log(state);
     if(state != null){
-
-    setCliente(state.client);
-    console.log(state.cart[0].attributes);
-    //setArticle(state.cart[0]);
-
+      setCliente(state.client);
     }
-    
   }, [state]);
 
   return (
@@ -154,7 +121,6 @@ export const CreateOrderPage = () => {
           onSelectArticle={handleSelectArticle}
         />
 
-        
         <ClientInformation setCliente={setCliente} cliente={cliente} />
 
         <Cart
@@ -166,8 +132,6 @@ export const CreateOrderPage = () => {
           cart={cart}
         />
         <PaymentDetails cart={cart} total={total} />
-
-
 
         <CartOrderSummary cart={cart} total={total}>
           <Button

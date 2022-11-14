@@ -26,7 +26,17 @@ export const uploadFile = async (selectedFile: File) => {
     return response.data;
 }
 
+export const getOrderEntregado = async () => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=entregado`)
+    return data.data
+}
+
+export const getOrderPendiente = async () => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente`)
+    return data.data
+}
+
 export const deleteOrder = async (id: number) => {
-    const response = await axios.delete(`${API_URL}pedidos/${id}`);
+    const response = await axios.delete(`${API_URL}/pedidos/${id}`);
     return response.data;
 }

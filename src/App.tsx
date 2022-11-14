@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 
@@ -5,7 +6,7 @@ import theme from '../src/theme';
 import '../src/theme/styles.css';
 
 import { RequiredAuthentication } from 'components/RequiredAuthentication';
-import { HomePage } from 'pages/core/Home';
+import HomePage from 'pages/core/Home';
 
 import WelcomenPage from 'pages/auth/WelcomenPage';
 import LoginPage from 'pages/auth/LoginPage';
@@ -15,15 +16,13 @@ import { RequiredAnonymous } from 'components/RequiredAnonymous';
 import { CenterLayout } from 'pages/layouts/CenterLayout';
 import { MainLayout } from 'pages/layouts/MainLayout';
 import { useAuthInterceptors } from 'hooks/useAuthInterceptors';
-import { ListExistedOrdersPage } from 'pages/orders/ListExistedOrdersPage';
-import { SalesHistoryPage } from 'pages/sales/SalesHistoryPage.tsx';
+import ListExistedOrdersPage from 'pages/orders/ListExistedOrdersPage';
+import SalesHistoryPage from 'pages/sales/SalesHistoryPage.tsx';
 import CataloguePage from 'pages/articles/CataloguePage';
 import TypeNote from 'pages/payments/TypeNote';
 import TypeInvoices from 'pages/payments/invoice/TypeInvoices';
 import NewClient from 'pages/payments/invoice/NewClient';
 import {ExistingClient} from 'pages/payments/invoice/ExistingClient';
-//import Articulos from 'pages/articles/articulos';
-import { useState } from 'react';
 import { client } from 'services/api/cliente';
 import PromotionsPage from 'pages/articles/PromotionsPage';
 import AccountsPage from 'pages/accounts';
@@ -40,32 +39,27 @@ export const App = () => {
             <CenterLayout>
               <Outlet />
             </CenterLayout>
-          }
-        >
-          <Route
-            path="/"
+          }>
+          <Route path="/"
             element={
               <RequiredAnonymous>
                 <HomePage />
               </RequiredAnonymous>
-            }
-          />
+            }/>
           <Route
             path="/login"
             element={
               <RequiredAnonymous>
                 <LoginPage />
               </RequiredAnonymous>
-            }
-          />
+            }/>
           <Route
             path="/login/welcomen"
             element={
               <RequiredAuthentication>
                 <WelcomenPage />
               </RequiredAuthentication>
-            }
-          />
+            }/>
         </Route>
 
         <Route
@@ -73,104 +67,80 @@ export const App = () => {
             <MainLayout>
               <Outlet />
             </MainLayout>
-          }
-        >
-          <Route
-            path="/dashboard"
+          }>
+          <Route path="/dashboard"
             element={
               <RequiredAuthentication>
                 <DashboardPage />
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/orders/new"
+            }/>
+          <Route path="/orders/new"
             element={
               <RequiredAuthentication>
                 <CreateOrderPage />
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/orders"
+            }/>
+          <Route path="/orders/edit/:id"
+            element={
+              <RequiredAuthentication>
+                <CreateOrderPage />
+              </RequiredAuthentication>
+            }/>
+          <Route path="/orders"
             element={
               <RequiredAuthentication>
                 <ListExistedOrdersPage />
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/orders/typeNote"
+            }/>
+          <Route path="/orders/typeNote"
             element={
               <RequiredAuthentication>
                 <TypeNote />
               </RequiredAuthentication>
-            } 
-          />
-          <Route
-            path="/orders/typeInvoice"
+            }/>
+          <Route path="/orders/typeInvoice"
             element={
               <RequiredAuthentication>
                 <TypeInvoices />
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/orders/typeInvoice/newCliente"
+            }/>
+          <Route path="/orders/typeInvoice/newCliente"
             element={
               <RequiredAuthentication>
                 <NewClient/>
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/orders/typeInvoice/ExistingClient"
+            }/>
+          <Route path="/orders/typeInvoice/ExistingClient"
             element={
               <RequiredAuthentication>
                 <ExistingClient setCliente={setCliente}/>
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/sales"
+            }/>
+          <Route path="/sales"
             element={
               <RequiredAuthentication>
                 <SalesHistoryPage />
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/catalogue"
+            }/>
+          <Route path="/catalogue"
             element={
               <RequiredAuthentication>
                 <CataloguePage />
               </RequiredAuthentication>
-            }
-          />
-          <Route
-            path="/promotions"
+            }/>
+          <Route path="/promotions"
             element={
               <RequiredAuthentication>
                 <PromotionsPage />
               </RequiredAuthentication>
-            }
-          />
-
-          <Route
-            path="/accounts"
+            }/>
+          <Route path="/accounts"
             element={
               <RequiredAuthentication>
                 <AccountsPage />
               </RequiredAuthentication>
-            }
-          />
-
+            }/>
         </Route>
-
-        comercializadoracontainers_comercializadora_develop
-    
-
-
       </Routes>
     </ChakraProvider>
   );
