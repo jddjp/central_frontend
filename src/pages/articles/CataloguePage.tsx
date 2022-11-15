@@ -14,7 +14,20 @@ import "primeicons/primeicons.css";
 import "./style.css"
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getProducts, postProduct, deleteProduct, editProduct } from 'services/api/products';
-import { object, TypeOf } from 'yup';
+
+let initProduct = {
+  nombre: '',
+  precio_lista: 0,
+  marca: '',
+  inventario_fiscal: 0,
+  inventario_fisico: 0,
+  descripcion: "",
+  categoria: "",
+  codigo_barras: "",
+  codigo_qr: "",
+  estado: "",
+  foto: ""
+}
 
 export const Productos = () => {
 
@@ -24,33 +37,8 @@ export const Productos = () => {
   const removeProduct = useMutation(deleteProduct)
   const updateProduct = useMutation(editProduct)
 
-  const [product, setProduct] = useState({
-    nombre: '',
-    precio_lista: 0,
-    marca: '',
-    inventario_fiscal: 0,
-    inventario_fisico: 0,
-    descripcion: "",
-    categoria: "",
-    codigo_barras: "",
-    codigo_qr: "",
-    estado: "",
-    foto: ""
-  });
-  const [edit, setEdit] = useState({
-    nombre: '',
-    precio_lista: 0,
-    marca: '',
-    inventario_fiscal: 0,
-    inventario_fisico: 0,
-    descripcion: "",
-    categoria: "",
-    codigo_barras: "",
-    codigo_qr: "",
-    estado: "",
-    foto: ""
-  })
-  console.log(edit.foto)
+  const [product, setProduct] = useState(initProduct);
+  const [edit, setEdit] = useState(initProduct)
 
   const [id, setId] = useState('');
   const [productDialog, setProductDialog] = useState(false);
@@ -64,8 +52,8 @@ export const Productos = () => {
   const openEdit = (data :  any) => {
     const articulos = data.attributes;
     
-    edit.nombre = articulos.nombre
-    edit.marca = articulos.marca
+    edit.nombre = articulos?.nombre
+    edit.marca = articulos?.marca
     edit.estado = articulos.estado
     edit.categoria = articulos.categoria 
     edit.codigo_barras = articulos.codigo_barras 
@@ -75,7 +63,7 @@ export const Productos = () => {
     edit.foto = articulos.foto 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
-    setId(articulos.id)
+    setId(data.id)
     seteditroductDialog(true);
 
   }
@@ -96,19 +84,7 @@ export const Productos = () => {
   const saveProduct = () => {
     createProduct.mutate({ data: product }, {
       onSuccess: () => {
-        setProduct({
-          nombre: '',
-          precio_lista: 0,
-          marca: '',
-          inventario_fiscal: 0,
-          inventario_fisico: 0,
-          descripcion: "",
-          categoria: "",
-          codigo_barras: "",
-          codigo_qr: "",
-          estado: "",
-          foto: ""
-        })
+        setProduct(initProduct)
         setProductDialog(false);
       }
     })
@@ -116,20 +92,7 @@ export const Productos = () => {
   const updateProducts = () => {
     updateProduct.mutate({id: id, edit: {data: edit}}, {
       onSuccess: () => {
-        setEdit({
-          nombre: "",
-          precio_lista: 0,
-          marca: "",
-          inventario_fiscal: 0,
-          inventario_fisico: 0,
-          descripcion: "",
-          categoria: "",
-          codigo_barras: "",
-          codigo_qr: "",
-          estado: "",
-          foto: ""
-        })
-        
+        setEdit(initProduct)
         seteditroductDialog(false);
       }
     })
@@ -139,7 +102,7 @@ const handleDeleteProduct = () => {
   removeProduct.mutate(id, {
     onSuccess: () => {
       queryClient.invalidateQueries(['products'])
-      setId('')
+        setId('')
         setDeleteProductDialog(false)
       }
     })
@@ -225,9 +188,7 @@ const handleDeleteProduct = () => {
           exportable={false} style={{ minWidth: '8rem' }} />
       </DataTable>
 
-
       {/* new */}
-
       <Dialog visible={productDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
 
         <div className="field">
