@@ -16,6 +16,8 @@ export const deleteProduct = async (id: string) => {
   return data.data
 }
 
-export const editProduct = async () => {
-
+export const editProduct = async (params: any) => {
+  console.log(params.edit)
+  const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
+  return data.data;
 }

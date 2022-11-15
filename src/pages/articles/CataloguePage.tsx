@@ -13,7 +13,8 @@ import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";
 import "./style.css"
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getProducts, postProduct, deleteProduct } from 'services/api/products';
+import { getProducts, postProduct, deleteProduct, editProduct } from 'services/api/products';
+import { object, TypeOf } from 'yup';
 
 export const Productos = () => {
 
@@ -21,6 +22,7 @@ export const Productos = () => {
   const { data: products } = useQuery(["products"], getProducts)
   const createProduct = useMutation(postProduct)
   const removeProduct = useMutation(deleteProduct)
+  const updateProduct = useMutation(editProduct)
 
   const [product, setProduct] = useState({
     nombre: '',
@@ -48,6 +50,7 @@ export const Productos = () => {
     estado: "",
     foto: ""
   })
+  console.log(edit.foto)
 
   const [id, setId] = useState('');
   const [productDialog, setProductDialog] = useState(false);
@@ -58,13 +61,28 @@ export const Productos = () => {
   const openNew = () => {
     setProductDialog(true);
   }
-  const openEdit = (id: string) => {
-    setId(id)
+  const openEdit = (data :  any) => {
+    const articulos = data.attributes;
+    
+    edit.nombre = articulos.nombre
+    edit.marca = articulos.marca
+    edit.estado = articulos.estado
+    edit.categoria = articulos.categoria 
+    edit.codigo_barras = articulos.codigo_barras 
+    edit.inventario_fiscal = articulos.inventario_fiscal 
+    edit.inventario_fisico = articulos.inventario_fisico 
+    edit.precio_lista = articulos.precio_lista 
+    edit.foto = articulos.foto 
+    edit.descripcion = articulos.descripcion
+    edit.codigo_qr = articulos.codigo_qr
+    setId(articulos.id)
     seteditroductDialog(true);
+
   }
   const hideDialog = () => {
     setProductDialog(false);
     seteditroductDialog(false)
+    
   }
   const hideDeleteProductDialog = () => {
     setId('')
@@ -95,17 +113,28 @@ export const Productos = () => {
       }
     })
   }
-  
-  //   const editProducto = () => {
-    //     // setSubmitted(true);
-//     // let data = {
-  //     //   data: { ...edit },
-  //     // };
-  //     // appAxios.put(`/articulos/${id}`, data);
-  
-//     // }
-//   //}
-//   }
+  const updateProducts = () => {
+    updateProduct.mutate({id: id, edit: {data: edit}}, {
+      onSuccess: () => {
+        setEdit({
+          nombre: "",
+          precio_lista: 0,
+          marca: "",
+          inventario_fiscal: 0,
+          inventario_fisico: 0,
+          descripcion: "",
+          categoria: "",
+          codigo_barras: "",
+          codigo_qr: "",
+          estado: "",
+          foto: ""
+        })
+        
+        seteditroductDialog(false);
+      }
+    })
+  }
+
 const handleDeleteProduct = () => {
   removeProduct.mutate(id, {
     onSuccess: () => {
@@ -118,6 +147,9 @@ const handleDeleteProduct = () => {
 
   const myUploader = (e:any, name:any) => {
     setProduct({...product, [name]: URL.createObjectURL(e.target.files[0])})
+  }
+  const myUploaderEdit = (e:any, name:any) => {
+    setEdit({...edit, [name]: URL.createObjectURL(e.target.files[0])})
   }
   
   const onInputChange = (e: any, name: any) => {
@@ -148,7 +180,7 @@ const handleDeleteProduct = () => {
   const editProductDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-      <Button label="Save" icon="pi pi-check" className="p-button-text" />
+      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={updateProducts}/>
     </React.Fragment>
   );
   const deleteProductDialogFooter = (
@@ -187,7 +219,7 @@ const handleDeleteProduct = () => {
         <Column field="attributes.estado" header="Estado"/>
         <Column body={(data: any) => ( 
           <>
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => openEdit(data.id)} />
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => openEdit(data)} />
             <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteProduct(data.id)} />
           </>)} 
           exportable={false} style={{ minWidth: '8rem' }} />
@@ -301,6 +333,12 @@ const handleDeleteProduct = () => {
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
           <Dropdown inputId="dropdown" value={edit.estado} options={estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} optionLabel="name" />
           {/* <label htmlFor="dropdown">Dropdown</label> */}
+        </div>
+        <div >
+          <form action="">
+            <input type="file" accept="image/*" onChange={(e) => myUploaderEdit(e, 'foto')}/>
+            <img src={edit.foto} alt="" />
+          </form>
         </div>
 
       </Dialog>
