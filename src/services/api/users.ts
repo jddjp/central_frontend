@@ -9,4 +9,10 @@ export const autocompleteByName = async (config: {search: string}): Promise<User
   };
 
   return (await axios.get(`${API_URL}/users`, {params})).data;
-} 
+}
+
+export const getDespachadores = async () => {
+  const { data } = await axios.get(`${API_URL}/users/?filters[roleCons][$contains]=Despachador`)
+
+  return data
+}

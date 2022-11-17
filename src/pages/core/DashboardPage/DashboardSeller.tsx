@@ -19,8 +19,10 @@ export const DashboardSeller = () => {
     {name: 'Historial de venta', route: '/sales'},
   ];
   const optionsVendedor = [
+    {name: 'Ingresar pedido', route: '/orders/new'},
     {name: 'Promociones', route: '/promotions'},
     {name: 'Cátalogo', route: '/catalogue'},
+
   ];
   const optionsDespachador = [
     {name: 'Cuentas y Accesos', route: '/accounts'},

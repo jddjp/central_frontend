@@ -84,6 +84,7 @@ export const Productos = () => {
   const saveProduct = () => {
     createProduct.mutate({ data: product }, {
       onSuccess: () => {
+        queryClient.invalidateQueries(['products'])
         setProduct(initProduct)
         setProductDialog(false);
       }

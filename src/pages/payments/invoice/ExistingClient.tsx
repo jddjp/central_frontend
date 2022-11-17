@@ -1,5 +1,5 @@
 import React, { useState, useRef, useImperativeHandle, Dispatch, SetStateAction } from 'react';
-import { Heading, HStack, Stack,StackProps } from '@chakra-ui/react';
+import { HStack, Stack,StackProps } from '@chakra-ui/react';
 import { asyncSelectAppStyles } from 'theme';
 import {
   ActionMeta,
@@ -41,21 +41,6 @@ export interface ClientInformationProps extends StackProps {
     if (action === 'input-change') {
       setInputValue(newValue);
       setUser(null);
-      /*let cliente : client = {
-        RFC: 'string',
-        nombre: newValue,
-        apellido_paterno: '',
-        apellido_materno: '',
-        calle: '',
-        colonia: '',
-        correo: '',
-        codigo_postal: '',
-        telefono: '',
-        ciudad: '',
-        estado: '',
-        id: 0
-      };
-      props.setCliente(cliente);*/
     }
   };
 
@@ -88,25 +73,13 @@ export interface ClientInformationProps extends StackProps {
 
   return (
     <Stack
-      // spacing="3"
-      // alignItems="center"
-      w="90%"
+      w="100%"
       mx="auto"
       mb="10"
-      mt='3'
-      // justifyContent="center"
-    >
-      {/* <Heading mt="10px" mb="15px">
-        Buscar Cliente
-      </Heading> */}
+      mt='3'>
       <HStack
-        // spacing="3"
-        // alignItems="center"
         w="100%"
-        mx="auto"
-        // my="5"
-        // justifyContent="center"
-      >
+        mx="auto">
         <Select
           ref={selectRef as any}
           loadOptions={handleAutocomplete}
@@ -121,7 +94,7 @@ export interface ClientInformationProps extends StackProps {
           getOptionValue={getUserValue}
           styles={asyncSelectAppStyles}
           hideSelectedOptions
-          placeholder=""
+          placeholder="Buscar cliente"
           loadingMessage={() => `Buscando...`}
           noOptionsMessage={() =>
             'No se encontro ningún cliente con este nombre'

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Portal, Stack, useDisclosure, Button, useToast} from '@chakra-ui/react';
+import { Portal, Stack, useDisclosure, Button, useToast, Text} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from './Header';
 import { useCart } from './useCart';
@@ -11,13 +11,14 @@ import { Formik } from 'formik';
 import { CartOrderSummary } from './CartOrderSummary';
 import { ArrowRightIcon } from 'components/icons';
 import { Cart } from './Cart';
-import { ClientInformation } from './ClientInformation';
+// import { ClientInformation } from './ClientInformation';
 import { PaymentDetails } from './PaymentDetails';
 import { OrderMenu } from './OrderMenu';
 import { ShoppingCartArticle } from './types';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { client } from 'services/api/cliente';
 import { Order } from 'types/Order';
+import { ExistingClient } from 'pages/payments/invoice/ExistingClient';
 
 const initialClient = { name: 'ss' };
 const initialPayment = {
@@ -35,7 +36,6 @@ export interface LocationOrdenEdit {
 export const CreateOrderPage = () => {
 
   const location = useLocation();
-  const { id } = useParams()
   const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<client>();
@@ -121,7 +121,8 @@ export const CreateOrderPage = () => {
           onSelectArticle={handleSelectArticle}
         />
 
-        <ClientInformation setCliente={setCliente} cliente={cliente} />
+        <Text fontWeight='bold' fontSize={18}>Cliente</Text>
+        <ExistingClient setCliente={setCliente}/>
 
         <Cart
           minH="85vh"
