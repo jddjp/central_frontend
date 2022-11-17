@@ -26,7 +26,8 @@ let initProduct = {
   codigo_barras: "",
   codigo_qr: "",
   estado: "",
-  foto: ""
+  foto: "",
+  unidad_de_medida:1
 }
 
 export const Productos = () => {
@@ -63,6 +64,7 @@ export const Productos = () => {
     edit.foto = articulos.foto 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
+ 
     setId(data.id)
     seteditroductDialog(true);
 
@@ -237,6 +239,13 @@ const handleDeleteProduct = () => {
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
           <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" />
           {/* <label htmlFor="dropdown">Dropdown</label> */}
+        </div>
+
+       
+        <div className="field">
+          <label htmlFor="name">Unidad Medida</label>
+          <InputText value={product.unidad_de_medida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} required />
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
         </div>
         <div >
           <form action="">
