@@ -136,6 +136,9 @@ const handleDeleteProduct = () => {
   }
 
   const estado = [{ name: 'bueno', value: 'bueno' }];
+  const unidadMedida = [{ name: 'kg', value: '1' },{ name: 'litros', value: '2' }];
+
+
   const productDialogFooter = (
     <React.Fragment>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
@@ -240,13 +243,15 @@ const handleDeleteProduct = () => {
           <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" />
           {/* <label htmlFor="dropdown">Dropdown</label> */}
         </div>
-
-       
         <div className="field">
-          <label htmlFor="name">Unidad Medida</label>
-          <InputText value={product.unidad_de_medida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} required />
+          <label htmlFor="name">Unidad de Medida</label>
+          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required /> */}
           {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          <Dropdown inputId="dropdown" value={product.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} optionLabel="name" />
+          {/* <label htmlFor="dropdown">Dropdown</label> */}
         </div>
+       
+     
         <div >
           <form action="">
             <input type="file" accept="image/*" onChange={(e) => myUploader(e, 'foto')}/>

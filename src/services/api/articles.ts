@@ -26,7 +26,7 @@ export const searchArticles = async (
   name: string
 ): Promise<ListResponse<SearchArticle>> => {
   let queryParams: Record<string, any> = {
-    populate: "foto,unidad_de_medida",
+     populate: "foto,unidad_de_medida",
     "filters[nombre][$contains]": name,
   };
 
