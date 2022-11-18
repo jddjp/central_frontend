@@ -7,13 +7,12 @@ import { getDespachadores } from 'services/api/users';
 export default function AccountsPage() {
 
   const { data: users } = useQuery(["users"], getDespachadores)
-  console.log(users);
 
   return (
     <Box width='90%' display='flex' margin='auto'>
-      <Stack spacing='3.5' direction='row'>
+      <Stack spacing='3.5' direction='row' wrap='wrap'>
         {users?.map((user: any) => (
-          <Card title={user.username} subTitle={user.email} style={{width: '250px'}}>
+          <Card title={user.username} subTitle={user.email} footer={user.roleCons} style={{width: '250px', marginTop: '1.25em'}}>
           </Card> 
         ))
         }
