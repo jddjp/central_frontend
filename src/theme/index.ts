@@ -1,4 +1,5 @@
 import { extendTheme, theme as base, withDefaultColorScheme, withDefaultVariant } from '@chakra-ui/react';
+import zIndex from '@material-ui/core/styles/zIndex';
 import {StylesConfig, GroupBase} from 'react-select';
 
 const inputSelectStyles = {

@@ -5,6 +5,8 @@ import { WithRequired } from "types/utils";
 import { ListResponse, PaginationConfig } from "./types";
 import { buildFilter, defaultPaginationConfig } from "./utils";
 const API_URL = process.env.REACT_APP_API_URL
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 
 export type SearchArticle = ContentType<
   WithRequired<ArticleAttributes, "foto" | "unidad_de_medida">
@@ -17,7 +19,7 @@ const fixArticleMediaUrls = <
 ) => {
   
   article.attributes.foto.data.attributes.url =
-    `${API_URL}/${article.attributes.foto.data.attributes.url}`;
+    `${BASE_URL}${article.attributes.foto.data.attributes.url}`;
 
   return article;
 };
