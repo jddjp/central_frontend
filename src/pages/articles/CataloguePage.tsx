@@ -15,6 +15,8 @@ import "./style.css"
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getProducts, postProduct, deleteProduct, editProduct } from 'services/api/products';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
 let initProduct = {
   nombre: '',
   precio_lista: 0,
@@ -52,6 +54,7 @@ export const Productos = () => {
   }
   const openEdit = (data :  any) => {
     const articulos = data.attributes;
+    console.log(data);
     
     edit.nombre = articulos?.nombre
     edit.marca = articulos?.marca
@@ -61,7 +64,7 @@ export const Productos = () => {
     edit.inventario_fiscal = articulos.inventario_fiscal 
     edit.inventario_fisico = articulos.inventario_fisico 
     edit.precio_lista = articulos.precio_lista 
-    edit.foto = articulos.foto 
+    edit.foto = articulos.foto.data.attributes.url 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
  
@@ -313,7 +316,7 @@ const handleDeleteProduct = () => {
         <div >
           <form action="">
             <input type="file" accept="image/*" onChange={(e) => myUploaderEdit(e, 'foto')}/>
-            <img src={edit.foto} alt="" />
+            <img src={`${BASE_URL}${edit.foto}`} alt="" />
           </form>
         </div>
 
