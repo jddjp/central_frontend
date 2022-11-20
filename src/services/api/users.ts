@@ -12,6 +12,6 @@ export const autocompleteByName = async (config: {search: string}): Promise<User
 }
 
 export const getDespachadores = async () => {
-  const { data } = await axios.get(`${API_URL}/users/?filters[roleCons][$contains]=Despachador&filters[roleCons][$contains]=Librador`)
+  const { data } = await axios.get(`${API_URL}/users/?populate=pedidos&filters[roleCons][$contains]=Despachador&filters[roleCons][$contains]=Librador`)
   return data
 }

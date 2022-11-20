@@ -1,5 +1,5 @@
 import React, { useState, useRef, useImperativeHandle, Dispatch, SetStateAction } from 'react';
-import { HStack, Stack,StackProps } from '@chakra-ui/react';
+import { Stack,StackProps, Input } from '@chakra-ui/react';
 import { asyncSelectAppStyles } from 'theme';
 import {
   ActionMeta,
@@ -13,7 +13,7 @@ import { autocompleteByCliente, client, Cliente } from 'services/api/cliente';
 import { forwardRef } from "react";
 
 
-const Input = (props: any) => <components.Input {...props} isHidden={false} />;
+const InputSelect = (props: any) => <components.Input {...props} isHidden={false} />;
 
 const getUserLabel = (user: any) =>
   `${user.attributes.nombre} ${user.attributes.apellido_paterno} ${user.attributes.apellido_materno}`;
@@ -32,9 +32,15 @@ export interface ClientInformationProps extends StackProps {
 }
 
 //export default function ExistingClient(props: ClientInformationProps) {
-  export const ExistingClient = forwardRef((props : ClientInformationProps, ref) => {
+export const ExistingClient = forwardRef((props : ClientInformationProps, ref) => {
+
   const [user, setUser] = useState(null);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  const [textValue, setTextValue] = useState({
+    name: "",
+    firstName: "",
+    lastName: ""
+  });
   const selectRef = useRef();
 
   const handleInputChange = (newValue: string, { action }: InputActionMeta) => {
@@ -54,6 +60,26 @@ export interface ClientInformationProps extends StackProps {
     props.setCliente(option);
     
   };
+
+  const handleNewClient = (e: any, target: string) => {
+    setTextValue({...textValue, [target]: e.target.value})
+    props.setCliente({
+      attributes: {
+        RFC: "",
+        nombre: textValue.name,
+        apellido_paterno: textValue.firstName,
+        apellido_materno: textValue.lastName,
+        calle: "",
+        colonia: "",
+        correo: "",
+        codigo_postal: "",
+        telefono: "",
+        ciudad: "",
+        estado: "",
+        id: 0
+      }
+    });
+  }
 
   const handleFocus = () => {
     user && (selectRef.current as any).select?.inputRef?.select();
@@ -76,10 +102,9 @@ export interface ClientInformationProps extends StackProps {
       w="100%"
       mx="auto"
       mb="10"
+      direction="column"
+      spacing="4"
       mt='3'>
-      <HStack
-        w="100%"
-        mx="auto">
         <Select
           ref={selectRef as any}
           loadOptions={handleAutocomplete}
@@ -89,10 +114,11 @@ export interface ClientInformationProps extends StackProps {
           onChange={handleChange}
           onFocus={handleFocus}
           controlShouldRenderValue={false}
-          components={{ Input: Input }}
+          components={{ Input: InputSelect }}
           getOptionLabel={getUserLabel}
           getOptionValue={getUserValue}
           styles={asyncSelectAppStyles}
+          isDisabled={textValue.name || textValue.firstName || textValue.lastName ? true : false}
           hideSelectedOptions
           placeholder="Buscar cliente"
           loadingMessage={() => `Buscando...`}
@@ -101,7 +127,13 @@ export interface ClientInformationProps extends StackProps {
           }
           autoFocus
         />
-      </HStack>
+        {/* <Box display="flex"> */}
+          <Stack spacing="5" direction='row'>
+            <Input placeholder='Ingrese nombre' onChange={(e) => handleNewClient(e, 'name')} isDisabled={inputValue ? true : false}/>
+            <Input placeholder='Ingrese apellido paterno' onChange={(e) => handleNewClient(e, 'firstName')} isDisabled={inputValue ? true : false}/>
+            <Input placeholder='Ingrese apellido materno' onChange={(e) => handleNewClient(e, 'lastName')} isDisabled={inputValue ? true : false}/>
+          </Stack>
+        {/* </Box> */}
     </Stack>
   );
 //}

@@ -11,7 +11,6 @@ import { Formik } from 'formik';
 import { CartOrderSummary } from './CartOrderSummary';
 import { ArrowRightIcon } from 'components/icons';
 import { Cart } from './Cart';
-// import { ClientInformation } from './ClientInformation';
 import { PaymentDetails } from './PaymentDetails';
 import { OrderMenu } from './OrderMenu';
 import { ShoppingCartArticle } from './types';

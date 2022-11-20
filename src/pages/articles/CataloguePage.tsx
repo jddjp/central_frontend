@@ -64,7 +64,7 @@ export const Productos = () => {
     edit.inventario_fiscal = articulos.inventario_fiscal 
     edit.inventario_fisico = articulos.inventario_fisico 
     edit.precio_lista = articulos.precio_lista 
-    edit.foto = articulos.foto.data.attributes.url 
+    edit.foto = articulos?.foto?.data?.attributes?.url 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
  

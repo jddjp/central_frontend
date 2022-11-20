@@ -1,27 +1,15 @@
-import {useState} from 'react';
+import React from 'react';
 import { FixedMenuProps, FixedMenu } from "components/FixedMenu";
 import { IconAction } from "components/IconAction";
-import {FileUpload} from "primereact/fileupload";
 import { CatalogueIcon, SaveIcon, ClearIcon, PlusIcon } from "components/icons";
-import {
-  Stack,
-  StackProps,
-  useDisclosure,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  useToast
-} from "@chakra-ui/react";
+import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast } from "@chakra-ui/react";
 import NewClient from "pages/payments/invoice/NewClient";
 
 //import { newOrder, newItem, uploadFile } from "services/api/orders";
 import { Order, Item } from "types/Order";
 import { ShoppingCart } from './types';
 import { newItem, newOrder } from 'services/api/orders';
+import { sendRandomId } from 'helpers/randomIdUser';
 // import { client } from 'services/api/cliente';
 
 export interface OrderMenuProps extends FixedMenuProps {
@@ -38,7 +26,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
   const toast = useToast();
   const handleNewOrder = () => {
 
-    if(props.cart.items.length == 0) {
+    if(props.cart.items.length === 0) {
       toast({
         title: 'Agregar productos',
         description: 'Se requiere al menos un producto para poder guardar la orden',
@@ -66,6 +54,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
     var date = new Date();
     var order: Order = {
       id: 0,
+      // dispatchId: sendRandomId(),
       attributes:{
         fecha_pedido: date.toISOString(),
         hora_pedido:
