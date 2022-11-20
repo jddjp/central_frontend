@@ -17,7 +17,7 @@ export const CartItem = (props: CartItemProps) => {
   const { descripcion, nombre, precio_lista, foto, unidad_de_medida } =
     item.article.attributes;
   //const imageUrl = foto.data.attributes.url;
-  const imageUrl = foto.data.attributes.url;
+  const imageUrl = foto?.data?.attributes?.url;
 
   const handleChangeAmount = (e: ChangeEvent<HTMLInputElement>) => {
     onChangeItemAmount(Number(e.target!.value));
