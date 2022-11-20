@@ -25,7 +25,7 @@ const fixArticleMediaUrls = <
 };
 
 export const searchArticles = async ( name: string) => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=foto`)
   
   return data;
 };

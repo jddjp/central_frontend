@@ -4,6 +4,7 @@ import { CartProductMeta } from "./CartProductMeta";
 import { getFinalPrice } from "../useCart/reducer";
 import { ChangeEvent } from "react";
 import { ShoppingCartItem } from "../types";
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 type CartItemProps = {
   item: ShoppingCartItem;
@@ -14,10 +15,11 @@ type CartItemProps = {
 export const CartItem = (props: CartItemProps) => {
   const { item, onClickDelete, onChangeItemAmount } = props;
   const { amount, customPrice } = item;
-  const { descripcion, nombre, precio_lista, foto, unidad_de_medida } =
+  const { descripcion, nombre, precio_lista } =
     item.article.attributes;
   //const imageUrl = foto.data.attributes.url;
-  const imageUrl = foto?.data?.attributes?.url;
+  // const imageUrl = foto?.data?.attributes?.url;
+  const imageUrl = `${BASE_URL}${props?.item?.article?.attributes?.foto?.data?.attributes?.url}`
 
   const handleChangeAmount = (e: ChangeEvent<HTMLInputElement>) => {
     onChangeItemAmount(Number(e.target!.value));

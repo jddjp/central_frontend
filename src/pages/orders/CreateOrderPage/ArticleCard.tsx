@@ -15,6 +15,7 @@ import {
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCartArticle } from "./types";
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;
@@ -25,6 +26,7 @@ const MotionStack = motion(Stack);
 export const ArticleCard = (props: ArticleCardProps) => {
   const { article, children, ...rest } = props;
   const { nombre, foto, descripcion, unidad_de_medida } = article.attributes;
+  console.log(props.article);
 
   return (
     <Tabs isFitted isLazy={true}>
@@ -40,7 +42,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Box width="60%" alignSelf="center">
                 <AspectRatio ratio={4 / 3}>
                   <Image
-                    src={foto?.data.attributes.url}
+                    src={`${BASE_URL}${props?.article?.attributes?.foto?.data?.attributes?.url}`}
                     alt={nombre}
                     draggable="false"
                     fallback={<Skeleton />}
