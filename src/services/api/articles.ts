@@ -36,7 +36,8 @@ export const searchArticles = async (
     await axios.get(`${API_URL}/articulos`, { params: queryParams })
   ).data;
   response.data = response.data.map(fixArticleMediaUrls);
-
+console.log("=============>")
+  console.log(  response.data)
   return response;
 };
 
