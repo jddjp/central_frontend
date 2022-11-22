@@ -24,21 +24,10 @@ const fixArticleMediaUrls = <
   return article;
 };
 
-export const searchArticles = async (
-  name: string
-): Promise<ListResponse<SearchArticle>> => {
-  let queryParams: Record<string, any> = {
-     populate: "foto,unidad_de_medida",
-    "filters[nombre][$contains]": name,
-  };
-
-  const response: ListResponse<SearchArticle> = (
-    await axios.get(`${API_URL}/articulos`, { params: queryParams })
-  ).data;
-  response.data = response.data.map(fixArticleMediaUrls);
-console.log("=============>")
-  console.log(  response.data)
-  return response;
+export const searchArticles = async ( name: string) => {
+  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=foto`)
+  
+  return data;
 };
 
 export const listArticles = async (
