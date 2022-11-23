@@ -54,7 +54,6 @@ export const Productos = () => {
   }
   const openEdit = (data :  any) => {
     const articulos = data.attributes;
-    console.log(data);
     
     edit.nombre = articulos?.nombre
     edit.marca = articulos?.marca
@@ -115,10 +114,10 @@ const handleDeleteProduct = () => {
   }
 
   const myUploader = (e:any, name:any) => {
-    setProduct({...product, [name]: URL.createObjectURL(e.target.files[0])})
+    setProduct({...product, [name]: e.target.files[0]})
   }
   const myUploaderEdit = (e:any, name:any) => {
-    setEdit({...edit, [name]: URL.createObjectURL(e.target.files[0])})
+    setEdit({...edit, [name]: e.target.files[0]})
   }
   
   const onInputChange = (e: any, name: any) => {
