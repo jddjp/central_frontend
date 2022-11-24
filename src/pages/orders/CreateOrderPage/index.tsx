@@ -16,8 +16,12 @@ import { OrderMenu } from './OrderMenu';
 import { ShoppingCartArticle } from './types';
 import { useLocation } from 'react-router-dom';
 import { client } from 'services/api/cliente';
-import { Order } from 'types/Order';
+import { Item, Order } from 'types/Order';
 import { ExistingClient } from 'pages/payments/invoice/ExistingClient';
+import { newItem, newOrder } from 'services/api/orders';
+import { sendRandomId } from 'helpers/randomIdUser';
+import { getDispatchers, getLibradores } from 'services/api/users';
+import { useMutation, useQuery } from 'react-query';
 
 const initialClient = { name: 'ss' };
 const initialPayment = {
@@ -37,7 +41,21 @@ export const CreateOrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
-  const [cliente, setCliente] = useState<client>();
+  const [cliente, setCliente] = useState<any>();
+  const [dispatchers, setDispatchers] = useState<number[]>([])
+  const [libradores, setLibradores] = useState<number[]>([])
+
+  const { mutate } = useMutation(newItem)
+  useQuery(["users_librador"], getLibradores, {
+    onSuccess: (libradores) => {
+      setLibradores(libradores.map((users: any) => users.id))
+    }
+  })
+  useQuery(["users_dispatchers"], getDispatchers, {
+    onSuccess: (dispatchers) => {
+      setDispatchers(dispatchers.map((users: any) => users.id))
+    }
+  })
   
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
@@ -51,7 +69,51 @@ export const CreateOrderPage = () => {
       });
       return;
     }
-    navigate(route,{state:{cart,client}});
+
+    var date = new Date();
+    var order: any = {
+      id: 0,
+      attributes:{
+        fecha_pedido: date.toISOString(),
+        hora_pedido:
+          (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+          ":" +
+          (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+          ":" +
+          (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
+        estatus: "pendiente",
+        librador: sendRandomId(libradores),
+        repartidor: sendRandomId(dispatchers),
+        cliente: cliente.id,
+      }
+    };
+
+    var responseNewOrder = newOrder(order.attributes);
+    responseNewOrder.then((response) => {
+      cart.items.forEach((item: any) => {
+        var itemNew: Item = {
+          id: 0,
+          attributes: {
+          cantidad: item.amount,
+          pesado: 0,
+          cantidad_real: item.amount,
+          precio_venta: item.article.attributes.precio_lista,
+          pedido: response.data.id,
+          articulos: item.article.id
+          }
+        };
+
+        // newItem(itemNew);
+        mutate(itemNew, {
+          onSuccess: () => {
+            navigate(route,{state:{cart,client}});
+          }
+        })
+        order = response.data;
+      });
+
+    });
+
   };
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();
