@@ -44,7 +44,12 @@ export const deleteProduct = async (id: string) => {
 }
 
 export const editProduct = async (params: any) => {
-  if (params.edit.data.foto) {
+  if (params.edit.data.foto.slice(0,9) == '/uploads/') {
+    console.log(params.edit.data);
+    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
+    return data.data;
+    
+  }else if(params.edit.data.foto){
     let file = new FormData();
     file.append("files", params.edit.data.foto, params.edit.data.foto.name);
     axios.post(`${API_URL}/upload/`, file)
@@ -66,7 +71,9 @@ export const editProduct = async (params: any) => {
         .catch((error)=>{
         //handle error
     })  
-  } else {
+    
+  }
+  else{
     const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
     return data.data;
   }
