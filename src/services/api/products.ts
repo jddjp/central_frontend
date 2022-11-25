@@ -50,6 +50,7 @@ export const editProduct = async (params: any) => {
     return data.data;
     
   }else if(params.edit.data.foto){
+    console.log(params.edit.data.foto);
     let file = new FormData();
     file.append("files", params.edit.data.foto, params.edit.data.foto.name);
     axios.post(`${API_URL}/upload/`, file)
