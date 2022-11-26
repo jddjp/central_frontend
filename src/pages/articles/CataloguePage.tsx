@@ -54,7 +54,7 @@ export const Productos = () => {
   }
   const openEdit = (data :  any) => {
     const articulos = data.attributes;
-    
+    console.log(articulos);
     edit.nombre = articulos?.nombre
     edit.marca = articulos?.marca
     edit.estado = articulos.estado
@@ -63,7 +63,7 @@ export const Productos = () => {
     edit.inventario_fiscal = articulos.inventario_fiscal 
     edit.inventario_fisico = articulos.inventario_fisico 
     edit.precio_lista = articulos.precio_lista 
-    edit.foto = articulos?.foto?.data?.attributes?.url 
+    edit.foto = articulos?.foto?.data 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
  

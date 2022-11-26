@@ -9,7 +9,11 @@ export const getProducts = async () => {
 }
 
 export const postProduct = async (product: any) => {
-  if (product.data.foto) {
+  if(product.data.foto === ""){
+      product.data.foto = null;
+      const { data } = await axios.post(`${API_URL}/articulos`, product)
+      return data
+  }else{
     let file = new FormData();
     file.append("files", product.data.foto, product.data.foto.name);
     axios.post(`${API_URL}/upload/`, file)
@@ -32,9 +36,6 @@ export const postProduct = async (product: any) => {
         .catch((error)=>{
         //handle error
     })  
-  } else {
-    const { data } = await axios.post(`${API_URL}/articulos`, product)
-    return data
   }
 }
 
@@ -44,12 +45,16 @@ export const deleteProduct = async (id: string) => {
 }
 
 export const editProduct = async (params: any) => {
-  if (params.edit.data.foto.slice(0,9) == '/uploads/') {
-    console.log(params.edit.data);
+  console.log(params);
+if(params.edit.data.foto === null){
+    params.edit.data.foto = null;
     const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
     return data.data;
-    
-  }else if(params.edit.data.foto){
+}else if(params.edit.data.foto.id){
+    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
+    return data.data;
+}
+else{
     console.log(params.edit.data.foto);
     let file = new FormData();
     file.append("files", params.edit.data.foto, params.edit.data.foto.name);
@@ -72,10 +77,6 @@ export const editProduct = async (params: any) => {
         .catch((error)=>{
         //handle error
     })  
-    
   }
-  else{
-    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
-    return data.data;
-  }
+  
 }
