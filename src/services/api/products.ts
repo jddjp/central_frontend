@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { useState } from 'react'
 const API_URL = process.env.REACT_APP_API_URL
 
 
@@ -9,33 +8,27 @@ export const getProducts = async () => {
 }
 
 export const postProduct = async (product: any) => {
-  if(product.data.foto === ""){
-      product.data.foto = null;
-      const { data } = await axios.post(`${API_URL}/articulos`, product)
-      return data
-  }else{
-    let file = new FormData();
-    file.append("files", product.data.foto, product.data.foto.name);
-    axios.post(`${API_URL}/upload/`, file)
-      .then((response) => {
-        product.data.foto = response.data
-        axios({
-            method: "post",
-            url: `${API_URL}/articulos/`,
-            data: product,
-                
-            })
-            .then(({ data }) => {
-              return data;
-          })
-        .catch((error) => {
-        //handle error
-        });
+  console.log(product.data.foto);
 
-        })
-        .catch((error)=>{
-        //handle error
-    })  
+  if(product.data.foto === ""){
+    delete product.data.foto;
+
+    const { data } = await axios.post(`${API_URL}/articulos`, product)
+    return data
+
+  } else {
+    let file = new FormData();
+    file.append("files", product.data.foto);
+    
+    axios.post(`${API_URL}/upload`, file)
+    .then((response) => {
+      product.data.foto = response.data[0].id
+
+      axios.post(`${API_URL}/articulos`, product)
+      .then(({ data }) => {
+        return data;
+      })
+    })
   }
 }
 
@@ -45,37 +38,25 @@ export const deleteProduct = async (id: string) => {
 }
 
 export const editProduct = async (params: any) => {
-  console.log(params);
-if(params.edit.data.foto === null){
-    params.edit.data.foto = null;
-    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
-    return data.data;
-}else if(params.edit.data.foto.id){
-    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
-    return data.data;
-}
-else{
-    console.log(params.edit.data.foto);
-    let file = new FormData();
-    file.append("files", params.edit.data.foto, params.edit.data.foto.name);
-    axios.post(`${API_URL}/upload/`, file)
-      .then((response) => {
-        params.edit.data.foto = response.data
-        axios({
-            method: "put",
-            url: `${API_URL}/articulos/${params.id}`,
-            data: params.edit,  
-            })
-            .then(({ data }) => {
-              return data;
-          })
-        .catch((error) => {
-        //handle error
-        });
 
-        })
-        .catch((error)=>{
-        //handle error
+  if(params.edit.data.foto === null){
+    delete params.edit.data.foto;
+
+    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
+    return data.data;
+
+  } else if(params.edit.data.foto) {
+    let file = new FormData();
+    file.append("files", params.edit.data.foto);
+
+    axios.post(`${API_URL}/upload/`, file)
+    .then((response) => {
+      params.edit.data.foto = response.data[0].id
+
+      axios.put(`${API_URL}/articulos/${params.id}`, params.edit )
+      .then(({ data }) => {
+        return data;
+      })
     })  
   }
   
