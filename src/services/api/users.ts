@@ -15,3 +15,13 @@ export const getDespachadores = async () => {
   const { data } = await axios.get(`${API_URL}/users/?populate=pedidos&filters[roleCons][$contains]=Despachador&filters[roleCons][$contains]=Librador`)
   return data
 }
+
+export const getDispatchers = async () => {
+  const { data } = await axios.get(`${API_URL}/users/?populate=pedidos&filters[roleCons][$contains]=Despachador`)
+  return data
+}
+
+export const getLibradores = async () => {
+  const { data } = await axios.get(`${API_URL}/users/?populate=pedidos&filters[roleCons][$contains]=Librador`)
+  return data
+}

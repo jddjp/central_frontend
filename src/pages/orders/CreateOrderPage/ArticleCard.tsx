@@ -15,6 +15,8 @@ import {
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCartArticle } from "./types";
+import { extractStock } from "services/api/stocks";
+import { useQuery } from "react-query";
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
 interface ArticleCardProps extends StackProps {
@@ -25,8 +27,10 @@ const MotionStack = motion(Stack);
 
 export const ArticleCard = (props: ArticleCardProps) => {
   const { article, children, ...rest } = props;
-  const { nombre, foto, descripcion, unidad_de_medida } = article.attributes;
+  const { nombre, descripcion } = article.attributes;
   console.log(props.article);
+  const { data: stock } = useQuery(['stock'], () => extractStock(props.article.id))
+  console.log(stock);
 
   return (
     <Tabs isFitted isLazy={true}>
@@ -76,8 +80,15 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Unidad</Text>
                 <Text>
-                  {unidad_de_medida?.data?.attributes.nombre ??
+                  {stock?.medida !== '' ? stock?.medida :
                     "No hay una unidad de medida asignada."}
+                </Text>
+              </Stack>
+
+              <Stack>
+                <Text fontWeight="semibold">Cantidad</Text>
+                <Text>
+                  {stock?.stock ?? 0}
                 </Text>
               </Stack>
             </Stack>

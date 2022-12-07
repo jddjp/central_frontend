@@ -1,16 +1,16 @@
-import React from 'react';
+import { useState } from 'react';
 import { FixedMenuProps, FixedMenu } from "components/FixedMenu";
 import { IconAction } from "components/IconAction";
 import { CatalogueIcon, SaveIcon, ClearIcon, PlusIcon } from "components/icons";
 import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast } from "@chakra-ui/react";
 import NewClient from "pages/payments/invoice/NewClient";
-
-//import { newOrder, newItem, uploadFile } from "services/api/orders";
-import { Order, Item } from "types/Order";
+import { Item } from "types/Order";
 import { ShoppingCart } from './types';
 import { newItem, newOrder } from 'services/api/orders';
+import { extractFlagOrders } from "services/api/orders";
 import { sendRandomId } from 'helpers/randomIdUser';
-// import { client } from 'services/api/cliente';
+import { useQuery } from 'react-query';
+import { getDispatchers, getLibradores } from 'services/api/users';
 
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
@@ -20,8 +20,29 @@ export interface OrderMenuProps extends FixedMenuProps {
 }
 
 export const OrderMenu = (props: OrderMenuProps) => {
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [disponibleUsers, setDisponibleUsers] = useState<number[]>([])
+  const [dispatchers, setDispatchers] = useState<number[]>([])
+  const [libradores, setLibradores] = useState<number[]>([])
   const { onOpenCatalogueModal, onOpenConfirmationClear } = props;
+
+  useQuery(["users_librador"], getLibradores, {
+    onSuccess: (libradores) => {
+      setLibradores(libradores.map((users: any) => users.id))
+    }
+  })
+  useQuery(["users_dispatchers"], getDispatchers, {
+    onSuccess: (dispatchers) => {
+      setDispatchers(dispatchers.map((users: any) => users.id))
+    }
+  })
+  // useQuery(["flagOrders"], extractFlagOrders, {
+  //   onSuccess: (orders) => {
+  //     setDisponibleUsers([...disponibleUsers, orders.filter((order: any) => order?.attributes?.cliente?.data?.id)
+  //     .map((order:any) =>order?.attributes?.cliente?.data?.id)])
+  //   }
+  // })
 
   const toast = useToast();
   const handleNewOrder = () => {
@@ -47,14 +68,10 @@ export const OrderMenu = (props: OrderMenuProps) => {
       });
       return;
     }
-    // console.log("Order");
-    
-    // console.log(props.cliente);
 
     var date = new Date();
-    var order: Order = {
+    var order: any = {
       id: 0,
-      // dispatchId: sendRandomId(),
       attributes:{
         fecha_pedido: date.toISOString(),
         hora_pedido:
@@ -64,6 +81,8 @@ export const OrderMenu = (props: OrderMenuProps) => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
+        librador: sendRandomId(libradores),
+        repartidor: sendRandomId(dispatchers),
         cliente: props.cliente.id,
       }
     };
@@ -96,7 +115,6 @@ export const OrderMenu = (props: OrderMenuProps) => {
       });
     });
 
-    props.cart.items.forEach((item) => {});
   };
   
   // const [selectedFile, setSelectedFile] = useState(null);

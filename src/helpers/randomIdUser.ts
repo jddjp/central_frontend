@@ -1,4 +1,4 @@
-const sendRandomId = (items: [number]) => {
+const sendRandomId = (items: number[]) => {
   return items[Math.floor(Math.random()*items.length)]
 }
 

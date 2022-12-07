@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -29,7 +29,7 @@ let initProduct = {
   codigo_qr: "",
   estado: "",
   foto: "",
-  unidad_de_medida:1
+  unidad_de_medida: ''
 }
 
 export const Productos = () => {
@@ -40,8 +40,34 @@ export const Productos = () => {
   const removeProduct = useMutation(deleteProduct)
   const updateProduct = useMutation(editProduct)
 
-  const [product, setProduct] = useState(initProduct);
-  const [edit, setEdit] = useState(initProduct)
+  const [product, setProduct] = useState({
+    nombre: '',
+    precio_lista: 0,
+    marca: '',
+    inventario_fiscal: 0,
+    inventario_fisico: 0,
+    descripcion: "",
+    categoria: "",
+    codigo_barras: "",
+    codigo_qr: "",
+    estado: "",
+    foto: "",
+    unidad_de_medida: ''
+  });
+  const [edit, setEdit] = useState({
+    nombre: '',
+    precio_lista: 0,
+    marca: '',
+    inventario_fiscal: 0,
+    inventario_fisico: 0,
+    descripcion: "",
+    categoria: "",
+    codigo_barras: "",
+    codigo_qr: "",
+    estado: "",
+    foto: "",
+    unidad_de_medida: ''
+  })
 
   const [id, setId] = useState('');
   const [productDialog, setProductDialog] = useState(false);
@@ -54,7 +80,8 @@ export const Productos = () => {
   }
   const openEdit = (data :  any) => {
     const articulos = data.attributes;
-    
+    console.log(articulos);
+
     edit.nombre = articulos?.nombre
     edit.marca = articulos?.marca
     edit.estado = articulos.estado
@@ -66,7 +93,8 @@ export const Productos = () => {
     edit.foto = articulos?.foto?.data?.attributes?.url 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
- 
+    edit.unidad_de_medida = articulos.unidad_de_medida
+
     setId(data.id)
     seteditroductDialog(true);
 
@@ -97,16 +125,16 @@ export const Productos = () => {
   const updateProducts = () => {
     updateProduct.mutate({id: id, edit: {data: edit}}, {
       onSuccess: () => {
-        setEdit(initProduct)
+        queryClient.invalidateQueries(['products'])
         seteditroductDialog(false);
       }
     })
   }
 
-const handleDeleteProduct = () => {
-  removeProduct.mutate(id, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['products'])
+  const handleDeleteProduct = () => {
+    removeProduct.mutate(id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['products'])
         setId('')
         setDeleteProductDialog(false)
       }
@@ -139,6 +167,7 @@ const handleDeleteProduct = () => {
   }
 
   const estado = [{ name: 'bueno', value: 'bueno' }];
+  const categoria = [{ name: 'Semilla', value: 'Semilla' }];
   const unidadMedida = [{ name: 'kg', value: '1' },{ name: 'litros', value: '2' }];
 
 
@@ -163,7 +192,7 @@ const handleDeleteProduct = () => {
 
 
   return (
-    <>
+    <Box paddingTop='5'>
       <DataTable paginator className="p-datatable-customers" showGridlines rows={10}  editMode="row" 
         value={products?.map((product: any) => product)} 
         header={
@@ -199,133 +228,135 @@ const handleDeleteProduct = () => {
       {/* new */}
       <Dialog visible={productDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
 
-        <div className="field">
-          <label htmlFor="name">Nombre</label>
-          <InputText value={product.nombre} onChange={(e: any) => onInputChange(e, 'nombre')} autoFocus />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Marca</label>
-          <InputText value={product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Precio</label>
-          <InputNumber value={product.precio_lista} onChange={(e: any) => onInputNumberChange(e, 'precio_lista')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Inventario fiscal</label>
-          <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Inventario fisico</label>
-          <InputNumber value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Descripción</label>
-          <InputText value={product.descripcion} onChange={(e: any) => onInputChange(e, 'descripcion')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Cod. barras</label>
-          <InputText value={product.codigo_barras} onChange={(e: any) => onInputChange(e, 'codigo_barras')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Cod. Qr</label>
-          <InputText value={product.codigo_qr} onChange={(e: any) => onInputChange(e, 'codigo_qr')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Estado</label>
-          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required /> */}
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" />
-          {/* <label htmlFor="dropdown">Dropdown</label> */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Unidad de Medida</label>
-          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required /> */}
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          <Dropdown inputId="dropdown" value={product.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} optionLabel="name" />
-          {/* <label htmlFor="dropdown">Dropdown</label> */}
-        </div>
-       
-     
-        <div >
-          <form action="">
-            <input type="file" accept="image/*" onChange={(e) => myUploader(e, 'foto')}/>
-            <img src={product.foto} alt="" />
-          </form>
-        </div>
+        <Stack spacing='2'>
+
+          <div className="field">
+            <label htmlFor="name">Nombre</label>
+            <InputText value={product.nombre} onChange={(e: any) => onInputChange(e, 'nombre')} autoFocus />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Marca</label>
+            <InputText value={product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Precio</label>
+            <InputNumber value={product.precio_lista} onChange={(e: any) => onInputNumberChange(e, 'precio_lista')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Inventario fiscal</label>
+            <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Inventario fisico</label>
+            <InputNumber value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Descripción</label>
+            <InputText value={product.descripcion} onChange={(e: any) => onInputChange(e, 'descripcion')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Cod. barras</label>
+            <InputText value={product.codigo_barras} onChange={(e: any) => onInputChange(e, 'codigo_barras')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Cod. Qr</label>
+            <InputText value={product.codigo_qr} onChange={(e: any) => onInputChange(e, 'codigo_qr')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Estado</label>
+            <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" required/>
+          </div>
+          <div className="field">
+            <label htmlFor="name">Categoria</label>
+            <Dropdown inputId="dropdown" value={product.categoria} options={categoria} onChange={(e: any) => onInputChange(e, 'categoria')} optionLabel="name" required/>
+          </div>
+          <div className="field">
+            <label htmlFor="name">Unidad de Medida</label>
+            <Dropdown inputId="dropdown" value={product.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} optionLabel="name" required/>
+          </div>
+
+          <div >
+            <form action="">
+              <input type="file" accept="image/*" onChange={(e) => myUploader(e, 'foto')}/>
+              <img src={product.foto} alt="" />
+            </form>
+          </div>
+        </Stack>
+
       </Dialog>
 
       {/* edit */}
       <Dialog visible={editProductDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={editProductDialogFooter} onHide={hideDialog}>
-        <div className="field">
-          <label htmlFor="name">Nombre</label>
-          <InputText value={edit.nombre} onChange={(e: any) => onInputChangeEdit(e, 'nombre')} autoFocus />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Marca</label>
-          <InputText value={edit.marca} onChange={(e: any) => onInputChangeEdit(e, 'marca')} />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Precio</label>
-          <InputNumber value={edit.precio_lista} onChange={(e: any) => onInputNumberChangeEdit(e, 'precio_lista')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Inventario fiscal</label>
-          <InputNumber value={edit.inventario_fiscal} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fiscal')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Inventario fisico</label>
-          <InputNumber value={edit.inventario_fisico} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fisico')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Descripción</label>
-          <InputText value={edit.descripcion} onChange={(e: any) => onInputChangeEdit(e, 'descripcion')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Cod. barras</label>
-          <InputText value={edit.codigo_barras} onChange={(e: any) => onInputChangeEdit(e, 'codigo_barras')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Cod. Qr</label>
-          <InputText value={edit.codigo_qr} onChange={(e: any) => onInputChangeEdit(e, 'codigo_qr')} required />
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Estado</label>
-          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} required /> */}
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          <Dropdown inputId="dropdown" value={edit.estado} options={estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} optionLabel="name" />
-          {/* <label htmlFor="dropdown">Dropdown</label> */}
-        </div>
-        <div className="field">
-          <label htmlFor="name">Unidad de Medida</label>
-          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required /> */}
-          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          <Dropdown inputId="dropdown" value={edit.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} optionLabel="name" />
-          {/* <label htmlFor="dropdown">Dropdown</label> */}
-        </div>
-  
-        <div >
-          <form action="">
-            <input type="file" accept="image/*" onChange={(e) => myUploaderEdit(e, 'foto')}/>
-            <img src={`${BASE_URL}${edit.foto}`} alt="" />
-          </form>
-        </div>
+        <Stack spacing='2'>
+
+          <div className="field">
+            <label htmlFor="name">Nombre</label>
+            <InputText value={edit.nombre} onChange={(e: any) => onInputChangeEdit(e, 'nombre')} autoFocus />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Marca</label>
+            <InputText value={edit.marca} onChange={(e: any) => onInputChangeEdit(e, 'marca')} />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Precio</label>
+            <InputNumber value={edit.precio_lista} onChange={(e: any) => onInputNumberChangeEdit(e, 'precio_lista')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Inventario fiscal</label>
+            <InputNumber value={edit.inventario_fiscal} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fiscal')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Inventario fisico</label>
+            <InputNumber value={edit.inventario_fisico} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fisico')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Descripción</label>
+            <InputText value={edit.descripcion} onChange={(e: any) => onInputChangeEdit(e, 'descripcion')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Cod. barras</label>
+            <InputText value={edit.codigo_barras} onChange={(e: any) => onInputChangeEdit(e, 'codigo_barras')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Cod. Qr</label>
+            <InputText value={edit.codigo_qr} onChange={(e: any) => onInputChangeEdit(e, 'codigo_qr')} required />
+            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          </div>
+          <div className="field">
+            <label htmlFor="name">Estado</label>
+            <Dropdown inputId="dropdown" value={edit.estado} options={estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} optionLabel="name" />
+          </div>
+          <div className="field">
+            <label htmlFor="name">Categoria</label>
+            <Dropdown inputId="dropdown" value={edit.categoria} options={categoria} onChange={(e: any) => onInputChangeEdit(e, 'categoria')} optionLabel="name" />
+          </div>
+          <div className="field">
+            <label htmlFor="name">Unidad de Medida</label>
+            <Dropdown inputId="dropdown" value={edit.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChangeEdit(e, 'unidad_de_medida')} optionLabel="name" />
+          </div>
+
+          <div >
+            <form action="">
+              <input type="file" accept="image/*" onChange={(e) => myUploaderEdit(e, 'foto')}/>
+              <img src={edit.foto ? `${BASE_URL}${edit.foto}` : ''} alt="" />
+            </form>
+          </div>
+        </Stack>
 
       </Dialog>
 
@@ -335,14 +366,14 @@ const handleDeleteProduct = () => {
           <span>¿Estas seguro que quieres que eliminarlo? </span>
         </div>
       </Dialog>
-    </>
+    </Box>
   );
 }
 
 const CataloguePage = () => {
 
   return (
-    <Box>
+    <Box display='flex' margin='auto'>
       <Productos/>
     </Box>
   );

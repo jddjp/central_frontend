@@ -40,3 +40,9 @@ export const deleteOrder = async (id: number) => {
     const response = await axios.delete(`${API_URL}/pedidos/${id}`);
     return response.data;
 }
+
+export const extractFlagOrders = async () => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=*`)
+
+    return data.data
+}
