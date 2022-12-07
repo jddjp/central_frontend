@@ -312,6 +312,14 @@ const handleDeleteProduct = () => {
           <Dropdown inputId="dropdown" value={edit.estado} options={estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} optionLabel="name" />
           {/* <label htmlFor="dropdown">Dropdown</label> */}
         </div>
+        <div className="field">
+          <label htmlFor="name">Unidad de Medida</label>
+          {/* <InputText  value={product.estado} onChange={(e: any) => onInputChange(e, 'estado')} required /> */}
+          {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
+          <Dropdown inputId="dropdown" value={edit.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} optionLabel="name" />
+          {/* <label htmlFor="dropdown">Dropdown</label> */}
+        </div>
+  
         <div >
           <form action="">
             <input type="file" accept="image/*" onChange={(e) => myUploaderEdit(e, 'foto')}/>
