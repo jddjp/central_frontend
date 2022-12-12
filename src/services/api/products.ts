@@ -24,21 +24,20 @@ export const postProduct = async (param: any) => {
       })
     })
 
-  } 
-  // else {
-  //   let file = new FormData();
-  //   file.append("files", param.product.data.foto);
+  } else {
+    let file = new FormData();
+    file.append("files", param.product.data.foto);
     
-  //   axios.post(`${API_URL}/upload`, file)
-  //   .then((response) => {
-  //     param.product.data.foto = response.data[0].id
+    axios.post(`${API_URL}/upload`, file)
+    .then((response) => {
+      param.product.data.foto = response.data[0].id
 
-  //     axios.post(`${API_URL}/articulos`, param.product)
-  //     .then(({ data }) => {
-  //       return data;
-  //     })
-  //   })
-  // }
+      axios.post(`${API_URL}/articulos`, param.product)
+      .then(({ data }) => {
+        return data;
+      })
+    })
+  }
 }
 
 export const deleteProduct = async (id: string) => {
