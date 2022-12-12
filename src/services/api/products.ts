@@ -7,29 +7,38 @@ export const getProducts = async () => {
   return data.data
 }
 
-export const postProduct = async (product: any) => {
-  console.log(product.data.foto);
+export const postProduct = async (param: any) => {
 
-  if(product.data.foto === ""){
-    delete product.data.foto;
+  console.log(param);
 
-    const { data } = await axios.post(`${API_URL}/articulos`, product)
-    return data
+  if(param.product.data.foto === ""){
+    delete param.product.data.foto;
 
-  } else {
-    let file = new FormData();
-    file.append("files", product.data.foto);
-    
-    axios.post(`${API_URL}/upload`, file)
-    .then((response) => {
-      product.data.foto = response.data[0].id
+    axios.post(`${API_URL}/articulos`, param.product)
+    .then(({data}) => {
+      param.stock.data.articulo = data.data.id
 
-      axios.post(`${API_URL}/articulos`, product)
-      .then(({ data }) => {
-        return data;
+      axios.post(`${API_URL}/stocks`, param.stock)
+      .then(({data}) => {
+        return data
       })
     })
-  }
+
+  } 
+  // else {
+  //   let file = new FormData();
+  //   file.append("files", param.product.data.foto);
+    
+  //   axios.post(`${API_URL}/upload`, file)
+  //   .then((response) => {
+  //     param.product.data.foto = response.data[0].id
+
+  //     axios.post(`${API_URL}/articulos`, param.product)
+  //     .then(({ data }) => {
+  //       return data;
+  //     })
+  //   })
+  // }
 }
 
 export const deleteProduct = async (id: string) => {

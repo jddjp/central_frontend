@@ -14,6 +14,7 @@ import "primeicons/primeicons.css";
 import "./style.css"
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getProducts, postProduct, deleteProduct, editProduct } from 'services/api/products';
+import { getSubsidiaries } from 'services/api/subsidiary';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -29,13 +30,20 @@ let initProduct = {
   codigo_qr: "",
   estado: "",
   foto: "",
-  unidad_de_medida: ''
+  unidad_de_medida: 1
+}
+
+let initStock = {
+  cantidad: 0,
+  sucursal: 0,
+  unidad_de_medida: 0
 }
 
 export const Productos = () => {
 
   const queryClient = useQueryClient()
   const { data: products } = useQuery(["products"], getProducts)
+  const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
   const createProduct = useMutation(postProduct)
   const removeProduct = useMutation(deleteProduct)
   const updateProduct = useMutation(editProduct)
@@ -52,7 +60,7 @@ export const Productos = () => {
     codigo_qr: "",
     estado: "",
     foto: "",
-    unidad_de_medida: ''
+    unidad_de_medida: 0
   });
   const [edit, setEdit] = useState({
     nombre: '',
@@ -66,7 +74,19 @@ export const Productos = () => {
     codigo_qr: "",
     estado: "",
     foto: "",
-    unidad_de_medida: ''
+    unidad_de_medida: 0
+  })
+
+  const [entryStock, setEntryStock] = useState({
+    cantidad: 0,
+    sucursal: 0,
+    unidad_de_medida: 0
+  })
+
+  const [editStock, setEditStock] = useState({
+    cantidad: 0,
+    sucursal: 0,
+    unidad_de_medida: 0
   })
 
   const [id, setId] = useState('');
@@ -93,7 +113,6 @@ export const Productos = () => {
     edit.foto = articulos?.foto?.data?.attributes?.url 
     edit.descripcion = articulos.descripcion
     edit.codigo_qr = articulos.codigo_qr
-    edit.unidad_de_medida = articulos.unidad_de_medida
 
     setId(data.id)
     seteditroductDialog(true);
@@ -114,10 +133,11 @@ export const Productos = () => {
   }
 
   const saveProduct = () => {
-    createProduct.mutate({ data: product }, {
+    createProduct.mutate({ product: {data: product}, stock: {data: entryStock} }, {
       onSuccess: () => {
         queryClient.invalidateQueries(['products'])
         setProduct(initProduct)
+        setEntryStock(initStock)
         setProductDialog(false);
       }
     })
@@ -161,14 +181,21 @@ export const Productos = () => {
   const onInputNumberChangeEdit = (e:any, name:any) => {
     setProduct({...edit, [name]: e.value});
   }
-
+  
   const onGlobalFilterChange1 = (e: any) => {
     setGlobalFilterValue1(e.target.value);
   }
 
+  const onInputHandleSock = (e: any, name: any) => {
+    setEntryStock({...entryStock, [name]: e.value})
+  }
+  const onInputEditSock = (e: any, name: any) => {
+    setEditStock({...editStock, [name]: e.value})
+  }
+
   const estado = [{ name: 'bueno', value: 'bueno' }];
   const categoria = [{ name: 'Semilla', value: 'Semilla' }];
-  const unidadMedida = [{ name: 'kg', value: '1' },{ name: 'litros', value: '2' }];
+  const unidadMedida = [{ name: 'kg', value: 1 },{ name: 'litros', value: 2 }];
 
 
   const productDialogFooter = (
@@ -278,9 +305,22 @@ export const Productos = () => {
             <label htmlFor="name">Categoria</label>
             <Dropdown inputId="dropdown" value={product.categoria} options={categoria} onChange={(e: any) => onInputChange(e, 'categoria')} optionLabel="name" required/>
           </div>
+
+          {/* STOCKS */}
+
+          <div className="field">
+            <label htmlFor="name">Cantidad</label>
+            <InputNumber value={entryStock.cantidad} onChange={(e: any) => onInputHandleSock(e, 'cantidad')} required />
+          </div>
+
           <div className="field">
             <label htmlFor="name">Unidad de Medida</label>
-            <Dropdown inputId="dropdown" value={product.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChange(e, 'unidad_de_medida')} optionLabel="name" required/>
+            <Dropdown inputId="dropdown" value={entryStock.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputHandleSock(e, 'unidad_de_medida')} optionLabel="name" required/>
+          </div>
+
+          <div className="field">
+            <label htmlFor="name">Sucursales</label>
+            <Dropdown inputId="dropdown" value={entryStock.sucursal} options={subsidiaries} onChange={(e: any) => onInputHandleSock(e, 'sucursal')} optionLabel="name" required/>
           </div>
 
           <div >
@@ -345,9 +385,22 @@ export const Productos = () => {
             <label htmlFor="name">Categoria</label>
             <Dropdown inputId="dropdown" value={edit.categoria} options={categoria} onChange={(e: any) => onInputChangeEdit(e, 'categoria')} optionLabel="name" />
           </div>
+
+          {/* STOCKS */}
+
+          <div className="field">
+            <label htmlFor="name">Cantidad</label>
+            <InputText value={editStock.cantidad} onChange={(e: any) => onInputHandleSock(e, 'cantidad')} required />
+          </div>
+
           <div className="field">
             <label htmlFor="name">Unidad de Medida</label>
-            <Dropdown inputId="dropdown" value={edit.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputChangeEdit(e, 'unidad_de_medida')} optionLabel="name" />
+            <Dropdown inputId="dropdown" value={editStock.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputEditSock(e, 'unidad_de_medida')} optionLabel="name" required/>
+          </div>
+
+          <div className="field">
+            <label htmlFor="name">Sucursales</label>
+            <Dropdown inputId="dropdown" value={editStock.sucursal} options={subsidiaries} onChange={(e: any) => onInputEditSock(e, 'sucursal')} optionLabel="name" required/>
           </div>
 
           <div >
