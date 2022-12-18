@@ -84,11 +84,12 @@ export const OrderMenu = (props: OrderMenuProps) => {
         librador: sendRandomId(libradores),
         repartidor: sendRandomId(dispatchers),
         cliente: props.cliente.id,
+        articulos: []
       }
     };
-    // console.log(order);
-    // console.log(props.cart);
-    
+   props.cart.items.forEach(
+       elements => order.attributes.articulos.push(elements.article.id)
+    );
     /*-Crear orden con sus items*/
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
