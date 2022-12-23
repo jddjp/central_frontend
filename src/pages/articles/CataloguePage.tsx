@@ -1,225 +1,73 @@
-import React, { useState } from 'react'
-import { Box, Stack } from "@chakra-ui/react";
+import { useState } from 'react'
+import { Box } from "@chakra-ui/react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
-import { InputNumber } from 'primereact/inputnumber';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-import { Dropdown } from 'primereact/dropdown';
 import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";
 import "./style.css"
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getProducts, postProduct, deleteProduct, editProduct } from 'services/api/products';
-import { getSubsidiaries } from 'services/api/subsidiary';
+import { getProducts } from 'services/api/products';
+import { deleteStock } from 'services/api/stocks';
+import Confirmation from 'components/modals/Confirmation';
+import ArticlePostDetail from 'components/modals/ArticlePostDetail';
+import ArticlePutDetail from 'components/modals/ArticlePutDetail';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
-
-let initProduct = {
-  nombre: '',
-  precio_lista: 0,
-  marca: '',
-  inventario_fiscal: 0,
-  inventario_fisico: 0,
-  descripcion: "",
-  categoria: "",
-  codigo_barras: "",
-  codigo_qr: "",
-  estado: "",
-  foto: "",
-  unidad_de_medida: 1
-}
-
-let initStock = {
-  cantidad: 0,
-  sucursal: 0,
-  unidad_de_medida: 0
-}
-
-export const Productos = () => {
-
+const CataloguePage = () => {
+  
   const queryClient = useQueryClient()
-  const { data: products } = useQuery(["products"], getProducts)
-  const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
-  const createProduct = useMutation(postProduct)
-  const removeProduct = useMutation(deleteProduct)
-  const updateProduct = useMutation(editProduct)
-
-  const [product, setProduct] = useState({
-    nombre: '',
-    precio_lista: 0,
-    marca: '',
-    inventario_fiscal: 0,
-    inventario_fisico: 0,
-    descripcion: "",
-    categoria: "",
-    codigo_barras: "",
-    codigo_qr: "",
-    estado: "",
-    foto: "",
-    unidad_de_medida: 0
-  });
-  const [edit, setEdit] = useState({
-    nombre: '',
-    precio_lista: 0,
-    marca: '',
-    inventario_fiscal: 0,
-    inventario_fisico: 0,
-    descripcion: "",
-    categoria: "",
-    codigo_barras: "",
-    codigo_qr: "",
-    estado: "",
-    foto: "",
-    unidad_de_medida: 0
-  })
-
-  const [entryStock, setEntryStock] = useState({
-    cantidad: 0,
-    sucursal: 0,
-    unidad_de_medida: 0
-  })
-
-  const [editStock, setEditStock] = useState({
-    cantidad: 0,
-    sucursal: 0,
-    unidad_de_medida: 0
-  })
-
-  const [id, setId] = useState('');
-  const [productDialog, setProductDialog] = useState(false);
-  const [editProductDialog, seteditroductDialog] = useState(false);
-  const [deleteProductDialog, setDeleteProductDialog] = useState(false);
+  const [id, setId] = useState(0);
+  const [ visibleCreate, setVisibleCreate] = useState(false);
+  const [ visibleEdit, setVisibleEdit ] = useState(false);
+  const [ visibleDelete, setVisibleDelete ] = useState(false);
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
 
-  const openNew = () => {
-    setProductDialog(true);
+  const { data: products } = useQuery(["products"], getProducts)
+
+  const removeProduct = useMutation(deleteStock)
+
+  const openDialogPost = () => {
+    setVisibleCreate(true);
   }
-  const openEdit = (data :  any) => {
-    const articulos = data.attributes;
-    console.log(articulos);
-
-    edit.nombre = articulos?.nombre
-    edit.marca = articulos?.marca
-    edit.estado = articulos.estado
-    edit.categoria = articulos.categoria 
-    edit.codigo_barras = articulos.codigo_barras 
-    edit.inventario_fiscal = articulos.inventario_fiscal 
-    edit.inventario_fisico = articulos.inventario_fisico 
-    edit.precio_lista = articulos.precio_lista 
-    edit.foto = articulos?.foto?.data?.attributes?.url 
-    edit.descripcion = articulos.descripcion
-    edit.codigo_qr = articulos.codigo_qr
-
+  const openDialogEdit = (data:  any) => {
     setId(data.id)
-    seteditroductDialog(true);
+    setVisibleEdit (true);
+  }
 
+  const hideDialogPost = () => {
+    setVisibleCreate(false)
   }
-  const hideDialog = () => {
-    setProductDialog(false);
-    seteditroductDialog(false)
-    
+  const hideDialogPut = () => {
+    setId(0)
+    setVisibleEdit(false)
   }
-  const hideDeleteProductDialog = () => {
-    setId('')
-    setDeleteProductDialog(false);
+  const hideDialogDelete = () => {
+    setId(0)
+    setVisibleDelete(false);
   }
-  const confirmDeleteProduct = (id: string) => {
+  const confirmDelete = (id: number) => {
     setId(id)
-    setDeleteProductDialog(true);
-  }
-
-  const saveProduct = () => {
-    createProduct.mutate({ product: {data: product}, stock: {data: entryStock} }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['products'])
-        setProduct(initProduct)
-        setEntryStock(initStock)
-        setProductDialog(false);
-      }
-    })
-  }
-  const updateProducts = () => {
-    updateProduct.mutate({id: id, edit: {data: edit}}, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['products'])
-        seteditroductDialog(false);
-      }
-    })
+    setVisibleDelete(true);
   }
 
   const handleDeleteProduct = () => {
     removeProduct.mutate(id, {
       onSuccess: () => {
         queryClient.invalidateQueries(['products'])
-        setId('')
-        setDeleteProductDialog(false)
+        hideDialogDelete()
       }
     })
   }
 
-  const myUploader = (e:any, name:any) => {
-    setProduct({...product, [name]: e.target.files[0]})
-  }
-  const myUploaderEdit = (e:any, name:any) => {
-    setEdit({...edit, [name]: e.target.files[0]})
-  }
-  
-  const onInputChange = (e: any, name: any) => {
-    setProduct({...product, [name]: e.target.value});
-  }
-  const onInputNumberChange = (e:any, name:any) => {
-    console.log(e);
-    setProduct({...product, [name]: e.value});
-  }
-  const onInputChangeEdit = (e: any, name: any) => {
-    setEdit({...edit, [name]: e.target.value});
-  }
-  const onInputNumberChangeEdit = (e:any, name:any) => {
-    setProduct({...edit, [name]: e.value});
-  }
-  
   const onGlobalFilterChange1 = (e: any) => {
     setGlobalFilterValue1(e.target.value);
   }
 
-  const onInputHandleSock = (e: any, name: any) => {
-    setEntryStock({...entryStock, [name]: e.value})
-  }
-  const onInputEditSock = (e: any, name: any) => {
-    setEditStock({...editStock, [name]: e.value})
-  }
-
-  const estado = [{ name: 'bueno', value: 'bueno' }];
-  const categoria = [{ name: 'Semilla', value: 'Semilla' }];
-  const unidadMedida = [{ name: 'kg', value: 1 },{ name: 'litros', value: 2 }];
-
-
-  const productDialogFooter = (
-    <React.Fragment>
-      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveProduct} />
-    </React.Fragment>
-  );
-  const editProductDialogFooter = (
-    <React.Fragment>
-      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={updateProducts}/>
-    </React.Fragment>
-  );
-  const deleteProductDialogFooter = (
-    <React.Fragment>
-      <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProductDialog} />
-      <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={handleDeleteProduct} />
-    </React.Fragment>
-  );
-
-
   return (
-    <Box paddingTop='5'>
+    <Box paddingTop='5' display='flex' margin='auto'>
       <DataTable paginator className="p-datatable-customers" showGridlines rows={10}  editMode="row" 
         value={products?.map((product: any) => product)} 
         header={
@@ -227,7 +75,7 @@ export const Productos = () => {
             <span className="p-input-icon-left">
               <i className="pi pi-search" />
               <InputText value={globalFilterValue1} onChange={onGlobalFilterChange1} />
-              <Button label="New" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} />
+              <Button label="New" icon="pi pi-plus" className="p-button-success mr-2" onClick={openDialogPost} />
             </span>
           </Box>
         } 
@@ -246,190 +94,23 @@ export const Productos = () => {
         <Column field="attributes.estado" header="Estado"/>
         <Column body={(data: any) => ( 
           <>
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => openEdit(data)} />
-            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteProduct(data.id)} />
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => openDialogEdit(data)} />
+            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDelete(data.id)} />
           </>)} 
           exportable={false} style={{ minWidth: '8rem' }} />
       </DataTable>
 
-      {/* new */}
-      <Dialog visible={productDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+      {/* Modals */}
+      <Confirmation 
+      isVisible={visibleDelete} 
+      titleText='¿Estas seguro que quieres que eliminarlo?'
+      onHandleHide={hideDialogDelete} 
+      onHandleAgree={handleDeleteProduct}/>
 
-        <Stack spacing='2'>
-
-          <div className="field">
-            <label htmlFor="name">Nombre</label>
-            <InputText value={product.nombre} onChange={(e: any) => onInputChange(e, 'nombre')} autoFocus />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Marca</label>
-            <InputText value={product.marca} onChange={(e: any) => onInputChange(e, 'marca')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Precio</label>
-            <InputNumber value={product.precio_lista} onChange={(e: any) => onInputNumberChange(e, 'precio_lista')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Inventario fiscal</label>
-            <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Inventario fisico</label>
-            <InputNumber value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Descripción</label>
-            <InputText value={product.descripcion} onChange={(e: any) => onInputChange(e, 'descripcion')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Cod. barras</label>
-            <InputText value={product.codigo_barras} onChange={(e: any) => onInputChange(e, 'codigo_barras')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Cod. Qr</label>
-            <InputText value={product.codigo_qr} onChange={(e: any) => onInputChange(e, 'codigo_qr')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Estado</label>
-            <Dropdown inputId="dropdown" value={product.estado} options={estado} onChange={(e: any) => onInputChange(e, 'estado')} optionLabel="name" required/>
-          </div>
-          <div className="field">
-            <label htmlFor="name">Categoria</label>
-            <Dropdown inputId="dropdown" value={product.categoria} options={categoria} onChange={(e: any) => onInputChange(e, 'categoria')} optionLabel="name" required/>
-          </div>
-
-          {/* STOCKS */}
-
-          <div className="field">
-            <label htmlFor="name">Cantidad</label>
-            <InputNumber value={entryStock.cantidad} onChange={(e: any) => onInputHandleSock(e, 'cantidad')} required />
-          </div>
-
-          <div className="field">
-            <label htmlFor="name">Unidad de Medida</label>
-            <Dropdown inputId="dropdown" value={entryStock.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputHandleSock(e, 'unidad_de_medida')} optionLabel="name" required/>
-          </div>
-
-          <div className="field">
-            <label htmlFor="name">Sucursales</label>
-            <Dropdown inputId="dropdown" value={entryStock.sucursal} options={subsidiaries} onChange={(e: any) => onInputHandleSock(e, 'sucursal')} optionLabel="name" required/>
-          </div>
-
-          <div >
-            <form action="">
-              <input type="file" accept="image/*" onChange={(e) => myUploader(e, 'foto')}/>
-              <img src={product.foto} alt="" />
-            </form>
-          </div>
-        </Stack>
-
-      </Dialog>
-
-      {/* edit */}
-      <Dialog visible={editProductDialog} style={{ width: '60%' }} header="Product Details" modal className="p-fluid" footer={editProductDialogFooter} onHide={hideDialog}>
-        <Stack spacing='2'>
-
-          <div className="field">
-            <label htmlFor="name">Nombre</label>
-            <InputText value={edit.nombre} onChange={(e: any) => onInputChangeEdit(e, 'nombre')} autoFocus />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Marca</label>
-            <InputText value={edit.marca} onChange={(e: any) => onInputChangeEdit(e, 'marca')} />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Precio</label>
-            <InputNumber value={edit.precio_lista} onChange={(e: any) => onInputNumberChangeEdit(e, 'precio_lista')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Inventario fiscal</label>
-            <InputNumber value={edit.inventario_fiscal} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fiscal')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Inventario fisico</label>
-            <InputNumber value={edit.inventario_fisico} onChange={(e: any) => onInputNumberChangeEdit(e, 'inventario_fisico')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Descripción</label>
-            <InputText value={edit.descripcion} onChange={(e: any) => onInputChangeEdit(e, 'descripcion')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Cod. barras</label>
-            <InputText value={edit.codigo_barras} onChange={(e: any) => onInputChangeEdit(e, 'codigo_barras')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Cod. Qr</label>
-            <InputText value={edit.codigo_qr} onChange={(e: any) => onInputChangeEdit(e, 'codigo_qr')} required />
-            {/* {submitted && !product.name && <small className="p-error">Name is required.</small>} */}
-          </div>
-          <div className="field">
-            <label htmlFor="name">Estado</label>
-            <Dropdown inputId="dropdown" value={edit.estado} options={estado} onChange={(e: any) => onInputChangeEdit(e, 'estado')} optionLabel="name" />
-          </div>
-          <div className="field">
-            <label htmlFor="name">Categoria</label>
-            <Dropdown inputId="dropdown" value={edit.categoria} options={categoria} onChange={(e: any) => onInputChangeEdit(e, 'categoria')} optionLabel="name" />
-          </div>
-
-          {/* STOCKS */}
-
-          <div className="field">
-            <label htmlFor="name">Cantidad</label>
-            <InputText value={editStock.cantidad} onChange={(e: any) => onInputHandleSock(e, 'cantidad')} required />
-          </div>
-
-          <div className="field">
-            <label htmlFor="name">Unidad de Medida</label>
-            <Dropdown inputId="dropdown" value={editStock.unidad_de_medida} options={unidadMedida} onChange={(e: any) => onInputEditSock(e, 'unidad_de_medida')} optionLabel="name" required/>
-          </div>
-
-          <div className="field">
-            <label htmlFor="name">Sucursales</label>
-            <Dropdown inputId="dropdown" value={editStock.sucursal} options={subsidiaries} onChange={(e: any) => onInputEditSock(e, 'sucursal')} optionLabel="name" required/>
-          </div>
-
-          <div >
-            <form action="">
-              <input type="file" accept="image/*" onChange={(e) => myUploaderEdit(e, 'foto')}/>
-              <img src={edit.foto ? `${BASE_URL}${edit.foto}` : ''} alt="" />
-            </form>
-          </div>
-        </Stack>
-
-      </Dialog>
-
-      <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
-        <div className="confirmation-content">
-          <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-          <span>¿Estas seguro que quieres que eliminarlo? </span>
-        </div>
-      </Dialog>
+      <ArticlePostDetail isVisible={visibleCreate} onHandleHide={hideDialogPost}/> 
+      <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={id}/>
     </Box>
   );
 }
-
-const CataloguePage = () => {
-
-  return (
-    <Box display='flex' margin='auto'>
-      <Productos/>
-    </Box>
-  );
-};
 
 export default CataloguePage;
