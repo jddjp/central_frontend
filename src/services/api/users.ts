@@ -16,7 +16,7 @@ export const getDespachadores = async () => {
   return data
 }
 export const getPedidos = async () => {
-  const { data } = await axios.get(`${API_URL}/pedidos`)
+  const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos`)
   return data
 }
 
