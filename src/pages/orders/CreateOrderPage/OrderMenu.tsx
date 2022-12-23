@@ -11,7 +11,10 @@ import { extractFlagOrders } from "services/api/orders";
 import { sendRandomId } from 'helpers/randomIdUser';
 import { useQuery } from 'react-query';
 import { getDispatchers, getLibradores } from 'services/api/users';
+import { newCliente } from '../../../services/api/cliente';
+import { AxiosError } from 'axios';
 
+import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
   onOpenConfirmationClear: VoidFunction;
@@ -57,17 +60,66 @@ export const OrderMenu = (props: OrderMenuProps) => {
       });
       return;
     }
+   
+   
 
-    if(props.cliente == null){
-      toast({
-        title: 'Indicar cliente',
-        description: 'Se requiere indicar el cliente para poder indentificar el pedido',
-        status: 'warning',
-        duration: 9000,
-        isClosable: true,
+    
+    if(props.cliente.id==undefined){
+    
+      try {
+        //Registrar cliente nuevo con datos dumi sin registro
+        props.cliente.attributes.RFC="x"
+        props.cliente.attributes.calle="x"
+        props.cliente.ciudad="x"
+        props.cliente.attributes.codigo_postal="1"
+        props.cliente.attributes.colonia="x"
+        props.cliente.attributes.correo="example@gmail.com"
+        props.cliente.attributes.estado="x"
+        props.cliente.attributes.telefono="1"
+      var client  =  newCliente(props.cliente.attributes);
+      client.then((response) => {
+        props.cliente.id=response.data.id
+        console.log(response.data.id)
       });
-      return;
+      
+    } catch (e) {
+        const error = e as AxiosError;
+        if (error?.response?.status === 400) {
+          toast({
+            title: 'Error.',
+            description: 'No se pudo registrar el cliente.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        } else {
+        
+          toast({
+            title: 'Error.',
+            description: SERVER_ERROR_MESSAGE,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        }
+      }
+
+   
     }
+
+    //Validacion original
+    // if(props.cliente == null){
+    //   toast({
+    //     title: 'Indicar cliente',
+    //     description: 'Se requiere indicar el cliente para poder indentificar el pedido',
+    //     status: 'warning',
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
 
     var date = new Date();
     var order: any = {
@@ -84,12 +136,15 @@ export const OrderMenu = (props: OrderMenuProps) => {
         librador: sendRandomId(libradores),
         repartidor: sendRandomId(dispatchers),
         cliente: props.cliente.id,
+        articulos: []
       }
     };
-    // console.log(order);
-    // console.log(props.cart);
-    
+   props.cart.items.forEach(
+       elements => order.attributes.articulos.push(elements.article.id)
+    );
     /*-Crear orden con sus items*/
+    console.log("===>" +props.cliente.id);
+    if(props.cliente.id!==undefined){
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
       props.cart.items.forEach((item) => {
@@ -114,7 +169,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
         
       });
     });
-
+  }
   };
   
   // const [selectedFile, setSelectedFile] = useState(null);

@@ -22,6 +22,10 @@ import { newItem, newOrder } from 'services/api/orders';
 import { sendRandomId } from 'helpers/randomIdUser';
 import { getDispatchers, getLibradores } from 'services/api/users';
 import { useMutation, useQuery } from 'react-query';
+import { newCliente } from '../../../services/api/cliente';
+import { AxiosError } from 'axios';
+
+import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
 
 const initialClient = { name: 'ss' };
 const initialPayment = {
@@ -59,16 +63,62 @@ export const CreateOrderPage = () => {
   
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
-    if(cliente == null){
-      toast({
-        title: 'Indicar cliente',
-        description: 'Se requiere el nombre del cliente para poder identificar el pedido',
-        status: 'warning',
-        duration: 9000,
-        isClosable: true,
+
+       
+    if(client.id==undefined){
+    
+      try {
+        //Registrar cliente nuevo con datos dumi sin registro
+        client.attributes.RFC="x"
+        client.attributes.calle="x"
+        client.ciudad="x"
+        client.attributes.codigo_postal="1"
+        client.attributes.colonia="x"
+        client.attributes.correo="example@gmail.com"
+        client.attributes.estado="x"
+        client.attributes.telefono="1"
+      var clientesave  =  newCliente(client.attributes);
+      clientesave.then((response) => {
+        client.id=response.data.id
+        console.log(response.data.id)
       });
-      return;
+      
+    } catch (e) {
+        const error = e as AxiosError;
+        if (error?.response?.status === 400) {
+          toast({
+            title: 'Error.',
+            description: 'No se pudo registrar el cliente.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        } else {
+        
+          toast({
+            title: 'Error.',
+            description: SERVER_ERROR_MESSAGE,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        }
+      }
+
+   
     }
+    // if(cliente == null){
+    //   toast({
+    //     title: 'Indicar cliente',
+    //     description: 'Se requiere el nombre del cliente para poder identificar el pedido',
+    //     status: 'warning',
+    //     duration: 9000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
 
     var date = new Date();
     var order: any = {
@@ -88,6 +138,8 @@ export const CreateOrderPage = () => {
       }
     };
 
+    console.log("===>" +client.id);
+    if(client.id!==undefined){
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
       cart.items.forEach((item: any) => {
@@ -113,7 +165,7 @@ export const CreateOrderPage = () => {
       });
 
     });
-
+  }
   };
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();

@@ -32,8 +32,16 @@ export const getOrderEntregado = async () => {
 }
 
 export const getOrderPendiente = async () => {
-    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente`)
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos`)
     return data.data
+}
+export const putCliente = async (params: any) => {
+    console.log(params);
+      delete params.update.data.articulos
+      delete params.update.data.fecha
+      delete params.update.data.hora 
+    const { data } = await axios.put(`${API_URL}/clientes/${params.id}`, params.update)
+    return data.data;
 }
 
 export const deleteOrder = async (id: number) => {

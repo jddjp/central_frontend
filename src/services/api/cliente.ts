@@ -22,7 +22,6 @@ export interface client {
 export type Cliente = ContentType<client>;
 
 export const newCliente = async (payload: any) => {
-
   const response = await axios.post(`${API_URL}/clientes`, {data: payload});
   return response.data;
 };
