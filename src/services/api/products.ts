@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { postStock, updateStock } from './stocks'
 const API_URL = process.env.REACT_APP_API_URL
 
 
@@ -18,10 +19,7 @@ export const postProduct = async (param: any) => {
     .then(({data}) => {
       param.stock.data.articulo = data.data.id
 
-      axios.post(`${API_URL}/stocks`, param.stock)
-      .then(({data}) => {
-        return data
-      })
+      postStock(param.stock)
     })
 
   } else {
@@ -34,38 +32,51 @@ export const postProduct = async (param: any) => {
 
       axios.post(`${API_URL}/articulos`, param.product)
       .then(({ data }) => {
-        return data;
+        param.stock.data.articulo = data.data.id
+
+        postStock(param.stock)
       })
     })
   }
 }
 
-export const deleteProduct = async (id: string) => {
+export const deleteProduct = async (id: number) => {
   const { data } = await axios.delete(`${API_URL}/articulos/${id}`)
   return data.data
 }
 
-export const editProduct = async (params: any) => {
+export const editProduct = async (param: any) => {
 
-  if(params.edit.data.foto === null){
-    delete params.edit.data.foto;
+  console.log(param.edit, param.id);
 
-    const { data } = await axios.put(`${API_URL}/articulos/${params.id}`, params.edit)
-    return data.data;
+  if(!param.edit.data.foto){
+    delete param.edit.data.foto;
 
-  } else if(params.edit.data.foto) {
+    axios.put(`${API_URL}/articulos/${param.id}`, param.edit)
+    .then(() => {
+      updateStock(param.id, param.stock)
+    })
+
+  } else if(param.edit.data.foto) {
     let file = new FormData();
-    file.append("files", params.edit.data.foto);
+    file.append("files", param.edit.data.foto);
 
     axios.post(`${API_URL}/upload/`, file)
     .then((response) => {
-      params.edit.data.foto = response.data[0].id
+      param.edit.data.foto = response.data[0].id
 
-      axios.put(`${API_URL}/articulos/${params.id}`, params.edit )
-      .then(({ data }) => {
-        return data;
-      })
+      axios.put(`${API_URL}/articulos/${param.id}`, param.edit )
     })  
   }
   
+}
+
+export const getProductById = async (id: number) => {
+  const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
+  
+  if(data.data.length === 0) {
+    return {}
+  } else {
+    return data.data[0].attributes
+  }
 }
