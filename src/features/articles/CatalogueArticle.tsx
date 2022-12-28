@@ -10,6 +10,9 @@ import { ArticleAttributes } from "types/Article";
 import { ContentType } from "types/core";
 import { WithRequired } from "types/utils";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL
+
+
 export interface CatalogueArticleProps {
   article: ContentType<WithRequired<ArticleAttributes, "foto">>;
 }
@@ -36,7 +39,7 @@ export const CatalogueArticle = (props: CatalogueArticleProps) => {
       <Box width="80%" alignSelf="center">
         <AspectRatio ratio={4 / 3}>
           <Image
-            src={article.attributes.foto.data.attributes.url}
+            src={`${BASE_URL}${article?.attributes?.foto?.data?.attributes?.url}` ?? 'https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'}
             alt={article.attributes.nombre}
             draggable="false"
             fallback={<Skeleton />}

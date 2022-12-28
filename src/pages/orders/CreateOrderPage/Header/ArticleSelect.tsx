@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select/async';
 import {
-  ActionMeta,
   components,
   InputActionMeta,
   MultiValue,
@@ -24,7 +23,7 @@ const getArticleLabel = (article: ShoppingCartArticle) =>
 const getArticleValue = (article: ShoppingCartArticle) => article.id.toString();
 
 const handleAutocomplete = async (search: string) => {
-  if (search.length < 3) return [];
+  // if (search.length < 3) return [];
 
   const result = await searchArticles(search);
   console.log("===========Productos============");
@@ -49,8 +48,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   };
 
   const handleChange = (
-    option: MultiValue<ShoppingCartArticle> | SingleValue<ShoppingCartArticle>,
-    actionMeta: ActionMeta<ShoppingCartArticle>
+    option: MultiValue<ShoppingCartArticle> | SingleValue<ShoppingCartArticle>
   ) => {
     setArticle(option as ShoppingCartArticle);
     setInputValue(

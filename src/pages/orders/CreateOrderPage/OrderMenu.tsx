@@ -7,7 +7,6 @@ import NewClient from "pages/payments/invoice/NewClient";
 import { Item } from "types/Order";
 import { ShoppingCart } from './types';
 import { newItem, newOrder } from 'services/api/orders';
-import { extractFlagOrders } from "services/api/orders";
 import { sendRandomId } from 'helpers/randomIdUser';
 import { useQuery } from 'react-query';
 import { getDispatchers, getLibradores } from 'services/api/users';

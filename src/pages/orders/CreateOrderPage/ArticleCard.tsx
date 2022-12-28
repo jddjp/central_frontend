@@ -30,7 +30,6 @@ export const ArticleCard = (props: ArticleCardProps) => {
   const { nombre, descripcion } = article.attributes;
   console.log(props.article);
   const { data: stock } = useQuery(['stock'], () => extractStock(props.article.id))
-  console.log(stock);
 
   return (
     <Tabs isFitted isLazy={true}>
@@ -46,7 +45,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Box width="60%" alignSelf="center">
                 <AspectRatio ratio={4 / 3}>
                   <Image
-                    src={props?.article?.attributes?.foto.data?.attributes?.url ? `${BASE_URL}${props?.article?.attributes?.foto?.data?.attributes?.url}` : 'https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'}
+                    src={`${BASE_URL}${props?.article?.attributes?.foto?.data?.attributes?.url}` ?? 'https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'}
                     alt={nombre}
                     draggable="false"
                     fallback={<Skeleton />}

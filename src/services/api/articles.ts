@@ -5,24 +5,10 @@ import { WithRequired } from "types/utils";
 import { ListResponse, PaginationConfig } from "./types";
 import { buildFilter, defaultPaginationConfig } from "./utils";
 const API_URL = process.env.REACT_APP_API_URL
-const BASE_URL = process.env.REACT_APP_BASE_URL
-
 
 export type SearchArticle = ContentType<
   WithRequired<ArticleAttributes, "foto" | "unidad_de_medida">
 >;
-
-const fixArticleMediaUrls = <
-  T extends ContentType<WithRequired<ArticleAttributes, "foto">>
->(
-  article: T
-) => {
-  
-  article.attributes.foto.data.attributes.url =
-    `${BASE_URL}${article.attributes.foto.data.attributes.url}`;
-
-  return article;
-};
 
 export const searchArticles = async ( name: string) => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=foto`)
@@ -41,7 +27,7 @@ export const listArticles = async (
   const response: ListResponse<SearchArticle> = (
     await axios.get(`${API_URL}/articulos`, { params: queryParams })
   ).data;
-  response.data = response.data.map(fixArticleMediaUrls);
+  // response.data = response.data.map(fixArticleMediaUrls);
 
   return response;
 };
