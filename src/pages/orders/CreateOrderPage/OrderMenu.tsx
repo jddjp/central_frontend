@@ -59,10 +59,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
       });
       return;
     }
-   
-   
 
-    
     if(props.cliente.id==undefined){
     
       try {
@@ -132,15 +129,17 @@ export const OrderMenu = (props: OrderMenuProps) => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
+        comentario:  props.cart.items.map((article: any) => {
+          return `${article.amount}x ${article.article.attributes.nombre}`
+        }).toString(),
         librador: sendRandomId(libradores),
         repartidor: sendRandomId(dispatchers),
         cliente: props.cliente.id,
-        articulos: []
+        articulos: props.cart.items.map((article: any) => {
+          return article.article.id
+        })
       }
     };
-   props.cart.items.forEach(
-       elements => order.attributes.articulos.push(elements.article.id)
-    );
     /*-Crear orden con sus items*/
     console.log("===>" +props.cliente.id);
     if(props.cliente.id!==undefined){

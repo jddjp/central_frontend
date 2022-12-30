@@ -64,61 +64,58 @@ export const CreateOrderPage = () => {
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
 
-       
-    if(client.id==undefined){
+  if(cliente === undefined){
+    toast({
+      title: 'Indicar cliente',
+      description: 'Se requiere el nombre del cliente para poder identificar el pedido',
+      status: 'warning',
+      duration: 9000,
+      isClosable: true,
+    });
+    return;
+  }
+
+  if(client.id===undefined){
     
-      try {
-        //Registrar cliente nuevo con datos dumi sin registro
-        client.attributes.RFC="x"
-        client.attributes.calle="x"
-        client.ciudad="x"
-        client.attributes.codigo_postal="1"
-        client.attributes.colonia="x"
-        client.attributes.correo="example@gmail.com"
-        client.attributes.estado="x"
-        client.attributes.telefono="1"
+    try {
+      //Registrar cliente nuevo con datos dumi sin registro
+      client.attributes.RFC="x"
+      client.attributes.calle="x"
+      client.ciudad="x"
+      client.attributes.codigo_postal="1"
+      client.attributes.colonia="x"
+      client.attributes.correo="example@gmail.com"
+      client.attributes.estado="x"
+      client.attributes.telefono="1"
       var clientesave  =  newCliente(client.attributes);
       clientesave.then((response) => {
         client.id=response.data.id
         console.log(response.data.id)
       });
-      
     } catch (e) {
-        const error = e as AxiosError;
-        if (error?.response?.status === 400) {
-          toast({
-            title: 'Error.',
-            description: 'No se pudo registrar el cliente.',
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
-          });
-          return;
-        } else {
-        
-          toast({
-            title: 'Error.',
-            description: SERVER_ERROR_MESSAGE,
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
-          });
-          return;
-        }
+      const error = e as AxiosError;
+      if (error?.response?.status === 400) {
+        toast({
+          title: 'Error.',
+          description: 'No se pudo registrar el cliente.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+        return;
+      } else {
+      
+        toast({
+          title: 'Error.',
+          description: SERVER_ERROR_MESSAGE,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+        return;
       }
-
-   
     }
-    // if(cliente == null){
-    //   toast({
-    //     title: 'Indicar cliente',
-    //     description: 'Se requiere el nombre del cliente para poder identificar el pedido',
-    //     status: 'warning',
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    //   return;
-    // }
+  }
 
     var date = new Date();
     var order: any = {
@@ -135,6 +132,12 @@ export const CreateOrderPage = () => {
         librador: sendRandomId(libradores),
         repartidor: sendRandomId(dispatchers),
         cliente: cliente.id,
+        comentario:  cart.items.map((article: any) => {
+          return `${article.amount}x ${article.article.attributes.nombre}`
+        }).toString(),
+        articulos: cart.items.map((article: any) => {
+          return article.article.id
+        })
       }
     };
 
@@ -167,6 +170,7 @@ export const CreateOrderPage = () => {
     });
   }
   };
+
   const { total, addItem, clear, removeItem, cart, changeItemAmount } =
     useCart();
   const {
@@ -215,6 +219,8 @@ export const CreateOrderPage = () => {
       setCliente(state.client);
     }
   }, [state]);
+
+  console.log(cart);
 
   return (
     <Formik

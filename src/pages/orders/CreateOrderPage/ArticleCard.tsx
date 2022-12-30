@@ -29,7 +29,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
   const { article, children, ...rest } = props;
   const { nombre, descripcion } = article.attributes;
   console.log(props.article);
-  const { data: stock } = useQuery(['stock'], () => extractStock(props.article.id))
+  const { data: stock } = useQuery(['stock', props.article.id], () => extractStock(props.article.id))
 
   return (
     <Tabs isFitted isLazy={true}>

@@ -4,6 +4,7 @@ import { CartProductMeta } from "./CartProductMeta";
 import { getFinalPrice } from "../useCart/reducer";
 import { ChangeEvent } from "react";
 import { ShoppingCartItem } from "../types";
+import { useQueryClient } from 'react-query'
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
 type CartItemProps = {
@@ -12,13 +13,15 @@ type CartItemProps = {
   onChangeItemAmount: (amount: number) => void;
 };
 
+
 export const CartItem = (props: CartItemProps) => {
+  
   const { item, onClickDelete, onChangeItemAmount } = props;
+  const queryCache = useQueryClient()
+  const query : any = queryCache.getQueryData(['stock', item.article.id])
   const { amount, customPrice } = item;
   const { descripcion, nombre, precio_lista } =
     item.article.attributes;
-  //const imageUrl = foto.data.attributes.url;
-  // const imageUrl = foto?.data?.attributes?.url;
   const imageUrl = `${BASE_URL}${props?.item?.article?.attributes?.foto?.data?.attributes?.url}`
 
   const handleChangeAmount = (e: ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +58,7 @@ export const CartItem = (props: CartItemProps) => {
             onChange={handleChangeAmount}
           />
           <Text display="inline" ml="2">
-            {//unidad_de_medida!.data.attributes.nombre ||
+            { query?.medida ||
               "No hay una unidad de medida disponible."}
           </Text>
         </Box>

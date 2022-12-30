@@ -4,6 +4,7 @@ import { AuthProvider } from "providers/AuthProvider";
 import ReactDOM from "react-dom"
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider} from "react-query";
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { App } from "./App"
 
 const queryClient = new QueryClient({
@@ -23,6 +24,7 @@ ReactDOM.render(
       <BrowserRouter>
         <AuthProvider>
         <App />
+        <ReactQueryDevtools/>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
