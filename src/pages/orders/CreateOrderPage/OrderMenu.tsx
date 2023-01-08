@@ -76,6 +76,52 @@ export const OrderMenu = (props: OrderMenuProps) => {
       client.then((response) => {
         props.cliente.id=response.data.id
         console.log(response.data.id)
+        var order: any = {
+          id: 0,
+          attributes:{
+              fecha_pedido: date.toISOString(),
+              hora_pedido:
+                (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+                ":" +
+                (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+                ":" +
+                (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
+              estatus: "pendiente",
+              comentario:  props.cart.items.map((article: any) => {
+                return `${article.amount}x ${article.article.attributes.nombre}`
+              }).toString(),
+              librador: sendRandomId(libradores),
+              repartidor: sendRandomId(dispatchers),
+              cliente: response.data.id,
+              articulos: props.cart.items.map((article: any) => {
+                return article.article.id
+              })
+          }
+        };
+        var responseNewOrder = newOrder(order.attributes);
+          responseNewOrder.then((response) => {
+            props.cart.items.forEach((item) => {
+              var itemNew: Item = {
+                id: 0,
+                attributes: {
+                cantidad: item.amount,
+                pesado: 0,
+                cantidad_real: item.amount,
+                precio_venta: item.article.attributes.precio_lista,
+                pedido: response.data.id,
+                articulos: item.article.id
+                }
+              };
+
+              // console.log("----------");
+              // console.log(response.data.id);
+              // console.log(item.article.id);
+              
+              newItem(itemNew);
+              order = response.data;
+              
+            });
+          });
       });
       
     } catch (e) {

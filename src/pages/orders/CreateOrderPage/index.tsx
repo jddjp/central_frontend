@@ -89,8 +89,55 @@ export const CreateOrderPage = () => {
       client.attributes.telefono="1"
       var clientesave  =  newCliente(client.attributes);
       clientesave.then((response) => {
-        client.id=response.data.id
+        client.id = response.data.id
         console.log(response.data.id)
+        var order: any = {
+          id: 0,
+          attributes:{
+            fecha_pedido: date.toISOString(),
+            hora_pedido:
+              (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+              ":" +
+              (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+              ":" +
+              (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
+            estatus: "pendiente",
+            librador: sendRandomId(libradores),
+            repartidor: sendRandomId(dispatchers),
+            cliente:  response.data.id,
+            comentario:  cart.items.map((article: any) => {
+              return `${article.amount}x ${article.article.attributes.nombre}`
+            }).toString(),
+            articulos: cart.items.map((article: any) => {
+              return article.article.id
+            })
+          }
+        };
+        var responseNewOrder = newOrder(order.attributes);
+          responseNewOrder.then((response) => {
+            cart.items.forEach((item: any) => {
+              var itemNew: Item = {
+                id: 0,
+                attributes: {
+                cantidad: item.amount,
+                pesado: 0,
+                cantidad_real: item.amount,
+                precio_venta: item.article.attributes.precio_lista,
+                pedido: response.data.id,
+                articulos: item.article.id
+                }
+              };
+
+              // newItem(itemNew);
+              mutate(itemNew, {
+                onSuccess: () => {
+                  navigate(route,{state:{cart,client}});
+                }
+              })
+              order = response.data;
+            });
+
+          });
       });
     } catch (e) {
       const error = e as AxiosError;
