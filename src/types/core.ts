@@ -43,7 +43,11 @@ export interface MediaAttributes {
 export type Media = ContentType<MediaAttributes>;
 
 export interface UnidadMedidaAttributes {
-  nombre: string,
+  id: number,
+  attributes: {
+    nombre: string
+  }
+  // nombre: string,
   createdAt: string,
   updatedAt: string,
 };

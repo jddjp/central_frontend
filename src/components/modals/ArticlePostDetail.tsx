@@ -8,7 +8,8 @@ import { InputText } from "primereact/inputtext";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getSubsidiaries } from '../../services/api/subsidiary';
 import { postProduct } from 'services/api/products';
-import { categoria, estado, initProduct, initStock, unidadMedida } from 'helpers/constants';
+import { categoria, estado, initProduct, initStock } from 'helpers/constants';
+import { getUnidades } from 'services/api/articles';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -21,7 +22,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
 
   const queryClient = useQueryClient()
   const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
+  const { data: unidadMedida } = useQuery(["unidades"], getUnidades)
   const createProduct = useMutation(postProduct)
+
+  console.log(unidadMedida);
 
   const [product, setProduct] = useState({
     nombre: '',

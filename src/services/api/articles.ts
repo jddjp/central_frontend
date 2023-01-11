@@ -1,3 +1,4 @@
+import { UnidadMedidaAttributes } from './../../types/core';
 import axios from "axios";
 import { Article, ArticleAttributes, PriceBreakage } from "types/Article";
 import { ContentType } from "types/core";
@@ -42,3 +43,13 @@ export const getArticlePrices = async (
   return (await axios.get(`${API_URL}/rupturaprecios`, { params: queryParams })).data;
 };
 
+export const getUnidades = async () => {
+  const { data } = await axios.get(`${API_URL}/unidadmedidas`)
+
+  return data.data.map((unidad: UnidadMedidaAttributes) => {
+    return {
+      value: unidad.id,
+      name: unidad.attributes.nombre
+    }
+  })
+}
