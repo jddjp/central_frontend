@@ -9,7 +9,9 @@ export const newOrder = async (payload: IOrderAttributes) => {
 }
 
 export const newItem = async (payload: Item) => {
+    console.log(payload.attributes.unidad_de_medida);
     const response = await axios.post(`${API_URL}/items`, {data: { ...payload.attributes }});
+    console.log(response.data);
     return response.data;
 }
 
@@ -37,9 +39,9 @@ export const getOrderPendiente = async () => {
 }
 export const putCliente = async (params: any) => {
     console.log(params);
-      delete params.update.data.articulos
-      delete params.update.data.fecha
-      delete params.update.data.hora 
+    delete params.update.data.articulos
+    delete params.update.data.fecha
+    delete params.update.data.hora 
     const { data } = await axios.put(`${API_URL}/clientes/${params.id}`, params.update)
     return data.data;
 }

@@ -47,3 +47,9 @@ export const updateStock = async (id: number, stockData: any) => {
   const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data[0].id}`, stockData)
   return { data }
 }
+
+export const extractUnidad = async (id: number) => {
+  const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
+
+  return data.data[0].attributes.unidad_de_medida.data.id
+}

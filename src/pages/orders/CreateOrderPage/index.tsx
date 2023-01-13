@@ -26,6 +26,7 @@ import { newCliente } from '../../../services/api/cliente';
 import { AxiosError } from 'axios';
 
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
+import { extractUnidad } from 'services/api/stocks';
 
 const initialClient = { name: 'ss' };
 const initialPayment = {
@@ -39,6 +40,8 @@ export interface LocationOrdenEdit {
   editCart: Boolean,
   cart: Order[]
 }
+
+// TODO: REFACTOR CODE REPEAT
 
 export const CreateOrderPage = () => {
 
@@ -116,25 +119,28 @@ export const CreateOrderPage = () => {
         var responseNewOrder = newOrder(order.attributes);
           responseNewOrder.then((response) => {
             cart.items.forEach((item: any) => {
-              var itemNew: Item = {
-                id: 0,
-                attributes: {
-                cantidad: item.amount,
-                pesado: 0,
-                cantidad_real: item.amount,
-                precio_venta: item.article.attributes.precio_lista,
-                pedido: response.data.id,
-                articulos: item.article.id
-                }
-              };
-
-              // newItem(itemNew);
-              mutate(itemNew, {
-                onSuccess: () => {
-                  navigate(route,{state:{cart,client}});
-                }
+              extractUnidad(item.article.id)
+              .then(extract => {
+                var itemNew: Item = {
+                  id: 0,
+                  attributes: {
+                    cantidad: item.amount,
+                    pesado: 0,
+                    cantidad_real: item.amount,
+                    precio_venta: item.article.attributes.precio_lista,
+                    pedido: response.data.id,
+                    articulos: item.article.id,
+                    unidad_de_medida: extract
+                  }
+                };
+  
+                mutate(itemNew, {
+                  onSuccess: () => {
+                    navigate(route,{state:{cart,client}});
+                  }
+                })
+                order = response.data;
               })
-              order = response.data;
             });
 
           });
@@ -193,25 +199,30 @@ export const CreateOrderPage = () => {
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
       cart.items.forEach((item: any) => {
-        var itemNew: Item = {
-          id: 0,
-          attributes: {
-          cantidad: item.amount,
-          pesado: 0,
-          cantidad_real: item.amount,
-          precio_venta: item.article.attributes.precio_lista,
-          pedido: response.data.id,
-          articulos: item.article.id
-          }
-        };
-
-        // newItem(itemNew);
-        mutate(itemNew, {
-          onSuccess: () => {
-            navigate(route,{state:{cart,client}});
-          }
+        extractUnidad(item.article.id)
+        .then(extract => {
+          var itemNew: Item = {
+            id: 0,
+            attributes: {
+              cantidad: item.amount,
+              pesado: 0,
+              cantidad_real: item.amount,
+              precio_venta: item.article.attributes.precio_lista,
+              pedido: response.data.id,
+              articulos: item.article.id,
+              unidad_de_medida: extract
+            }
+          };
+  
+          // newItem(itemNew);
+          console.log(itemNew);
+          mutate(itemNew, {
+            onSuccess: () => {
+              navigate(route,{state:{cart,client}});
+            }
+          })
+          order = response.data;
         })
-        order = response.data;
       });
 
     });
