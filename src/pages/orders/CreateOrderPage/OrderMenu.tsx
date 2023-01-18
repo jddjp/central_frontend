@@ -105,7 +105,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
           responseNewOrder.then((response) => {
             props.cart.items.forEach((item) => {
               extractUnidad(item.article.id)
-              .then(extract => {
+              .then((extract: number) => {
                 var itemNew: Item = {
                   id: 0,
                   attributes: {
@@ -194,7 +194,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
     responseNewOrder.then((response) => {
       props.cart.items.forEach((item) => {
         extractUnidad(item.article.id)
-        .then(extract => {
+        .then((extract: number) => {
           var itemNew: Item = {
             id: 0,
             attributes: {
@@ -216,11 +216,6 @@ export const OrderMenu = (props: OrderMenuProps) => {
     });
   }
   };
-  
-  // const [selectedFile, setSelectedFile] = useState(null);
-  /*const myUploader = (event) => {
-    setSelectedFile(event.files[0]);
-}*/
 
   return (
     <FixedMenu right="3" top="30vh">

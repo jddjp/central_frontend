@@ -21,9 +21,8 @@ import { ExistingClient } from 'pages/payments/invoice/ExistingClient';
 import { newItem, newOrder } from 'services/api/orders';
 import { sendRandomId } from 'helpers/randomIdUser';
 import { getDispatchers, getLibradores } from 'services/api/users';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { newCliente } from '../../../services/api/cliente';
-import { articleStock } from '../../../services/api/stocks';
 import { AxiosError } from 'axios';
 
 
@@ -46,17 +45,13 @@ export interface LocationOrdenEdit {
 // TODO: REFACTOR CODE REPEAT
 
 export const CreateOrderPage = () => {
-  let stockArticle;
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<any>();
   const [dispatchers, setDispatchers] = useState<number[]>([])
   const [libradores, setLibradores] = useState<number[]>([])
-  const [stock, setStock] = useState(stockArticle);
-  const updateStock = useMutation(articleStock);
   const { mutate } = useMutation(newItem)
-  const queryClient = useQueryClient();
   useQuery(["users_librador"], getLibradores, {
     onSuccess: (libradores) => {
       setLibradores(libradores.map((users: any) => users.id))
@@ -70,8 +65,7 @@ export const CreateOrderPage = () => {
   
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
-   
-   
+
   if(cliente === undefined){
     toast({
       title: 'Indicar cliente',
@@ -125,7 +119,7 @@ export const CreateOrderPage = () => {
           responseNewOrder.then((response) => {
             cart.items.forEach((item: any) => {
               extractUnidad(item.article.id)
-              .then(extract => {
+              .then((extract: number)=> {
                 var itemNew: Item = {
                   id: 0,
                   attributes: {
@@ -138,7 +132,7 @@ export const CreateOrderPage = () => {
                     unidad_de_medida: extract
                   }
                 };
-  
+
                 mutate(itemNew, {
                   onSuccess: () => {
                     navigate(route,{state:{cart,client}});
@@ -174,22 +168,6 @@ export const CreateOrderPage = () => {
       }
     }
   }
-  
-  console.log('card', cart);
-   cart.items.forEach((element:any) => {
-      stockArticle = element;
-      console.log('stock', element);
-    updateStock.mutate({update: {data: element}}, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['stock'])
-        
-      }
-    })
-   });
-   
-  
-  
-  
 
     var date = new Date();
     var order: any = {
@@ -221,7 +199,7 @@ export const CreateOrderPage = () => {
     responseNewOrder.then((response) => {
       cart.items.forEach((item: any) => {
         extractUnidad(item.article.id)
-        .then(extract => {
+        .then((extract: number) => {
           var itemNew: Item = {
             id: 0,
             attributes: {

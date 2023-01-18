@@ -1,18 +1,19 @@
 import axios from 'axios'
 import { IOrderAttributes, Item } from 'types/Order';
+import { discountStock } from './stocks';
 const API_URL = process.env.REACT_APP_API_URL
 
 export const newOrder = async (payload: IOrderAttributes) => {
-    console.log(payload);
     const response = await axios.post(`${API_URL}/pedidos`, {data: { ...payload }});
     return response.data;
 }
 
 export const newItem = async (payload: Item) => {
-    console.log(payload.attributes.unidad_de_medida);
-    const response = await axios.post(`${API_URL}/items`, {data: { ...payload.attributes }});
-    console.log(response.data);
-    return response.data;
+    axios.post(`${API_URL}/items`, {data: { ...payload.attributes }})
+    .then(async () => {
+        const response = await discountStock({id: payload.attributes.articulos, cantidad: payload.attributes.cantidad})
+        return response.data
+    })
 }
 
 export const getItems = async () => {
