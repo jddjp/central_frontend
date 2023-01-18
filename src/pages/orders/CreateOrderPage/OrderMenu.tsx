@@ -14,12 +14,15 @@ import { newCliente } from '../../../services/api/cliente';
 import { AxiosError } from 'axios';
 
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
+import { extractUnidad } from 'services/api/stocks';
 export interface OrderMenuProps extends FixedMenuProps {
   onOpenCatalogueModal: VoidFunction;
   onOpenConfirmationClear: VoidFunction;
   cart: ShoppingCart
   cliente: any
 }
+
+// TODO: REFACTOR CODE REPEAT
 
 export const OrderMenu = (props: OrderMenuProps) => {
 
@@ -101,24 +104,24 @@ export const OrderMenu = (props: OrderMenuProps) => {
         var responseNewOrder = newOrder(order.attributes);
           responseNewOrder.then((response) => {
             props.cart.items.forEach((item) => {
-              var itemNew: Item = {
-                id: 0,
-                attributes: {
-                cantidad: item.amount,
-                pesado: 0,
-                cantidad_real: item.amount,
-                precio_venta: item.article.attributes.precio_lista,
-                pedido: response.data.id,
-                articulos: item.article.id
-                }
-              };
-
-              // console.log("----------");
-              // console.log(response.data.id);
-              // console.log(item.article.id);
-              
-              newItem(itemNew);
-              order = response.data;
+              extractUnidad(item.article.id)
+              .then(extract => {
+                var itemNew: Item = {
+                  id: 0,
+                  attributes: {
+                    cantidad: item.amount,
+                    pesado: 0,
+                    cantidad_real: item.amount,
+                    precio_venta: item.article.attributes.precio_lista,
+                    pedido: response.data.id,
+                    articulos: item.article.id,
+                    unidad_de_medida: extract
+                  }
+                };
+                
+                newItem(itemNew);
+                order = response.data;
+              })
               
             });
           });
@@ -147,8 +150,6 @@ export const OrderMenu = (props: OrderMenuProps) => {
           return;
         }
       }
-
-   
     }
 
     //Validacion original
@@ -192,24 +193,24 @@ export const OrderMenu = (props: OrderMenuProps) => {
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
       props.cart.items.forEach((item) => {
-        var itemNew: Item = {
-          id: 0,
-          attributes: {
-          cantidad: item.amount,
-          pesado: 0,
-          cantidad_real: item.amount,
-          precio_venta: item.article.attributes.precio_lista,
-          pedido: response.data.id,
-          articulos: item.article.id
-          }
-        };
-
-        // console.log("----------");
-        // console.log(response.data.id);
-        // console.log(item.article.id);
-        
-        newItem(itemNew);
-        order = response.data;
+        extractUnidad(item.article.id)
+        .then(extract => {
+          var itemNew: Item = {
+            id: 0,
+            attributes: {
+              cantidad: item.amount,
+              pesado: 0,
+              cantidad_real: item.amount,
+              precio_venta: item.article.attributes.precio_lista,
+              pedido: response.data.id,
+              articulos: item.article.id,
+              unidad_de_medida: extract
+            }
+          };
+          
+          newItem(itemNew);
+          order = response.data;
+        })
         
       });
     });

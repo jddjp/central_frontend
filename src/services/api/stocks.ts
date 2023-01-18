@@ -47,6 +47,7 @@ export const updateStock = async (id: number, stockData: any) => {
   const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data[0].id}`, stockData)
   return { data }
 }
+<<<<<<< HEAD
 export const articleStock = async (datos: any) => {
 
   let id = datos.update.data.article.id;
@@ -71,4 +72,11 @@ export const articleStock = async (datos: any) => {
    
   });
   
+=======
+
+export const extractUnidad = async (id: number) => {
+  const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
+
+  return data.data[0].attributes.unidad_de_medida.data.id
+>>>>>>> e0445aeb7130c891ce1dc0f3881b8612044226e4
 }
