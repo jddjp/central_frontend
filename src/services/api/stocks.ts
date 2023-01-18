@@ -47,3 +47,28 @@ export const updateStock = async (id: number, stockData: any) => {
   const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data[0].id}`, stockData)
   return { data }
 }
+export const articleStock = async (datos: any) => {
+
+  let id = datos.update.data.article.id;
+  let cantArt = datos.update.data.amount;
+
+  const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
+  return data.data.forEach((element:any) => {
+   
+    let descuento = parseFloat(element.attributes.cantidad) - parseFloat(cantArt);
+    console.log('descuento', descuento);
+    element.attributes.cantidad = descuento;
+   
+    delete element.attributes.articulo;
+    delete element.attributes.imagen;
+    delete element.attributes.sucursal;
+    delete element.attributes.unidad_de_medida;
+   
+    console.log('data actualizado', element);
+    axios.put(`${API_URL}/stocks/${element.id}`, element).then((response)=>{
+      console.log(response);
+    });
+   
+  });
+  
+}

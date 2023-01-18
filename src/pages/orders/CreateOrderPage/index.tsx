@@ -21,9 +21,11 @@ import { ExistingClient } from 'pages/payments/invoice/ExistingClient';
 import { newItem, newOrder } from 'services/api/orders';
 import { sendRandomId } from 'helpers/randomIdUser';
 import { getDispatchers, getLibradores } from 'services/api/users';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { newCliente } from '../../../services/api/cliente';
+import { articleStock } from '../../../services/api/stocks';
 import { AxiosError } from 'axios';
+
 
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
 
@@ -41,15 +43,17 @@ export interface LocationOrdenEdit {
 }
 
 export const CreateOrderPage = () => {
-
+  let stockArticle;
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<any>();
   const [dispatchers, setDispatchers] = useState<number[]>([])
   const [libradores, setLibradores] = useState<number[]>([])
-
+  const [stock, setStock] = useState(stockArticle);
+  const updateStock = useMutation(articleStock);
   const { mutate } = useMutation(newItem)
+  const queryClient = useQueryClient();
   useQuery(["users_librador"], getLibradores, {
     onSuccess: (libradores) => {
       setLibradores(libradores.map((users: any) => users.id))
@@ -63,7 +67,8 @@ export const CreateOrderPage = () => {
   
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
-
+   
+   
   if(cliente === undefined){
     toast({
       title: 'Indicar cliente',
@@ -163,6 +168,22 @@ export const CreateOrderPage = () => {
       }
     }
   }
+  
+  console.log('card', cart);
+   cart.items.forEach((element:any) => {
+      stockArticle = element;
+      console.log('stock', element);
+    updateStock.mutate({update: {data: element}}, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['stock'])
+        
+      }
+    })
+   });
+   
+  
+  
+  
 
     var date = new Date();
     var order: any = {
