@@ -1,6 +1,7 @@
 import {
   AspectRatio,
   Box,
+  Button,
   Image,
   Skeleton,
   Stack,
@@ -17,6 +18,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCartArticle } from "./types";
 import { extractStock } from "services/api/stocks";
 import { useQuery } from "react-query";
+
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
 interface ArticleCardProps extends StackProps {
@@ -56,7 +58,11 @@ export const ArticleCard = (props: ArticleCardProps) => {
             </Stack>
 
             <Stack dir="column" w="full">
-              {children}
+            {stock?.stock === 0 ? 
+                <Button colorScheme="brand" disabled marginTop='4rem'>
+                  Sin Stock
+                </Button> : children
+              }
             </Stack>
           </Stack>
         </TabPanel>
