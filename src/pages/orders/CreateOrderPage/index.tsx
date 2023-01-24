@@ -19,7 +19,7 @@ import { client } from 'services/api/cliente';
 import { Item, Order } from 'types/Order';
 import { ExistingClient } from 'pages/payments/invoice/ExistingClient';
 import { newItem, newOrder } from 'services/api/orders';
-import { sendRandomId } from 'helpers/randomIdUser';
+import { sendRandomId, sendRandomIdString } from 'helpers/randomIdUser';
 import { getDispatchers, getLibradores } from 'services/api/users';
 import { useMutation, useQuery } from 'react-query';
 import { newCliente } from '../../../services/api/cliente';
@@ -49,7 +49,7 @@ export const CreateOrderPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<any>();
-  const [dispatchers, setDispatchers] = useState<number[]>([])
+  const [dispatchers, setDispatchers] = useState<string[]>([])
   const [libradores, setLibradores] = useState<number[]>([])
   const { mutate } = useMutation(newItem)
   useQuery(["users_librador"], getLibradores, {
@@ -59,7 +59,7 @@ export const CreateOrderPage = () => {
   })
   useQuery(["users_dispatchers"], getDispatchers, {
     onSuccess: (dispatchers) => {
-      setDispatchers(dispatchers.map((users: any) => users.id))
+      setDispatchers(dispatchers.map((users: any) => users.id.toString()))
     }
   })
   
@@ -76,6 +76,7 @@ export const CreateOrderPage = () => {
     });
     return;
   }
+  console.log(dispatchers);
 
   if(client.id===undefined){
     
@@ -105,7 +106,7 @@ export const CreateOrderPage = () => {
               (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
             estatus: "pendiente",
             librador: sendRandomId(libradores),
-            repartidor: sendRandomId(dispatchers),
+            Despachador: sendRandomIdString(dispatchers),
             cliente:  response.data.id,
             comentario:  cart.items.map((article: any) => {
               return `${article.amount}x ${article.article.attributes.nombre}`
@@ -182,7 +183,7 @@ export const CreateOrderPage = () => {
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
         librador: sendRandomId(libradores),
-        repartidor: sendRandomId(dispatchers),
+        Despachador: sendRandomIdString(dispatchers),
         cliente: cliente.id,
         comentario:  cart.items.map((article: any) => {
           return `${article.amount}x ${article.article.attributes.nombre}`

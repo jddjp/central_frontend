@@ -7,7 +7,7 @@ import NewClient from "pages/payments/invoice/NewClient";
 import { Item } from "types/Order";
 import { ShoppingCart } from './types';
 import { newItem, newOrder } from 'services/api/orders';
-import { sendRandomId } from 'helpers/randomIdUser';
+import { sendRandomId, sendRandomIdString } from 'helpers/randomIdUser';
 import { useQuery } from 'react-query';
 import { getDispatchers, getLibradores } from 'services/api/users';
 import { newCliente } from '../../../services/api/cliente';
@@ -28,7 +28,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const [disponibleUsers, setDisponibleUsers] = useState<number[]>([])
-  const [dispatchers, setDispatchers] = useState<number[]>([])
+  const [dispatchers, setDispatchers] = useState<string[]>([])
   const [libradores, setLibradores] = useState<number[]>([])
   const { onOpenCatalogueModal, onOpenConfirmationClear } = props;
 
@@ -39,7 +39,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
   })
   useQuery(["users_dispatchers"], getDispatchers, {
     onSuccess: (dispatchers) => {
-      setDispatchers(dispatchers.map((users: any) => users.id))
+      setDispatchers(dispatchers.map((users: any) => users.id.toString()))
     }
   })
   // useQuery(["flagOrders"], extractFlagOrders, {
@@ -94,7 +94,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
                 return `${article.amount}x ${article.article.attributes.nombre}`
               }).toString(),
               librador: sendRandomId(libradores),
-              repartidor: sendRandomId(dispatchers),
+              Despachador: sendRandomIdString(dispatchers),
               cliente: response.data.id,
               articulos: props.cart.items.map((article: any) => {
                 return article.article.id
@@ -180,7 +180,7 @@ export const OrderMenu = (props: OrderMenuProps) => {
           return `${article.amount}x ${article.article.attributes.nombre}`
         }).toString(),
         librador: sendRandomId(libradores),
-        repartidor: sendRandomId(dispatchers),
+        Despachador: sendRandomIdString(dispatchers),
         cliente: props.cliente.id,
         articulos: props.cart.items.map((article: any) => {
           return article.article.id
