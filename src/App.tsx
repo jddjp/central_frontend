@@ -26,6 +26,7 @@ import {ExistingClient} from 'pages/payments/invoice/ExistingClient';
 import { client } from 'services/api/cliente';
 import PromotionsPage from 'pages/articles/PromotionsPage';
 import AccountsPage from 'pages/accounts';
+import Contador from 'pages/contador/index';
 
 export const App = () => {
   useAuthInterceptors();
@@ -138,6 +139,12 @@ export const App = () => {
             element={
               <RequiredAuthentication>
                 <AccountsPage />
+              </RequiredAuthentication>
+            }/>
+            <Route path="/contador"
+            element={
+              <RequiredAuthentication>
+                <Contador />
               </RequiredAuthentication>
             }/>
         </Route>

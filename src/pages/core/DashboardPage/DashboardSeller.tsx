@@ -36,7 +36,7 @@ export const DashboardSeller = () => {
     {name: 'Historial de venta', route: '/sales'},
   ];
   const optionsContador = [
-    {name: 'Historial de venta', route: '/sales'},
+    {name: 'Articulos de factura', route: '/contador'},
   ];
   
   let options: any = [];
