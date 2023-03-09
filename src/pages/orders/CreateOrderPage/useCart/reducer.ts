@@ -71,23 +71,29 @@ export const cartReducer = (cart: ShoppingCart, action: Action): ShoppingCart =>
       const payload = action.payload;
       const searchedItemIndex = cart.items.findIndex(item => item.article.id === payload.item.article.id);
       if(searchedItemIndex >= 0) {
-        return {
-          ...cart,
-          items: [
-            {
-              ...cart.items[searchedItemIndex],
-              amount: payload.amount,
-            },
-            ...cart.items.slice(0, searchedItemIndex),
-            ...cart.items.slice(searchedItemIndex + 1, -1),
-          ]
-        }
+        cart.items[searchedItemIndex].amount = payload.amount;
       }
 
       return {
         ...cart,
         items: cart.items
       }
+    }
+
+    case 'changePriceItem': {
+      const payload = action.payload;
+      const searchedItemIndex = cart.items.findIndex(item => item.article.id === payload.item.article.id);
+      if(searchedItemIndex >= 0) {
+        if(payload.newprice === cart.items[searchedItemIndex].article.attributes.precio_lista){
+          cart.items[searchedItemIndex].customPrice= undefined; //se le asigna el precio base del articulo
+        }else{
+          cart.items[searchedItemIndex].customPrice = payload.newprice;
+        }
+      }
+      return {
+        ...cart,
+        items: cart.items
+      }; 
     }
 
     default:

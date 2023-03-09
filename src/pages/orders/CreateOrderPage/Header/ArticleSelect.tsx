@@ -17,14 +17,12 @@ export interface ArticleSelectProps {
   setArticle: (article: ShoppingCartArticle | null) => void;
 }
 
-const getArticleLabel = (article: ShoppingCartArticle) =>
-  article.attributes.nombre;
+const getArticleLabel = (article: ShoppingCartArticle) => article.attributes.nombre;
 
 const getArticleValue = (article: ShoppingCartArticle) => article.id.toString();
 
 const handleAutocomplete = async (search: string) => {
   // if (search.length < 3) return [];
-
   const result = await searchArticles(search);
   console.log("===========Productos============");
   console.log(result.data);
@@ -60,6 +58,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   return (
     <>
       <Select
+        defaultOptions
         loadOptions={handleAutocomplete}
         value={article}
         inputValue={inputValue}

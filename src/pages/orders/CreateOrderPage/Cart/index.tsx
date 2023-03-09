@@ -10,14 +10,15 @@ export interface ShoppingCartProps extends BoxProps {
   cart: ShoppingCart,
   onRemoveItem: (item: ShoppingCartItem) => void,
   onChangeItemAmount: (data: {item: ShoppingCartItem, amount: number}) => void,
+  onChangePriceItem: (data: {item: ShoppingCartItem, newprice: number}) => void
 }
 
 export const Cart = (props: ShoppingCartProps) => {
-  const { onOpenConfirmationClear, cart, onRemoveItem, onChangeItemAmount, ...rest } = props;
+  const { onOpenConfirmationClear, cart, onRemoveItem, onChangeItemAmount, onChangePriceItem, ...rest } = props;
 
   const handleRemoveItem = (item: ShoppingCartItem) => () => onRemoveItem(item);
   const handleChangeItemAmount = (item: ShoppingCartItem) => (amount: number) => onChangeItemAmount({item, amount});
-
+  const handleChangePriceItem = (item: ShoppingCartItem) => (newprice: number) => onChangePriceItem({item, newprice});
   return (
     <Stack {...rest}>
       <Text fontWeight="bold" fontSize="xl" mb={1}>Orden</Text>
@@ -33,6 +34,7 @@ export const Cart = (props: ShoppingCartProps) => {
                     item={item}
                     onClickDelete={handleRemoveItem(item)}
                     onChangeItemAmount={handleChangeItemAmount(item)}
+                    onChangePriceItem={handleChangePriceItem(item)}
                   />
                 )}
               </>

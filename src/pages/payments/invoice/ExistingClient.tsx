@@ -21,8 +21,7 @@ const getUserLabel = (user: any) =>
 const getUserValue = (user: any) => user.id.toString();
 
 const handleAutocomplete = async (search: string) => {
-  if (search.length < 1) return [];
-
+  //if (search.length < 1) return [];
   return await autocompleteByCliente({ search });
 };
 
@@ -106,6 +105,7 @@ export const ExistingClient = forwardRef((props : ClientInformationProps, ref) =
       spacing="4"
       mt='3'>
         <Select
+          defaultOptions
           ref={selectRef as any}
           loadOptions={handleAutocomplete}
           value={user}

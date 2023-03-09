@@ -4,4 +4,5 @@ export type Action =
   | { type: 'addItem', payload: ShoppingCartItem }
   | { type: 'clear', payload: undefined | null, }
   | { type: 'removeItem', payload: ShoppingCartItem, }
-  | { type: 'changeAmountItem', payload: {item: ShoppingCartItem, amount: number}};
+  | { type: 'changeAmountItem', payload: {item: ShoppingCartItem, amount: number}}
+  | { type: 'changePriceItem', payload: {item: ShoppingCartItem, newprice: number}};
