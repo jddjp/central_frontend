@@ -10,6 +10,7 @@ const initProduct = {
   codigo_qr: "",
   estado: "",
   foto: "",
+  fresh: true,
   unidad_de_medida: 0
 }
 

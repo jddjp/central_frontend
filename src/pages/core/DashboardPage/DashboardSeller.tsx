@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const DashboardSeller = () => {
   const navigate = useNavigate();
+
   const optionsSupervisor = [
     {name: 'Ingresar pedido', route: '/orders/new'},
     {name: 'Pedidos existentes', route: '/orders'},
@@ -28,12 +29,10 @@ export const DashboardSeller = () => {
     {name: 'Cuentas y Accesos', route: '/accounts'},
   ];
   const optionsLibrador = [
-    {name: 'Pedidos existentes', route: '/orders'},
-    {name: 'Historial de venta', route: '/sales'},
+    {name: 'Recuadro de tareas', route: '/taskbox'}
   ];
   const optionsReceptor = [
-    {name: 'Pedidos existentes', route: '/orders'},
-    {name: 'Historial de venta', route: '/sales'},
+    {name: 'Recuadro de tareas', route: '/taskbox'}
   ];
   const optionsContador = [
     {name: 'Historial de venta', route: '/sales'},

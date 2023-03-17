@@ -26,6 +26,7 @@ import {ExistingClient} from 'pages/payments/invoice/ExistingClient';
 import { client } from 'services/api/cliente';
 import PromotionsPage from 'pages/articles/PromotionsPage';
 import AccountsPage from 'pages/accounts';
+import TaskBox from 'pages/taskbox';
 
 export const App = () => {
   useAuthInterceptors();
@@ -140,6 +141,14 @@ export const App = () => {
                 <AccountsPage />
               </RequiredAuthentication>
             }/>
+
+          <Route path="/taskbox"
+            element={
+              <RequiredAuthentication>
+                <TaskBox/>
+              </RequiredAuthentication>
+            }/>
+
         </Route>
       </Routes>
     </ChakraProvider>

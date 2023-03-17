@@ -58,6 +58,15 @@ export const discountStock = async (data: { id: number, cantidad: number }) => {
   return response.data
 };
 
+export const sumStock = async (id: number | undefined, stock: number) => {
+
+  const extract = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
+  // console.log(extract.data.data[0].id, stockData);
+  let sum = extract.data.data[0].attributes.cantidad + stock
+  const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data[0].id}`, { data: { cantidad: sum}})
+  return { data }
+};
+
 export const extractUnidad = async (id: number) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
 

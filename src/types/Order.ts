@@ -30,11 +30,12 @@ export type Item =  {
     id: number,
     attributes: {
         cantidad: number;
-        pesado: number;
+        pesado: boolean;
         cantidad_real: number;
         precio_venta: number;
         pedido: number;
         articulos: number,
-        unidad_de_medida: number
+        unidad_de_medida: number,
+        nombre_articulo: String
     }
 }

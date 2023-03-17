@@ -23,7 +23,7 @@ export const postProduct = async (param: any) => {
     })
 
   } else {
-    let file = new FormData();
+    const file = new FormData();
     file.append("files", param.product.data.foto);
     
     axios.post(`${API_URL}/upload`, file)
@@ -61,7 +61,7 @@ export const editProduct = async (param: any) => {
     let file = new FormData();
     file.append("files", param.edit.data.foto);
 
-    axios.post(`${API_URL}/upload/`, file)
+    axios.post(`${API_URL}/upload`, param.edit.foto)
     .then((response) => {
       param.edit.data.foto = response.data[0].id
 

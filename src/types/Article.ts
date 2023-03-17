@@ -11,6 +11,7 @@ export interface ArticleAttributes {
   precio_lista: number;
   codigo_barras: string;
   codigo_qr: string;
+  fresh: boolean,
   inventario_fiscal: number;
   inventario_fisico: number;
   foto?: RelatedContentType<Media>;

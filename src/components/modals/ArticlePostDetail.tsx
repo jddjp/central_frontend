@@ -11,8 +11,6 @@ import { postProduct } from 'services/api/products';
 import { categoria, estado, initProduct, initStock } from 'helpers/constants';
 import { getUnidades } from 'services/api/articles';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
-
 interface PropsArticleDetail {
   isVisible: boolean,
   onHandleHide: () => void
@@ -39,6 +37,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
+    fresh: true,
     unidad_de_medida: 0
   });
   
@@ -148,8 +147,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
         </div>
         <div >
           <form action="">
-            <input type="file" value={product.foto}  accept="image/*" onChange={onUpload} name='foto'/>
-            <img src={product.foto ? `${BASE_URL}${product.foto}` : ''} alt="" /> 
+            <input type="file"  accept="image/*" onChange={onUpload} name='foto'/>
           </form>
         </div>
       </Stack>

@@ -17,8 +17,6 @@ interface PropArticleDetail {
   onHandleHide: () => void,
 }
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
-
 const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const queryClient = useQueryClient()
@@ -170,7 +168,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
           <div >
             <form action="">
               <input type="file" accept="image/*" onChange={onUpload} name='foto'/>
-              <img src={product.foto ? `${BASE_URL}${product.foto}` : ''} alt="" />
             </form>
           </div>
         </Stack>

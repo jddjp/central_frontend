@@ -121,16 +121,18 @@ export const CreateOrderPage = () => {
             cart.items.forEach((item: any) => {
               extractUnidad(item.article.id)
               .then((extract: number)=> {
+                console.log('AQUI ESTAS EL BUG', response.data.id);
                 var itemNew: Item = {
                   id: 0,
                   attributes: {
                     cantidad: item.amount,
-                    pesado: 0,
+                    pesado: false,
                     cantidad_real: item.amount,
                     precio_venta: item.article.attributes.precio_lista,
                     pedido: response.data.id,
                     articulos: item.article.id,
-                    unidad_de_medida: extract
+                    unidad_de_medida: extract,
+                    nombre_articulo: item.article.attributes.nombre
                   }
                 };
 
@@ -198,19 +200,22 @@ export const CreateOrderPage = () => {
     if(client.id!==undefined){
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
+      console.log(response);
       cart.items.forEach((item: any) => {
         extractUnidad(item.article.id)
         .then((extract: number) => {
+          console.log('AQUI ESTAS EL BUG', response.data.id);
           var itemNew: Item = {
             id: 0,
             attributes: {
               cantidad: item.amount,
-              pesado: 0,
+              pesado: false,
               cantidad_real: item.amount,
               precio_venta: item.article.attributes.precio_lista,
               pedido: response.data.id,
               articulos: item.article.id,
-              unidad_de_medida: extract
+              unidad_de_medida: extract,
+              nombre_articulo: item.article.attributes.nombre
             }
           };
   

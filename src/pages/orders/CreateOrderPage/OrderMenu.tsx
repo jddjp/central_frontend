@@ -110,12 +110,13 @@ export const OrderMenu = (props: OrderMenuProps) => {
                   id: 0,
                   attributes: {
                     cantidad: item.amount,
-                    pesado: 0,
+                    pesado: false,
                     cantidad_real: item.amount,
                     precio_venta: item.article.attributes.precio_lista,
                     pedido: response.data.id,
                     articulos: item.article.id,
-                    unidad_de_medida: extract
+                    unidad_de_medida: extract,
+                    nombre_articulo: item.article.attributes.nombre
                   }
                 };
                 
@@ -192,19 +193,22 @@ export const OrderMenu = (props: OrderMenuProps) => {
     if(props.cliente.id!==undefined){
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
+      console.log(response);
       props.cart.items.forEach((item) => {
         extractUnidad(item.article.id)
         .then((extract: number) => {
+          console.log('AQUI ESTAS EL BUG', response.data.id);
           var itemNew: Item = {
             id: 0,
             attributes: {
               cantidad: item.amount,
-              pesado: 0,
+              pesado: false,
               cantidad_real: item.amount,
               precio_venta: item.article.attributes.precio_lista,
               pedido: response.data.id,
               articulos: item.article.id,
-              unidad_de_medida: extract
+              unidad_de_medida: extract,
+              nombre_articulo: item.article.attributes.nombre
             }
           };
           
