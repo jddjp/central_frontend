@@ -35,7 +35,7 @@ export const DashboardSeller = () => {
     {name: 'Recuadro de tareas', route: '/taskbox'}
   ];
   const optionsContador = [
-    {name: 'Historial de venta', route: '/sales'},
+    {name: 'Articulos de factura', route: '/contador'},
   ];
   
   let options: any = [];

@@ -49,6 +49,7 @@ export const CreateOrderPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<any>();
+  const [paymentsDetails ,setPaymentsDetails] = useState<string>();
   const [dispatchers, setDispatchers] = useState<string[]>([])
   const [libradores, setLibradores] = useState<number[]>([])
   const { mutate } = useMutation(newItem)
@@ -62,6 +63,7 @@ export const CreateOrderPage = () => {
       setDispatchers(dispatchers.map((users: any) => users.id.toString()))
     }
   })
+
   
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
@@ -77,7 +79,7 @@ export const CreateOrderPage = () => {
     return;
   }
   console.log(dispatchers);
-
+  
   if(client.id===undefined){
     
     try {
@@ -172,6 +174,17 @@ export const CreateOrderPage = () => {
     }
   }
 
+  if(paymentsDetails !== 'finished'){
+    toast({
+      title: 'Indicar Detalle de Pago',
+      description: 'Se requiere identificar la cantidad de pago',
+      status: 'warning',
+      duration: 8000,
+      isClosable: true,
+    });
+    return;
+  }
+
     var date = new Date();
     var order: any = {
       id: 0,
@@ -234,7 +247,7 @@ export const CreateOrderPage = () => {
   }
   };
 
-  const { total, addItem, clear, removeItem, cart, changeItemAmount } =
+  const { total, addItem, clear, removeItem, cart, changeItemAmount , changePriceItem } =
     useCart();
   const {
     isOpenAddItemModal,
@@ -311,10 +324,11 @@ export const CreateOrderPage = () => {
           maxH="85vh"
           onOpenConfirmationClear={onOpenConfirmationClear}
           onChangeItemAmount={changeItemAmount}
+          onChangePriceItem={changePriceItem}
           onRemoveItem={removeItem}
           cart={cart}
         />
-        <PaymentDetails cart={cart} total={total} />
+        <PaymentDetails setPaymentsDetails={setPaymentsDetails} cart={cart} total={total} />
 
         <CartOrderSummary cart={cart} total={total}>
           <Button

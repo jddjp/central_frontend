@@ -2,11 +2,13 @@ import { Alert, AlertIcon, Grid, Stack, StackProps, Text } from "@chakra-ui/reac
 import { InputField } from "components/InputField"
 import { useFormikContext } from "formik"
 import { formatPrice } from "helpers/format"
+import { useEffect } from "react"
 import { ShoppingCart } from "../types"
 import { InformationArea, InformationAreaGroup } from "./Layout"
 
 
 export interface PaymentDetailsProps extends StackProps {
+  setPaymentsDetails: any,
   cart: ShoppingCart,
   total: number,
 }
@@ -14,21 +16,24 @@ export interface PaymentDetailsProps extends StackProps {
 const n = (v: number | string) => typeof(v) === 'string' ? 0 : v;
 
 export const PaymentDetails = (props: PaymentDetailsProps) => {
-  const { cart, total, ...rest } = props;
+  const { setPaymentsDetails , cart, total, ...rest } = props;
   const ctx = useFormikContext<{payment: {
     effectiveAmount: number,
     paycheckAmount: number,
     creditCardAmount: number,
     creditAmount: number
   }}>();
-  const { effectiveAmount, paycheckAmount, creditAmount, creditCardAmount } = 
-    Object.fromEntries(Object.entries(ctx.values.payment).map(([k, v]) => [k, n(v)]));
+  const { effectiveAmount, paycheckAmount, creditAmount, creditCardAmount } = Object.fromEntries(Object.entries(ctx.values.payment).map(([k, v]) => [k, n(v)]));
   const recordedAmount = effectiveAmount + paycheckAmount + creditAmount + creditCardAmount;
   const unrecordedAmount = total - recordedAmount;
   const recordedAmountStatus = 
     (unrecordedAmount > 0) ? 'lackAmount':
     (unrecordedAmount < 0) ? 'leftOverAmount':
                              'finished';
+  
+  useEffect(()=>{
+    props.setPaymentsDetails(recordedAmountStatus);
+  },[recordedAmountStatus])
 
   return (
     <Stack {...rest} border=''>
