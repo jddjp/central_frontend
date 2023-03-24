@@ -1,15 +1,16 @@
-import { useState } from 'react'
-import { Box } from "@chakra-ui/react";
-import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog"; 
-import { InputNumber } from "primereact/inputnumber";
-import { useMutation } from 'react-query';
-import { sumStock } from 'services/api/stocks';
+import { useState, ChangeEvent } from 'react'
+import { Box, Button, Input, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
+import { Dialog } from "primereact/dialog";
+import { RiCheckLine, RiBookmark2Fill } from 'react-icons/ri'
+import { QueryClient, useMutation } from 'react-query';
+import { postHistorialPayload } from 'services/api/products';
+import moment from 'moment';
 
 interface PropsReceiveArticle {
   headerTitle: String | undefined,
   isVisible: boolean,
   idProduct: number | undefined,
+  historial: any
 
   onHandleHide: () => void,
   onHandleAgree?: () => void
@@ -17,32 +18,68 @@ interface PropsReceiveArticle {
 
 const RecieveArticle = (props: PropsReceiveArticle) => {
 
-  const { mutate } = useMutation(() => sumStock(props.idProduct, stock), {
+  const [historial, setHistorial] = useState('')
+  const queryClient = new QueryClient()
+
+  const { mutate } = useMutation(() => postHistorialPayload(historial, props.idProduct), {
     onSuccess: () => {
-      setStock(0)
+      setHistorial('')
+      queryClient.invalidateQueries(['products'])
       props.onHandleHide()
     }
   })
-  const [stock, setStock] = useState(0)
 
-  const onHandleChange = (e: any) => {
-    setStock(e.value)
+  const onHandleItem = (e: number) => {
+    if (historial) {
+      setHistorial(historial.concat(`, ${e}`))
+    } else {
+      setHistorial(historial.concat(`${e}`))
+    }
   }
 
+  const closeDialog = () => {
+    setHistorial('')
+    props.onHandleHide()
+  }
+
+  const onHandleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setHistorial(e.target.value)
+  }
+
+  console.log(historial);
+
   const deleteProductDialogFooter = (
-    <Box display='flex' justifyContent='space-between'> 
-      <InputNumber value={stock} onChange={onHandleChange} placeholder='Cantidad recibida'/>
-      <Button label="Ingresar" icon="pi pi-check" className="p-button-text" onClick={() => mutate()} />
+    <Box>
+      <Box display='flex' justifyContent='center' w='100%' py='4'>
+        {
+          [1,2,3,4,5,6,7,8,9].map((num: number) => (
+            <Button colorScheme='gray' variant='outline' onClick={() => onHandleItem(num)}>{num}</Button>
+          ))
+        }
+      </Box>
+      <Button leftIcon={<RiCheckLine/>} colorScheme='blue' variant='solid' onClick={() => mutate()}>
+        Ingresar
+      </Button>
     </Box>
   );
 
   return ( 
-    <Dialog style={{ width: '550px' }} header={props.headerTitle} modal 
+    <Dialog style={{ width: '600px' }} header={props.headerTitle} modal 
     footer={deleteProductDialogFooter} 
-    onHide={props.onHandleHide}
+    onHide={closeDialog}
     visible={props.isVisible}>
-      <Box height='10rem'>
-      </Box>
+      <Input value={historial} fontWeight='bold' borderRadius='5px' onChange={onHandleChange} variant='filled'/>
+      <List spacing={3} mt='2' py='3' height='11rem' overflowY='scroll'>
+        {props.historial?.map((item: any) => (
+            <ListItem display='flex' alignItems='center'  fontWeight='bold'>
+              <ListIcon as={RiBookmark2Fill} fontSize='25'/>
+              <Box>
+                <Text>{item.attributes.array_numeros}</Text>
+                <Text fontSize='13' fontWeight='medium'>{moment(item.attributes.createdAt).format('L, h:mm:ss a')}</Text>
+              </Box>
+            </ListItem>
+        ))}
+      </List>
     </Dialog>
   );
 }

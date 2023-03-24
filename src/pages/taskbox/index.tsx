@@ -58,7 +58,7 @@ const TaskBox = () => {
       <Box w='70%' m='auto' mt='3'>
         <ListBox filter value={selectedProduct} options={products} optionLabel='attributes.nombre' itemTemplate={itemTemplate}/>
       </Box>
-      <RecieveArticle isVisible={visible} onHandleHide={closeDialog} headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}/>
+      <RecieveArticle isVisible={visible} onHandleHide={closeDialog} headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id} historial={selectedProduct?.attributes?.historial_numeros?.data}/>
     </Box>
   );
 }

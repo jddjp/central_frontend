@@ -4,7 +4,7 @@ const API_URL = process.env.REACT_APP_API_URL
 
 
 export const getProducts = async () => {
-  const { data } = await axios.get(`${API_URL}/articulos?populate=foto`)
+  const { data } = await axios.get(`${API_URL}/articulos?populate=*`)
   return data.data
 }
 
@@ -79,4 +79,10 @@ export const getProductById = async (id: number) => {
   } else {
     return data.data[0].attributes
   }
+}
+
+export const postHistorialPayload = async (array: string, articulo: number | undefined) => {
+  const { data } = await axios.post(`${API_URL}/historial-numeros`, {data: { array_numeros: array.toString(), articulo }})
+
+  return data
 }

@@ -18,6 +18,7 @@ export interface ArticleAttributes {
   contador?: RelatedContentType<User>;
   proveedor?: RelatedContentType<Proveedor>;
   unidad_de_medida?: RelatedContentType<UnidadMedida>;
+  historial_numeros?: RelatedContentType<Array<number>>
 }
 
 export type Article = ContentType<ArticleAttributes>;
