@@ -1,13 +1,13 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-export const baseMediaUrl = 'https://centralapi.oficinadigital.mx';
-export const baseUrl = 'https://centralapi.oficinadigital.mx';
+export const baseMediaUrl = 'https://localhost:1337/uploads';
+export const baseUrl = 'https://localhost:1337';
 export const baseApiUrl = `${baseUrl}/api/`;
 
 export const appAxios = axios.create({ baseURL: baseApiUrl });
 
 export const jwtInterceptor = (
-  config: AxiosRequestConfig,
+  config: InternalAxiosRequestConfig,
   authToken: string | undefined
 ) => {
   if (authToken !== undefined) {

@@ -1,20 +1,12 @@
 import { Icon, IconProps } from '@chakra-ui/react';
-import { 
-  VscEdit,
-  RiAddFill,
-  RiGitRepositoryLine,
-  FaArrowLeft,
-  FaArrowRight,
-  HiEyeOff,
-  HiEye,
-  ImCart,
-  BsTrashFill,
-  AiOutlineClose,
-  AiOutlineCheck,
-  IoIosSave,
-  BsSearch
-} from 'react-icons/all';
 import { IconType } from 'react-icons'
+import { RiAddFill, RiGitRepositoryLine } from 'react-icons/ri'
+import { HiEye, HiEyeOff } from 'react-icons/hi';
+import { IoIosSave, IoMdCart } from 'react-icons/io'
+import { VscEdit } from 'react-icons/vsc'
+import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'
+import { BsTrashFill, BsSearch } from 'react-icons/bs'
+import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai'
 
 const wrapIcon = (IType: IconType) => (props: IconProps): JSX.Element => {
   return <Icon {...props} as={IType} />
@@ -32,7 +24,7 @@ export const HideIcon = wrapIcon(HiEyeOff);
 
 export const ShowIcon = wrapIcon(HiEye);
 
-export const CartIcon = wrapIcon(ImCart);
+export const CartIcon = wrapIcon(IoMdCart);
 
 export const ClearIcon = wrapIcon(BsTrashFill);
 

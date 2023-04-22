@@ -22,7 +22,7 @@ export const TableItem = <T extends unknown>(props: TableItemProps<T>) => {
     <Tr {...rowProps}>
       {table.columns.map((column, index) => {
         const cell = item[column.accessor as keyof typeof item];
-        const element = column.Cell?.(cell) ?? cell;
+        const element = column.Cell?.(cell);
 
         return (
           <Td whiteSpace="nowrap" key={index} {...cellProps}>

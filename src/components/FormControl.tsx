@@ -7,7 +7,7 @@ import {
   FormHelperText,
   FormLabel,
   FormLabelProps,
-  HelpTextProps,
+  TextProps,
 } from '@chakra-ui/react';
 import { useField } from 'formik';
 
@@ -16,7 +16,7 @@ export interface FormControlProps extends ChakraFormControlProps {
   label?: string;
   labelProps?: FormLabelProps;
   helperText?: string;
-  helperTextProps?: HelpTextProps;
+  helperTextProps?: TextProps;
   errorMessageProps?: FormErrorMessageProps;
 }
 

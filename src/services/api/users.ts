@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_API_URL
 export const autocompleteByName = async (config: {search: string}): Promise<User>  => {
   const { search } = config;
   const params = {
-    'filters[nombre][$contains]': search
+    'filters[nombre][$contains]': search.length > 2 ? search : '' 
   };
 
   return (await axios.get(`${API_URL}/users`, {params})).data;

@@ -10,6 +10,7 @@ import {
 
 export interface InformationAreaProps extends AccordionItemProps {
   title: string,
+  children: JSX.Element
 }
 
 export const InformationArea = (props: InformationAreaProps) => {

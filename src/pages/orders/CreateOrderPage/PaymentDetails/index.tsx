@@ -10,7 +10,7 @@ import { InformationArea, InformationAreaGroup } from "./Layout"
 export interface PaymentDetailsProps extends StackProps {
   setPaymentsDetails: any,
   cart: ShoppingCart,
-  total: number,
+  total: number
 }
 
 const n = (v: number | string) => typeof(v) === 'string' ? 0 : v;
@@ -33,59 +33,60 @@ export const PaymentDetails = (props: PaymentDetailsProps) => {
   
   useEffect(()=>{
     props.setPaymentsDetails(recordedAmountStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[recordedAmountStatus])
 
   return (
     <Stack {...rest} border=''>
       <InformationAreaGroup>
-        
-
         <InformationArea title='Detalles de pago'>
-          {recordedAmountStatus !== 'finished' && (
-            <Alert 
-              status={recordedAmountStatus === 'leftOverAmount' ? 'error' : 'info'}
-              mb='3'
-            >
-              <AlertIcon />
-              <Stack display='row'>
-                <Text display='inline'>El total de la compra es de </Text>
-                <Text display='inline' fontWeight="bold" mx="1">{formatPrice(total)}. </Text>.
-                <Text display='inline'>Faltan por registrar </Text>
-                <Text display='inline' mx="1" fontWeight="bold">{formatPrice(unrecordedAmount)}</Text>
-              </Stack>
-            </Alert>
-          )}
+          <>
+            {recordedAmountStatus !== 'finished' && (
+              <Alert 
+                status={recordedAmountStatus === 'leftOverAmount' ? 'error' : 'info'}
+                mb='3'
+              >
+                <AlertIcon />
+                <Stack display='row'>
+                  <Text display='inline'>El total de la compra es de </Text>
+                  <Text display='inline' fontWeight="bold" mx="1">{formatPrice(total)}. </Text>.
+                  <Text display='inline'>Faltan por registrar </Text>
+                  <Text display='inline' mx="1" fontWeight="bold">{formatPrice(unrecordedAmount)}</Text>
+                </Stack>
+              </Alert>
+            )}
 
-          <Grid templateColumns="repeat(2, 1fr)" gap='3' mb="3">
-            <InputField
-              placeholder='Monto sin asignar'
-              type='number'
-              variant='outline'
-              name='payment.effectiveAmount'
-              formControlProps={{label: 'Efectivo'}}
-            />
-            <InputField
-              placeholder='Monto sin asignar'
-              type='number'
-              variant='outline'           
-              name='payment.paycheckAmount'
-              formControlProps={{label: 'Cheque'}}
-            />
-            <InputField 
-              placeholder='Monto sin asignar'
-              type='number'
-              variant='outline'
-              name='payment.creditCardAmount'
-              formControlProps={{label: 'Tarjeta de crédito'}}
-            />
-            <InputField 
-              placeholder='Monto sin asignar'
-              type='number'
-              variant='outline'
-              name='payment.creditAmount'
-              formControlProps={{label: 'Cŕedito'}}
-            />
-          </Grid>
+            <Grid templateColumns="repeat(2, 1fr)" gap='3' mb="3">
+              <InputField
+                placeholder='Monto sin asignar'
+                type='number'
+                variant='outline'
+                name='payment.effectiveAmount'
+                formControlProps={{label: 'Efectivo'}}
+              />
+              <InputField
+                placeholder='Monto sin asignar'
+                type='number'
+                variant='outline'           
+                name='payment.paycheckAmount'
+                formControlProps={{label: 'Cheque'}}
+              />
+              <InputField 
+                placeholder='Monto sin asignar'
+                type='number'
+                variant='outline'
+                name='payment.creditCardAmount'
+                formControlProps={{label: 'Tarjeta de crédito'}}
+              />
+              <InputField 
+                placeholder='Monto sin asignar'
+                type='number'
+                variant='outline'
+                name='payment.creditAmount'
+                formControlProps={{label: 'Cŕedito'}}
+              />
+            </Grid>
+          </>
         </InformationArea>
       </InformationAreaGroup>
     </Stack>
