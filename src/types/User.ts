@@ -17,6 +17,7 @@ export interface User  {
   telefono?: string;
   updatedAt: string;
   username: string;
+  roleCons: string
 }
 
 export function fullName(user: User) {

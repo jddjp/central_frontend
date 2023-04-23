@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { sumStr } from 'helpers/sumStringNumbers'
 import { postStock, updateStock } from './stocks'
 const API_URL = process.env.REACT_APP_API_URL
 
@@ -81,8 +82,27 @@ export const getProductById = async (id: number) => {
   }
 }
 
-export const postHistorialPayload = async (array: string, articulo: number | undefined) => {
-  const { data } = await axios.post(`${API_URL}/historial-numeros`, {data: { array_numeros: array.toString(), articulo }})
+export const postHistorialPayload = async (array: string, weight: string, articulo: number | undefined) => {
+
+  var sendLoad = ''
+  if (!array) {
+    sendLoad = `${weight} Kg/L Neto`
+  } else {
+    sendLoad = array.concat(` = ${sumStr(array)}Bts = ${weight} Kg/L`)
+  }
+  const { data } = await axios.post(`${API_URL}/historial-numeros`, {data: { array_numeros: sendLoad, articulo }})
+
+  return data
+}
+
+export const getSimpleHistorial = async (id: number | undefined) => {
+  const { data } = await axios.get(`${API_URL}/articulos?filters[id]=${id}&populate=historial_numeros`)
+
+  return data.data[0].attributes?.historial_numeros?.data
+}
+
+export const updateFreshProduct = async (id: number | undefined, value: boolean) => {
+  const { data } = await axios.put(`${API_URL}/articulos/${id}`, {data: { fresh: value}})
 
   return data
 }

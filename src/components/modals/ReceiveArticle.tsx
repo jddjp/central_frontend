@@ -2,15 +2,17 @@ import { useState, ChangeEvent } from 'react'
 import { Box, Button, Input, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
 import { Dialog } from "primereact/dialog";
 import { RiCheckLine, RiBookmark2Fill } from 'react-icons/ri'
-import { QueryClient, useMutation } from 'react-query';
-import { postHistorialPayload } from 'services/api/products';
+import { useMutation, useQuery } from 'react-query';
+import { getSimpleHistorial, postHistorialPayload } from 'services/api/products';
+import { bigTotal } from 'helpers/bigTotal';
 import moment from 'moment';
 
 interface PropsReceiveArticle {
   headerTitle: String | undefined,
   isVisible: boolean,
   idProduct: number | undefined,
-  historial: any
+  children?: JSX.Element,
+  toogle?: string
 
   onHandleHide: () => void,
   onHandleAgree?: () => void
@@ -18,14 +20,16 @@ interface PropsReceiveArticle {
 
 const RecieveArticle = (props: PropsReceiveArticle) => {
 
+  const { data: historialApi, refetch } = useQuery(['product', props.idProduct], () => getSimpleHistorial(props.idProduct))
+  
   const [historial, setHistorial] = useState('')
-  const queryClient = new QueryClient()
+  const [weight, setWeight] = useState('')
+  const renderBigTotal = bigTotal(historialApi)
 
-  const { mutate } = useMutation(() => postHistorialPayload(historial, props.idProduct), {
+  const dispatchPost = useMutation(() => postHistorialPayload(historial, weight, props.idProduct), {
     onSuccess: () => {
       setHistorial('')
-      queryClient.invalidateQueries(['products'])
-      props.onHandleHide()
+      setWeight('')
     }
   })
 
@@ -46,7 +50,9 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
     setHistorial(e.target.value)
   }
 
-  console.log(historial);
+  const onHandleChangeWeight = (e: ChangeEvent<HTMLInputElement>) => {
+    setWeight(e.target.value)
+  }
 
   const deleteProductDialogFooter = (
     <Box>
@@ -57,20 +63,29 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
           ))
         }
       </Box>
-      <Button leftIcon={<RiCheckLine/>} colorScheme='blue' variant='solid' onClick={() => mutate()}>
+      <Button colorScheme='gray' variant='ghost' onClick={() => refetch()}>
+        Refrescar
+      </Button>
+      {props.children}
+      <Button leftIcon={<RiCheckLine/>} colorScheme='blue' variant='solid' onClick={() => dispatchPost.mutate()}>
         Ingresar
       </Button>
     </Box>
   );
 
   return ( 
-    <Dialog style={{ width: '600px' }} header={props.headerTitle} modal 
-    footer={deleteProductDialogFooter} 
+    <Dialog style={{ width: '600px' }} header={`${props.headerTitle} - ${renderBigTotal.totalBts}Bts, ${renderBigTotal.totalKg}Kg/L`} modal 
+    footer={!props.toogle ? deleteProductDialogFooter : null} 
     onHide={closeDialog}
     visible={props.isVisible}>
-      <Input value={historial} fontWeight='bold' borderRadius='5px' onChange={onHandleChange} variant='filled'/>
-      <List spacing={3} mt='2' py='3' height='11rem' overflowY='scroll'>
-        {props.historial?.map((item: any) => (
+      {!props.toogle && (
+        <Box display='flex' justifyContent='space-between' alignItems='center'>
+          <Input value={historial} fontWeight='bold' borderRadius='5px' onChange={onHandleChange} variant='filled' width='70%'/>
+          <Input value={weight} fontWeight='bold' borderRadius='5px' onChange={onHandleChangeWeight} variant='filled' width='20%'/>
+        </Box>
+      )} 
+      <List spacing={3} mt='2' py='3' height={!props.toogle ? '11rem' : '20rem'} overflowY='scroll'>
+        {historialApi?.map((item: any) => (
             <ListItem display='flex' alignItems='center'  fontWeight='bold'>
               <ListIcon as={RiBookmark2Fill} fontSize='25'/>
               <Box>
