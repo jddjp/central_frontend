@@ -2,7 +2,7 @@ import axios from 'axios';
 import { User } from 'types/User';
 const API_URL = process.env.REACT_APP_API_URL
 
-export const autocompleteByName = async (config: {search: string}): Promise<User>  => {
+export const autocompleteByName = async (config: {search: string}): Promise<User[]>  => {
   const { search } = config;
   const params = {
     'filters[nombre][$contains]': search.length > 2 ? search : '' 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Select from 'react-select/async';
 import { ActionMeta, components, InputActionMeta, MultiValue, SingleValue } from 'react-select';
 import { asyncSelectAppStyles } from 'theme';
@@ -22,7 +22,7 @@ const AutocompleteUsername = (props: AutocompleteUsernameProps) => {
   const { user, setUser } = props;
   const [search, setInputValue] = useState('');
   const selectRef = useRef();
-  const { mutate } = useMutation(autocompleteByName)
+  const { mutateAsync } = useMutation(autocompleteByName)
 
   const handleInputChange = (newValue: string, { action }: InputActionMeta) => {
     if (action === 'input-change') {
@@ -47,7 +47,7 @@ const AutocompleteUsername = (props: AutocompleteUsernameProps) => {
     <>
       <Select
         ref={selectRef as any}
-        loadOptions={() => mutate({search})}
+        loadOptions={() => mutateAsync({search})}
         value={user}
         inputValue={search}
         onInputChange={handleInputChange}
