@@ -25,7 +25,7 @@ const HomePage = () => {
   return (
     <VStack marginX="auto" maxW="xl" mt={12} spacing={8}>
       <Center>
-        <Heading textAlign='center'>Bienvenido a Comercializadora San José</Heading>
+        <Heading textAlign='center'>Comercializadora San José</Heading>
       </Center>
 
       <Menu w="full">

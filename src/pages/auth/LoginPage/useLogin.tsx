@@ -16,6 +16,7 @@ export const useLogin = () => {
   const { signin } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const role = localStorage.getItem('role')
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -27,12 +28,23 @@ export const useLogin = () => {
 
     try {
       const userData = (await login({username, password}));
-      signin(userData);
-      toast({
-        status: 'success',
-        title: 'Autenticación extiosa.',
-      });
-      navigate('/login/welcomen');
+      if (userData.user.roleCons === 'Supervisor' || userData.user.roleCons === role) {
+        signin(userData);
+        toast({
+          status: 'success',
+          title: 'Autenticación extiosa.',
+        });
+        navigate('/login/welcomen');
+      } else if (userData.user.roleCons !== role) {
+        toast({
+          title: `¡El ${userData.user.roleCons.toLowerCase()} no puede acceder a la zona del ${role?.toLowerCase()}!`,
+          status: 'error',
+          duration: 3000,
+        })
+        localStorage.removeItem('role')
+        navigate('/')
+      }
+      console.log(userData);
     } catch(e) {
       const error = e as AxiosError;
       setUser(null);

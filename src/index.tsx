@@ -1,6 +1,6 @@
 import * as React from "react"
 import { AuthProvider } from "providers/AuthProvider";
-import ReactDOM from "react-dom"
+import ReactDOM from "react-dom/client"
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider} from "react-query";
 import { ReactQueryDevtools } from 'react-query/devtools'
@@ -17,7 +17,9 @@ const queryClient = new QueryClient({
   }
 })
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
+
+root.render(
   <React.StrictMode>
     <ChakraProvider>
       <QueryClientProvider client={queryClient}> 
@@ -29,6 +31,5 @@ ReactDOM.render(
         </BrowserRouter>
       </QueryClientProvider>
     </ChakraProvider>
-  </React.StrictMode>,
-  document.getElementById("root"),
+  </React.StrictMode>
 )

@@ -6,7 +6,7 @@ export const Menu = (props: MenuProps) => {
     const { children, ...stackProps } = props;
     
     return (
-        <VStack gap={25} p={5} data-test='menu' { ...stackProps }>
+        <VStack gap='2' data-test='menu' { ...stackProps }>
             { children }
         </VStack>
     );
