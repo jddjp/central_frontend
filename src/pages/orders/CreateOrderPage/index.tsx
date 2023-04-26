@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Portal, Stack, useDisclosure, Button, useToast, Text} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from './Header';
@@ -45,6 +45,8 @@ export interface LocationOrdenEdit {
 // TODO: REFACTOR CODE REPEAT
 
 export const CreateOrderPage = () => {
+
+  const cancelRef = useRef()
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();

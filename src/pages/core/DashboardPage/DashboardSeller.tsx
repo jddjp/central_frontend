@@ -17,7 +17,8 @@ export const DashboardSeller = () => {
   const optionsCajero = [
     {name: 'Ingresar pedido', route: '/orders/new'},
     {name: 'Pedidos existentes', route: '/orders'},
-    {name: 'Historial de venta', route: '/sales'},
+    {name: 'Promociones', route: '/promotions'},
+    {name: 'Historial de venta', route: '/sales'}
   ];
   const optionsVendedor = [
     {name: 'Ingresar pedido', route: '/orders/new'},

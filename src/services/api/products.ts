@@ -88,7 +88,7 @@ export const postHistorialPayload = async (array: string, weight: string, articu
   if (!array) {
     sendLoad = `${weight} Kg/L Neto`
   } else {
-    sendLoad = array.concat(` = ${sumStr(array)}Bts = ${weight} Kg/L`)
+    sendLoad = array.concat(` = ${sumStr(array)}Bts ${weight ? `= ${weight} Kg/L` : ''}`)
   }
   const { data } = await axios.post(`${API_URL}/historial-numeros`, {data: { array_numeros: sendLoad, articulo }})
 

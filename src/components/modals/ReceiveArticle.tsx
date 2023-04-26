@@ -26,6 +26,8 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
   const [weight, setWeight] = useState('')
   const renderBigTotal = bigTotal(historialApi)
 
+  console.log(historialApi);
+
   const dispatchPost = useMutation(() => postHistorialPayload(historial, weight, props.idProduct), {
     onSuccess: () => {
       setHistorial('')
@@ -58,8 +60,8 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
     <Box>
       <Box display='flex' justifyContent='center' w='100%' py='4'>
         {
-          [1,2,3,4,5,6,7,8,9].map((num: number) => (
-            <Button colorScheme='gray' variant='outline' onClick={() => onHandleItem(num)}>{num}</Button>
+          [1,2,3,4,5,6,7,8,9].map((num: number, idx: number) => (
+            <Button key={idx} colorScheme='gray' variant='outline' onClick={() => onHandleItem(num)}>{num}</Button>
           ))
         }
       </Box>
@@ -86,7 +88,7 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
       )} 
       <List spacing={3} mt='2' py='3' height={!props.toogle ? '11rem' : '20rem'} overflowY='scroll'>
         {historialApi?.map((item: any) => (
-            <ListItem display='flex' alignItems='center'  fontWeight='bold'>
+            <ListItem display='flex' alignItems='center'  fontWeight='bold' key={item.id}>
               <ListIcon as={RiBookmark2Fill} fontSize='25'/>
               <Box>
                 <Text>{item.attributes.array_numeros}</Text>

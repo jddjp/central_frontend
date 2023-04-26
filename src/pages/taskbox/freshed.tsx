@@ -41,7 +41,8 @@ const Freshed = (props: FreshedProps) => {
     return (
       <Box display='flex'>
         <Box display='flex' w='100%' gap='3'>
-          <Image borderRadius='20px' minWidth='160px' objectFit='cover' height='100px' src={`${BASE_URL}${product.attributes?.foto?.data?.attributes?.url}`}  fallbackSrc='https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'/>
+          <Image borderRadius='20px' minWidth='160px' objectFit='cover' height='100px' 
+          src={`${BASE_URL}${product.attributes?.foto?.data?.attributes?.url}`}  fallbackSrc='https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'/>
             <Box display='flex' justifyContent='space-between' w='100%'>
               <Box>
                 <Text fontWeight='bold'>{product.attributes.nombre}</Text>
@@ -54,7 +55,8 @@ const Freshed = (props: FreshedProps) => {
                 )}
               </Box>
               <Box display='flex' alignItems='center' marginRight='5'>
-                <IconButton aria-label='show dialog' icon={<MdEdit/>} borderRadius='full' colorScheme='red' onClick={() => OpenDialog(product)} fontSize='20px' size='lg'/>
+                <IconButton aria-label='show dialog' icon={<MdEdit/>} borderRadius='full' colorScheme='red' 
+                onClick={() => OpenDialog(product)} fontSize='20px' size='lg'/>
               </Box>
             </Box>
         </Box>

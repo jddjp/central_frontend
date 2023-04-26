@@ -11,8 +11,8 @@ const PromotionsPage = () => {
   const { data: promotionsMedia } = useQuery(['promotions'], getPromotions)
 
   return (
-    <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center' gap='2rem'>
-      <Text fontSize='30px' fontWeight='bold'>Promociones</Text>
+    <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+      <Text fontSize='30px' fontWeight='bold' width='100%' textAlign='center' mb='5rem'>Promociones</Text>
       <Splide options={{
           type: 'loop',
           perPage: 4,
