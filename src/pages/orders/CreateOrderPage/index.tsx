@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Portal, Stack, useDisclosure, Button, useToast, Text} from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { Portal, Stack, useDisclosure, Button, useToast, Checkbox} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from './Header';
 import { useCart } from './useCart';
@@ -46,7 +46,7 @@ export interface LocationOrdenEdit {
 
 export const CreateOrderPage = () => {
 
-  const cancelRef = useRef()
+  const [type, setType] = useState(false)
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -80,7 +80,6 @@ export const CreateOrderPage = () => {
     });
     return;
   }
-  console.log(dispatchers);
   
   if(client.id===undefined){
     
@@ -306,6 +305,11 @@ export const CreateOrderPage = () => {
       onSubmit={() => {}}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
+
+        <Checkbox colorScheme='red' isChecked={type} onChange={() => setType(!type)} fontWeight='bold'>
+          { type ? 'Distribucion' : 'Normal' }
+        </Checkbox>
+
         <OrderMenu
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
@@ -318,8 +322,7 @@ export const CreateOrderPage = () => {
           onSelectArticle={handleSelectArticle}
         />
 
-        <Text fontWeight='bold' fontSize={18}>Cliente</Text>
-        <ExistingClient setCliente={setCliente}/>
+        <ExistingClient setCliente={setCliente} type={type}/>
 
         <Cart
           minH="85vh"
@@ -330,20 +333,35 @@ export const CreateOrderPage = () => {
           onRemoveItem={removeItem}
           cart={cart}
         />
-        <PaymentDetails setPaymentsDetails={setPaymentsDetails} cart={cart} total={total} />
 
-        <CartOrderSummary cart={cart} total={total}>
+        {type ? 
           <Button
-            colorScheme="red"
+          colorScheme="red"
             size="lg"
             fontSize="md"
             rightIcon={<ArrowRightIcon />}
-            disabled={cart.items.length === 0}
             onClick={redirectTo('/orders/typeNote', cart, cliente)}
           >
-            Pagar
-          </Button>
-        </CartOrderSummary>
+            Distribuir pedido
+          </Button> :
+          <>
+            <PaymentDetails setPaymentsDetails={setPaymentsDetails} cart={cart} total={total} />
+
+            <CartOrderSummary cart={cart} total={total}>
+              <Button
+                colorScheme="red"
+                size="lg"
+                fontSize="md"
+                rightIcon={<ArrowRightIcon />}
+                disabled={cart.items.length === 0}
+                onClick={redirectTo('/orders/typeNote', cart, cliente)}
+              >
+                Pagar
+              </Button>
+            </CartOrderSummary>
+          </>
+        }
+
 
         <Portal>
           <CatalogueModal
