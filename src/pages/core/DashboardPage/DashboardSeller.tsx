@@ -1,11 +1,15 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, background } from '@chakra-ui/react';
 import { Menu } from 'components/Menu';
 import { Option } from 'components/Option';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import "primeicons/primeicons.css";
 
 export const DashboardSeller = () => {
   const navigate = useNavigate();
-
+  const [color, changeColor] = useState("Hola");
+  
+ 
   const optionsSupervisor = [
     {name: 'Ingresar pedido', route: '/orders/new'},
     {name: 'Pedidos existentes', route: '/orders'},
@@ -13,6 +17,7 @@ export const DashboardSeller = () => {
     {name: 'Promociones', route: '/promotions'},
     {name: 'Cátalogo', route: '/catalogue'},
     // {name: 'Articulos', route: '/articulos'},
+    {name: 'Lista de Asistencia', route: '/asistencia', } 
   ];
   const optionsCajero = [
     {name: 'Ingresar pedido', route: '/orders/new'},
@@ -37,6 +42,7 @@ export const DashboardSeller = () => {
   ];
   const optionsContador = [
     {name: 'Articulos de factura', route: '/contador'},
+    {name: 'Lista de Asistencia', route: '/asistencia'} 
   ];
   
   let options: any = [];
