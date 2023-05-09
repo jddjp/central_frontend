@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "services/api/Auth";
+import { login, setDataLogin } from "services/api/Auth";
 import { SERVER_ERROR_MESSAGE } from "services/api/errors";
 import { User } from "types/User";
 
@@ -34,6 +34,7 @@ export const useLogin = () => {
           status: 'success',
           title: 'Autenticación extiosa.',
         });
+        setDataLogin(userData.user.id);
         navigate('/login/welcomen');
       } else if (userData.user.roleCons !== role) {
         toast({
