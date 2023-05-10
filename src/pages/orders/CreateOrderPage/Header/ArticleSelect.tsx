@@ -24,8 +24,8 @@ const getArticleValue = (article: ShoppingCartArticle) => article.id.toString();
 const handleAutocomplete = async (search: string) => {
   // if (search.length < 3) return [];
   const result = await searchArticles(search);
-  console.log("===========Productos============");
-  console.log(result.data);
+  // console.log("===========Productos============");
+  // console.log(result.data);
   return result.data;
 };
 

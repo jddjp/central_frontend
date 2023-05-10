@@ -1,20 +1,10 @@
-import {
-  AspectRatio,
-  Box,
-  Button,
-  Image,
-  Skeleton,
-  Stack,
-  StackProps,
-  Tab,
-  TabList,
-  TabPanel,
+import { AspectRatio, Box, Button, Image, Skeleton, Stack, StackProps, Tab, TabList, TabPanel,
   TabPanels,
   Tabs,
   Text,
 } from "@chakra-ui/react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ShoppingCartArticle } from "./types";
 import { extractStock } from "services/api/stocks";
 import { useQuery } from "react-query";
@@ -30,17 +20,16 @@ const MotionStack = motion(Stack);
 export const ArticleCard = (props: ArticleCardProps) => {
   const { article, children, ...rest } = props;
   const { nombre, descripcion } = article.attributes;
-  console.log(props.article);
   const { data: stock } = useQuery(['stock', props.article.id], () => extractStock(props.article.id))
 
   return (
-    <Tabs isFitted isLazy={true}>
+    <Tabs isLazy={true}>
       <TabList>
         <Tab>Resumen</Tab>
         <Tab>Detalles</Tab>
       </TabList>
 
-      <TabPanels as={AnimatePresence} exitBeforeEnter>
+      <TabPanels>
         <TabPanel key="resume">
           <Stack spacing="6" {...rest}>
             <Stack spacing="3">
@@ -52,7 +41,6 @@ export const ArticleCard = (props: ArticleCardProps) => {
                     draggable="false"
                     fallback={<Skeleton />}
                     borderRadius={"md"}
-                    fallbackSrc='https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'
                   />
                 </AspectRatio>
               </Box>

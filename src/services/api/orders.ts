@@ -4,7 +4,8 @@ import { discountStock } from './stocks';
 const API_URL = process.env.REACT_APP_API_URL
 
 export const newOrder = async (payload: IOrderAttributes) => {
-    const response = await axios.post(`${API_URL}/pedidos`, {data: { ...payload }});
+    console.log(payload);
+    const response = await axios.post(`${API_URL}/pedidos`, {data: { payload }});
     return response.data;
 }
 

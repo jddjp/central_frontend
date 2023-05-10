@@ -1,30 +1,18 @@
-
-import { ContentType } from "./core";
-
 // Estructura de datos de un pedido
-export interface IOrderAttributes {
-    "fecha_pedido": string;
-    "hora_pedido": string;
-    "estatus": string;
-    // unidad_de_medida: number
-
-"cliente":number,
-
+export type IOrderAttributes =  {
+    id: number,
+    attributes: {
+        fecha_pedido: string;
+        hora_pedido: string;
+        estatus: string
+        cliente:number,
+        sucursal: number,
+        receptor: number,
+        bodega: number,
+        comentario: string,
+        articulos: number[]
+    }
 }
-
-export type Order = ContentType<IOrderAttributes>;
-
-// // Estructura de datos del detalle de un pedido
-// export interface IItemsAttributes {
-//     "cantidad": number;
-//     "pesado": number;
-//     "cantidad_real": number;
-//     "precio_venta": number;
-//     "pedido": number;
-//     "articulos": number,
-// }
-
-// export type Item = ContentType<IItemsAttributes>;
 
 export type Item =  {
     id: number,

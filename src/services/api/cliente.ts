@@ -32,3 +32,8 @@ export const autocompleteByCliente = async (config: {search: string}) => {
   const { data: response } = await axios.get(`${API_URL}/clientes?filters[nombre][$contains]=${search}`)
   return response.data
 }
+
+export const getClients = async () => {
+  const { data: response } = await axios.get(`${API_URL}/clientes`)
+  return response.data
+}

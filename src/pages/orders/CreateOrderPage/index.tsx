@@ -16,8 +16,8 @@ import { OrderMenu } from './OrderMenu';
 import { ShoppingCartArticle } from './types';
 import { useLocation } from 'react-router-dom';
 import { client } from 'services/api/cliente';
-import { Item, Order } from 'types/Order';
-import { ExistingClient } from 'pages/payments/invoice/ExistingClient';
+import { IOrderAttributes, Item } from 'types/Order';
+import ExistingClient from 'pages/payments/invoice/ExistingClient';
 import { newItem, newOrder } from 'services/api/orders';
 import { sendRandomId, sendRandomIdString } from 'helpers/randomIdUser';
 import { getDispatchers, getLibradores } from 'services/api/users';
@@ -39,10 +39,8 @@ const initialPayment = {
 export interface LocationOrdenEdit {
   client: client,
   editCart: Boolean,
-  cart: Order[]
+  cart: IOrderAttributes[]
 }
-
-// TODO: REFACTOR CODE REPEAT
 
 export const CreateOrderPage = () => {
 
@@ -52,20 +50,20 @@ export const CreateOrderPage = () => {
   const toast = useToast();
   const [cliente, setCliente] = useState<any>();
   const [paymentsDetails ,setPaymentsDetails] = useState<string>();
-  const [dispatchers, setDispatchers] = useState<string[]>([])
-  const [libradores, setLibradores] = useState<number[]>([])
-  const { mutate } = useMutation(newItem)
-  useQuery(["users_librador"], getLibradores, {
-    onSuccess: (libradores) => {
-      setLibradores(libradores.map((users: any) => users.id))
-    }
+  const itemMutation = useMutation(newItem)
+  const orderMutation = useMutation(newOrder)
+  const { data: libradores } = useQuery(["users_librador"], getLibradores, {
+    select: (data) => data.map((users: any) => users.id),
   })
-  useQuery(["users_dispatchers"], getDispatchers, {
-    onSuccess: (dispatchers) => {
-      setDispatchers(dispatchers.map((users: any) => users.id.toString()))
-    }
+  const { data: dispatchers } = useQuery(["users_dispatchers"], getDispatchers, {
+    select: (data) => data.map((users: any) => users.id.toString())
   })
 
+  const [distribution, setDistribution] = useState({
+    sucursal: 0,
+    bodega: 0,
+    receptor: 0
+  })
   
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
@@ -81,7 +79,7 @@ export const CreateOrderPage = () => {
     return;
   }
   
-  if(client.id===undefined){
+  if(cliente.id===undefined){
     
     try {
       //Registrar cliente nuevo con datos dumi sin registro
@@ -124,7 +122,6 @@ export const CreateOrderPage = () => {
             cart.items.forEach((item: any) => {
               extractUnidad(item.article.id)
               .then((extract: number)=> {
-                console.log('AQUI ESTAS EL BUG', response.data.id);
                 var itemNew: Item = {
                   id: 0,
                   attributes: {
@@ -139,7 +136,7 @@ export const CreateOrderPage = () => {
                   }
                 };
 
-                mutate(itemNew, {
+                itemMutation.mutate(itemNew, {
                   onSuccess: () => {
                     navigate(route,{state:{cart,client}});
                   }
@@ -209,8 +206,7 @@ export const CreateOrderPage = () => {
         })
       }
     };
-
-    console.log("===>" +client.id);
+  
     if(client.id!==undefined){
     var responseNewOrder = newOrder(order.attributes);
     responseNewOrder.then((response) => {
@@ -218,7 +214,6 @@ export const CreateOrderPage = () => {
       cart.items.forEach((item: any) => {
         extractUnidad(item.article.id)
         .then((extract: number) => {
-          console.log('AQUI ESTAS EL BUG', response.data.id);
           var itemNew: Item = {
             id: 0,
             attributes: {
@@ -232,10 +227,7 @@ export const CreateOrderPage = () => {
               nombre_articulo: item.article.attributes.nombre
             }
           };
-  
-          // newItem(itemNew);
-          console.log(itemNew);
-          mutate(itemNew, {
+          itemMutation.mutate(itemNew, {
             onSuccess: () => {
               navigate(route,{state:{cart,client}});
             }
@@ -299,14 +291,56 @@ export const CreateOrderPage = () => {
 
   console.log(cart);
 
-  return (
-    <Formik
-      initialValues={{ client: initialClient, payment: initialPayment }}  
-      onSubmit={() => {}}
-    >
-      <Stack spacing="3" w="80%" mx="auto" my="5">
+  const submitDistribution = () => {
+    var date = new Date();
+    var order = {
+      id: 0,
+      attributes: {
+        fecha_pedido: date.toISOString(),
+        hora_pedido:
+          (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+          ":" +
+          (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+          ":" +
+          (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
+        estatus: "pendiente",
+        cliente: 0,
+        receptor: distribution.receptor,
+        sucursal: distribution.sucursal,
+        bodega: distribution.bodega,
+        distribution: true,
+        comentario:  cart.items.map((article: any) => {
+          return `${article.amount}x ${article.article.attributes.nombre}`
+        }).toString(),
+        articulos: cart.items.map((article: any) => {
+          return article.article.id
+        })
+      }
+    };
 
-        <Checkbox colorScheme='red' isChecked={type} onChange={() => setType(!type)} fontWeight='bold'>
+    orderMutation.mutate(order, {
+      onSuccess() {
+        setDistribution({ sucursal: 0, bodega: 0, receptor: 0})
+        clear();
+        toast({
+          title: 'Enviado para distribucion',
+          description: 'En un momento el receptor lo tendra en su panel',
+          status: 'success',
+          duration: 8000,
+          isClosable: true,
+        });
+      }
+    })
+  }
+
+  return (
+    <Formik initialValues={{ client: initialClient, payment: initialPayment }} onSubmit={() => {}}>
+      <Stack spacing="3" w="80%" mx="auto" my="5">
+        <Checkbox colorScheme='red' isChecked={type} onChange={() => {
+          setType(!type)
+          setCliente('')
+          setDistribution({sucursal: 0, bodega: 0, receptor: 0})
+        }} fontWeight='bold'>
           { type ? 'Distribucion' : 'Normal' }
         </Checkbox>
 
@@ -314,78 +348,44 @@ export const CreateOrderPage = () => {
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
           cart={cart}
-          cliente={cliente}
-        />
+          cliente={cliente}/>
 
-        <Header
-          selectedArticle={article}
-          onSelectArticle={handleSelectArticle}
-        />
+        <Header selectedArticle={article} onSelectArticle={handleSelectArticle}/>
+        <ExistingClient setCliente={setCliente} type={type} setDistribution={setDistribution} distribution={distribution}/>
 
-        <ExistingClient setCliente={setCliente} type={type}/>
-
-        <Cart
-          minH="85vh"
-          maxH="85vh"
+        <Cart minH="85vh" maxH="85vh"
           onOpenConfirmationClear={onOpenConfirmationClear}
           onChangeItemAmount={changeItemAmount}
           onChangePriceItem={changePriceItem}
           onRemoveItem={removeItem}
-          cart={cart}
-        />
+          cart={cart}/>
 
-        {type ? 
-          <Button
-          colorScheme="red"
-            size="lg"
-            fontSize="md"
-            rightIcon={<ArrowRightIcon />}
-            onClick={redirectTo('/orders/typeNote', cart, cliente)}
-          >
-            Distribuir pedido
-          </Button> :
-          <>
+        {type 
+          ? <Button colorScheme="red" size="lg" fontSize="md" rightIcon={<ArrowRightIcon/>} onClick={submitDistribution}>
+              Distribuir pedido
+            </Button>
+          : <>
             <PaymentDetails setPaymentsDetails={setPaymentsDetails} cart={cart} total={total} />
-
             <CartOrderSummary cart={cart} total={total}>
-              <Button
-                colorScheme="red"
-                size="lg"
-                fontSize="md"
-                rightIcon={<ArrowRightIcon />}
-                disabled={cart.items.length === 0}
-                onClick={redirectTo('/orders/typeNote', cart, cliente)}
-              >
+              <Button colorScheme="red" size="lg" fontSize="md" rightIcon={<ArrowRightIcon/>} disabled={cart.items.length === 0} 
+              onClick={redirectTo('/orders/typeNote', cart, cliente)}>
                 Pagar
               </Button>
             </CartOrderSummary>
           </>
         }
 
-
         <Portal>
-          <CatalogueModal
-            isOpen={isOpenCatalogueModal}
-            onClose={onCloseCatalogueModal}
-            onSelectArticle={handleSelectArticleOnCatalogueModal}
-          />
-          <AddItemModal
-            isOpen={isOpenAddItemModal}
-            onClose={onCloseAddItemModal}
-            article={article}
-            onAddItemModal={addItem}
-          />
-          <AlertConfirmation
-            onClose={onCloseConfirmationClear}
-            onConfirm={handleConfirmClearCart}
-            onReject={onCloseConfirmationClear}
-            isOpen={isOpenConfirmationClear}
-            title="Confirmación"
+          <CatalogueModal isOpen={isOpenCatalogueModal} onClose={onCloseCatalogueModal} onSelectArticle={handleSelectArticleOnCatalogueModal}/>
+
+          <AddItemModal isOpen={isOpenAddItemModal} onClose={onCloseAddItemModal} article={article} onAddItemModal={addItem}/>
+
+          <AlertConfirmation onClose={onCloseConfirmationClear} onConfirm={handleConfirmClearCart} onReject={onCloseConfirmationClear}
+            isOpen={isOpenConfirmationClear} title="Confirmación"
             message={
               '¿Desear eliminar todos los elementos de la orden? ' +
               'Una vez realizada está acción no será posible revertirla.'
-            }
-          />
+            }/>
         </Portal>
       </Stack>
     </Formik>

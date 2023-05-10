@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 
@@ -7,7 +6,6 @@ import '../src/theme/styles.css';
 
 import { RequiredAuthentication } from 'components/RequiredAuthentication';
 import HomePage from 'pages/core/Home';
-
 import WelcomenPage from 'pages/auth/WelcomenPage';
 import LoginPage from 'pages/auth/LoginPage';
 import DashboardPage from 'pages/core/DashboardPage';
@@ -22,8 +20,7 @@ import CataloguePage from 'pages/articles/CataloguePage';
 import TypeNote from 'pages/payments/TypeNote';
 import TypeInvoices from 'pages/payments/invoice/TypeInvoices';
 import NewClient from 'pages/payments/invoice/NewClient';
-import {ExistingClient} from 'pages/payments/invoice/ExistingClient';
-import { client } from 'services/api/cliente';
+import ExistingClient from 'pages/payments/invoice/ExistingClient';
 import PromotionsPage from 'pages/articles/PromotionsPage';
 import AccountsPage from 'pages/accounts';
 import TaskBox from 'pages/taskbox';
@@ -31,7 +28,6 @@ import Contador from 'pages/contador/index';
 
 export const App = () => {
   useAuthInterceptors();
-  const [cliente, setCliente] = useState<client>();
 
   return (
     <ChakraProvider theme={theme}>
@@ -115,7 +111,7 @@ export const App = () => {
           <Route path="/orders/typeInvoice/ExistingClient"
             element={
               <RequiredAuthentication>
-                <ExistingClient setCliente={setCliente}/>
+                <ExistingClient/>
               </RequiredAuthentication>
             }/>
           <Route path="/sales"
