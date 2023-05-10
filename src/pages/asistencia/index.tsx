@@ -5,13 +5,16 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
-
+import { useQuery} from "react-query";
+import {getSesiones} from 'services/api/Auth';
 
 export default function Asistencia (){
-    const [globalFilterValue1, setGlobalFilterValue1] = useState('');
-    const onGlobalFilterChange1 = (e:any) => {
+  const { data: sesiones } = useQuery(["sesion"], getSesiones);
+  
+  const [globalFilterValue1, setGlobalFilterValue1] = useState('');
+  const onGlobalFilterChange1 = (e:any) => {
         setGlobalFilterValue1(e.target.value);
-      }
+  }
    
     return (
         <Stack w="80%" mx="auto" mt="10" spacing="5">
@@ -27,11 +30,11 @@ export default function Asistencia (){
             filters={{
               '': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
             }}
+            value={ sesiones?.map((element: any) => {return(element)})}
             >
-                <Column field="" header="Nombre" />
-                <Column field="" header="Fecha" />
-                <Column field="" header="Hora de entrada" />
-                <Column field="" header="Hora de salida" />
+                <Column field="attributes.user.data.attributes.username" header="Nombre" />
+                <Column field="attributes.fecha_registro" header="Fecha" />
+                <Column field="attributes.hora_registro" header="Hora de entrada" />
             </DataTable>
             
       </Stack> 
