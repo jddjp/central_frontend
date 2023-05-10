@@ -25,10 +25,10 @@ import PromotionsPage from 'pages/articles/PromotionsPage';
 import AccountsPage from 'pages/accounts';
 import TaskBox from 'pages/taskbox';
 import Contador from 'pages/contador/index';
+import Asistencia from '../src/pages/asistencia/index';
 
 export const App = () => {
   useAuthInterceptors();
-
   return (
     <ChakraProvider theme={theme}>
       <Routes>
@@ -150,6 +150,12 @@ export const App = () => {
             element={
               <RequiredAuthentication>
                 <Contador />
+              </RequiredAuthentication>
+            }/>
+             <Route path="/asistencia"
+            element={
+              <RequiredAuthentication>
+                <Asistencia />
               </RequiredAuthentication>
             }/>
         </Route>
