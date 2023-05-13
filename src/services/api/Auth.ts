@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { renameKey } from 'helpers/objects';
 import { User } from 'types/User';
-import { useToast } from '@chakra-ui/react'
 
 const API_URL = process.env.REACT_APP_API_URL
 
@@ -15,11 +14,18 @@ export interface UserData {
   jwt: string;
   user: User
 }
+
 export const getSesiones = async () => {
   const { data: response } = await axios.get(`${API_URL}/Regsitro-sesiones?populate=*`)
-  console.log("sesiones", response.data);
   return response.data
 }
+
+export const deleteSesiones = async (sesionData: any) => {
+  const datos = sesionData;
+  const { data: response } = await axios.delete(`${API_URL}/Regsitro-sesiones/${datos.sesion.id}`);
+  return response.data
+}
+
 export const login = async (data: AuthKey): Promise<UserData>  => {
   const payload = renameKey(data, 'username', 'identifier');
   return (await axios.post(`${API_URL}/auth/local`, payload)).data;
