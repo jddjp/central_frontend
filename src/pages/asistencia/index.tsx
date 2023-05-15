@@ -29,10 +29,11 @@ export default function Asistencia (){
       description: "Procesando...",
       status: 'warning',
       duration: 2000,
-      isClosable: true,
+      isClosable: false,
     })
     deleteSesion.mutate({sesion: data}, {
       onSuccess: () => {
+        toast.closeAll();
         queryClient.invalidateQueries(['sesion']);
          toast({
           title: 'Eliminado el registro...',
@@ -44,6 +45,51 @@ export default function Asistencia (){
       }
     }); 
    }
+
+   const getDataSession_excel  = () =>{
+      let obj: { id_registro: any; usuario: string; fecha: any; hora: any; }[] = []; 
+      sesiones.map((el:any)=>{
+          let aux = {
+            id_registro:el.id,
+            usuario: el.attributes.user.data.attributes.username,
+            fecha: el.attributes.fecha_registro,
+            hora: el.attributes.hora_registro
+          }
+          obj.push(aux);
+      });
+
+      if (globalFilterValue1) obj = obj.filter((element)=> element.usuario.toLowerCase().startsWith(globalFilterValue1.toLowerCase()));
+      if (fecha) obj = obj.filter((element)=> element.fecha == fecha);
+      console.log(obj);
+      return obj;
+   }
+
+    const exportExcel = async ()  => {
+      const dataTable = await getDataSession_excel();
+        import('xlsx').then(xlsx => {
+            const worksheet = xlsx.utils.json_to_sheet(dataTable);
+            const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+            const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+            saveAsExcelFile(excelBuffer, 'lista_asistencia');
+        });
+    }
+
+    const saveAsExcelFile = (buffer:any, fileName:string) => {
+        import('file-saver').then(module => {
+            if (module && module.default) {
+                let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                let EXCEL_EXTENSION = '.xlsx';
+                const data = new Blob([buffer], {
+                    type: EXCEL_TYPE
+                });
+                module.default.saveAs(data, fileName + '_' + new Date().getTime() + EXCEL_EXTENSION);
+            }
+        });
+    }
+
+    const limpiarFechas = ()=>{ //metodo para que no devuelva fechas iguales y las reduzca a fehcas unicas y sin reptir
+      return sesiones?.map((element: any) => element.attributes.fecha_registro).filter((fecha: any, index: number, self: any[]) => self.indexOf(fecha) === index);
+    }
 
   return (
     <Stack w="80%" mx="auto" mt="10" spacing="10" display='flex'>
@@ -57,7 +103,10 @@ export default function Asistencia (){
               </span>
             </Box>
             <Box  display='flex' justifyContent='flex-end'>
-                <Dropdown   placeholder="Filtrado por fecha..." value={fecha} options={sesiones?.map((element:any)=>{return(element.attributes.fecha_registro)})} onChange={(e) => setFecha(e.value)} className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
+                <Dropdown   placeholder="Filtrado por fecha..." value={fecha} options={limpiarFechas()} onChange={(e) =>setFecha(e.value)} className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
+            </Box>
+            <Box  display='flex' justifyContent='flex-end'>
+              <Button type="button" icon="pi pi-file-excel" onClick={exportExcel} className="p-button-success mr-2" data-pr-tooltip="XLS" />
             </Box>
           </Stack>
           } 
