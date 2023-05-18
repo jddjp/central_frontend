@@ -39,6 +39,14 @@ export const getOrderPendiente = async () => {
     const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos`)
     return data.data
 }
+
+export const getOrderDistribution = async () => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[distribution]=true&populate=articulos`)
+    console.log("======================================")
+    console.log(data)
+    return data.data
+}
+
 export const putCliente = async (params: any) => {
     console.log(params);
     delete params.update.data.articulos
