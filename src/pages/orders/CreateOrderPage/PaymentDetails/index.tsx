@@ -41,6 +41,9 @@ export const PaymentDetails = (props: PaymentDetailsProps) => {
       <InformationAreaGroup>
         <InformationArea title='Detalles de pago'>
           <>
+            {creditCardAmount > 0 && (
+              <Alert status="warning" mb='3'><AlertIcon /><Text display='inline'>Asegurate de cobrar con la <b>terminal</b> el monto de trajeta</Text></Alert>
+            )}
             {recordedAmountStatus !== 'finished' && (
               <Alert 
                 status={recordedAmountStatus === 'leftOverAmount' ? 'error' : 'info'}
@@ -76,7 +79,7 @@ export const PaymentDetails = (props: PaymentDetailsProps) => {
                 type='number'
                 variant='outline'
                 name='payment.creditCardAmount'
-                formControlProps={{label: 'Tarjeta de crédito'}}
+                formControlProps={{label: 'Tarjeta de crédito/débito'}}
               />
               <InputField 
                 placeholder='Monto sin asignar'

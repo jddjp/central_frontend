@@ -68,6 +68,17 @@ export const CreateOrderPage = () => {
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client:any) => () => {
 
+    if(paymentsDetails !== 'finished'){
+      toast({
+        title: 'Detalle de Pago',
+        description: 'Completa las cantidades de pago para proceder con la compra',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
   if(cliente === undefined){
     toast({
       title: 'Indicar cliente',
@@ -170,17 +181,6 @@ export const CreateOrderPage = () => {
         return;
       }
     }
-  }
-
-  if(paymentsDetails !== 'finished'){
-    toast({
-      title: 'Indicar Detalle de Pago',
-      description: 'Se requiere identificar la cantidad de pago',
-      status: 'warning',
-      duration: 8000,
-      isClosable: true,
-    });
-    return;
   }
 
     var date = new Date();

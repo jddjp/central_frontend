@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box } from "@chakra-ui/react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -20,6 +20,7 @@ const CataloguePage = () => {
   
   const queryClient = useQueryClient()
   const [id, setId] = useState(0);
+  const [rolFlag, setRolFlag] = useState(true);
   const [ visibleCreate, setVisibleCreate] = useState(false);
   const [ visibleEdit, setVisibleEdit ] = useState(false);
   const [ visibleDelete, setVisibleDelete ] = useState(false);
@@ -66,16 +67,23 @@ const CataloguePage = () => {
     setGlobalFilterValue1(e.target.value);
   }
 
+  useEffect(()=>{
+    const role = localStorage.getItem('role');
+    if (role == 'Cajero') {
+      setRolFlag(false);
+    }
+  },[]);
+
   return (
     <Box paddingTop='5' display='flex' margin='auto'>
       <DataTable paginator className="p-datatable-customers" showGridlines rows={10}  editMode="row" 
         value={products?.map((product: any) => product)} 
         header={
-          <Box display='flex' justifyContent='flex-start'>
+          <Box display='flex' justifyContent='flex-start'   >
             <span className="p-input-icon-left">
               <i className="pi pi-search" />
               <InputText value={globalFilterValue1} onChange={onGlobalFilterChange1} />
-              <Button label="New" icon="pi pi-plus" className="p-button-success mr-2" onClick={openDialogPost} />
+              {rolFlag && (<Button label="New" icon="pi pi-plus" className="p-button-success mr-2" onClick={openDialogPost} />)}
             </span>
           </Box>
         } 
@@ -92,12 +100,14 @@ const CataloguePage = () => {
         <Column field="attributes.codigo_barras" header="Cod. Barra" />
         <Column field="attributes.codigo_qr" header="Cod. Qr" />
         <Column field="attributes.estado" header="Estado"/>
+        {rolFlag && (
         <Column body={(data: any) => ( 
           <>
             <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => openDialogEdit(data)} />
             <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDelete(data.id)} />
           </>)} 
           exportable={false} style={{ minWidth: '8rem' }} />
+          )}
       </DataTable>
 
       {/* Modals */}
