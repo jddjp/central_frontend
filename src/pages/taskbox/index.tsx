@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 import Freshed from "./freshed";
 import Required from "./required";
 import Inventory from "./inventory";
+import Distribution from "./distribution";
 import { Article } from "types/Article";
 
 const TaskBox = () => {
@@ -20,6 +21,7 @@ const TaskBox = () => {
           {auth?.user?.roleCons === 'Supervisor' && (
             <Tab>Inventario</Tab>
           )}
+          <Tab>Distribuidor</Tab>
           <Tab>Solicitados</Tab>
         </TabList>
         <TabPanels>
@@ -28,6 +30,9 @@ const TaskBox = () => {
           </TabPanel>
           <TabPanel>
             <Inventory items={products?.filter((e: Article) => e.attributes.fresh === false)}/>
+          </TabPanel>
+          <TabPanel>
+            <Distribution/>
           </TabPanel>
           <TabPanel>
             <Required/>
