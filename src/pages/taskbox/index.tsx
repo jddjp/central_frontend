@@ -3,7 +3,6 @@ import { useAuth } from "hooks/useAuth";
 import { getProducts } from "services/api/products";
 import { useQuery } from "react-query";
 import Freshed from "./freshed";
-import Required from "./required";
 import Inventory from "./inventory";
 import Distribution from "./distribution";
 import { Article } from "types/Article";
@@ -22,7 +21,6 @@ const TaskBox = () => {
             <Tab>Inventario</Tab>
           )}
           <Tab>Distribuidor</Tab>
-          <Tab>Solicitados</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -33,9 +31,6 @@ const TaskBox = () => {
           </TabPanel>
           <TabPanel>
             <Distribution/>
-          </TabPanel>
-          <TabPanel>
-            <Required/>
           </TabPanel>
         </TabPanels>
       </Tabs>

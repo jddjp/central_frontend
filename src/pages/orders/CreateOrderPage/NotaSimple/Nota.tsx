@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { DataTable } from "primereact/datatable";
-import {  Dispatch, SetStateAction } from 'react';
 import { Column } from "primereact/column";
 import { SimpleGrid, StackProps } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 //import styles from "./DataTableTicket.css";
-import { Button } from "primereact/button";
-import { client } from "services/api/cliente";
 import { ShoppingCartItem } from "../types";
 
 export interface NotaProps extends StackProps {
-  client: client
+  client: any
   items: any
 }
 
@@ -92,6 +89,7 @@ export const Nota = ( props: NotaProps) => {
   }`;
   console.log(".....-");
   console.log(products);
+  console.log(props.client);
 
   return (
     <>
@@ -101,7 +99,7 @@ export const Nota = ( props: NotaProps) => {
         </p>
         <p>{date}</p>
         <SimpleGrid columns={2} spacing={10}>
-          <Box height="40px">Cliente: {props.client.attributes.nombre} {props.client.attributes.apellido_paterno} {props.client.attributes.apellido_materno}</Box>
+          <Box height="40px">Cliente: {props.client?.label}</Box>
         </SimpleGrid>
         <div>
           <DataTable

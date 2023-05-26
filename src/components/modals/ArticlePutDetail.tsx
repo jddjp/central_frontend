@@ -162,7 +162,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
           <div className="field">
             <label htmlFor="name">Sucursales</label>
-            <Dropdown inputId="dropdown" value={stock.sucursal} options={subsidiaries?.data?.map((subsiduary: any) => {
+            <Dropdown inputId="dropdown" value={stock.sucursal} options={subsidiaries?.map((subsiduary: any) => {
                 return {
                   value: subsiduary.id,
                   name: subsiduary.attributes.nombre

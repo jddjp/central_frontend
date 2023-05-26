@@ -23,8 +23,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   const { data: unidadMedida } = useQuery(["unidades"], getUnidades)
   const createProduct = useMutation(postProduct)
 
-  console.log(unidadMedida);
-
   const [product, setProduct] = useState({
     nombre: '',
     precio_lista: 0,
@@ -143,7 +141,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
         </div>
         <div className="field">
           <label htmlFor="name">Sucursales</label>
-          <Dropdown value={stock.sucursal} inputId="dropdown" options={subsidiaries?.data?.map((subsiduary: any) => {
+          <Dropdown value={stock.sucursal} inputId="dropdown" options={subsidiaries?.map((subsiduary: any) => {
               return {
                 value: subsiduary.id,
                 name: subsiduary.attributes.nombre
