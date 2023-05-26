@@ -46,6 +46,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   })
 
   const handleSaveProduct = () => {
+    product.unidad_de_medida = stock.unidad_de_medida;
     createProduct.mutate({ product: {data: product}, stock: {data: stock} }, {
       onSuccess: () => {
         queryClient.invalidateQueries(['products'])
