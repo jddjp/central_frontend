@@ -25,7 +25,6 @@ import { useMutation, useQuery } from 'react-query';
 import { newCliente } from '../../../services/api/cliente';
 import { AxiosError } from 'axios';
 
-
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
 import { extractUnidad } from 'services/api/stocks';
 
@@ -90,7 +89,7 @@ export const CreateOrderPage = () => {
     return;
   }
   
-  if(cliente.id===undefined){
+  if(client.id===undefined){
     
     try {
       //Registrar cliente nuevo con datos dumi sin registro
@@ -102,11 +101,11 @@ export const CreateOrderPage = () => {
       client.attributes.correo="example@gmail.com"
       client.attributes.estado="x"
       client.attributes.telefono="1"
-      var clientesave  =  newCliente(client.attributes);
+      let clientesave  =  newCliente(client.attributes);
       clientesave.then((response) => {
         client.id = response.data.id
         console.log(response.data.id)
-        var order: any = {
+        let order: any = {
           id: 0,
           attributes:{
             fecha_pedido: date.toISOString(),
@@ -128,12 +127,12 @@ export const CreateOrderPage = () => {
             })
           }
         };
-        var responseNewOrder = newOrder(order.attributes);
+        let responseNewOrder = newOrder(order.attributes);
           responseNewOrder.then((response) => {
             cart.items.forEach((item: any) => {
               extractUnidad(item.article.id)
               .then((extract: number)=> {
-                var itemNew: Item = {
+                let itemNew: Item = {
                   id: 0,
                   attributes: {
                     cantidad: item.amount,
@@ -183,8 +182,8 @@ export const CreateOrderPage = () => {
     }
   }
 
-    var date = new Date();
-    var order: any = {
+    let date = new Date();
+    let order: any = {
       id: 0,
       attributes:{
         fecha_pedido: date.toISOString(),
@@ -195,6 +194,7 @@ export const CreateOrderPage = () => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
+        distribution: false,
         librador: sendRandomId(libradores),
         Despachador: sendRandomIdString(dispatchers),
         cliente: cliente.id,
@@ -208,36 +208,35 @@ export const CreateOrderPage = () => {
     };
   
     if(client.id!==undefined){
-    var responseNewOrder = newOrder(order.attributes);
-    responseNewOrder.then((response) => {
-      console.log(response);
-      cart.items.forEach((item: any) => {
-        extractUnidad(item.article.id)
-        .then((extract: number) => {
-          var itemNew: Item = {
-            id: 0,
-            attributes: {
-              cantidad: item.amount,
-              pesado: false,
-              cantidad_real: item.amount,
-              precio_venta: item.article.attributes.precio_lista,
-              pedido: response.data.id,
-              articulos: item.article.id,
-              unidad_de_medida: extract,
-              nombre_articulo: item.article.attributes.nombre
-            }
-          };
-          itemMutation.mutate(itemNew, {
-            onSuccess: () => {
-              navigate(route,{state:{cart,client}});
-            }
+      let responseNewOrder = newOrder(order.attributes);
+      responseNewOrder.then((response) => {
+        console.log(response);
+        cart.items.forEach((item: any) => {
+          extractUnidad(item.article.id)
+          .then((extract: number) => {
+            var itemNew: Item = {
+              id: 0,
+              attributes: {
+                cantidad: item.amount,
+                pesado: false,
+                cantidad_real: item.amount,
+                precio_venta: item.article.attributes.precio_lista,
+                pedido: response.data.id,
+                articulos: item.article.id,
+                unidad_de_medida: extract,
+                nombre_articulo: item.article.attributes.nombre
+              }
+            };
+            itemMutation.mutate(itemNew, {
+              onSuccess: () => {
+                navigate(route,{state:{cart,client}});
+              }
+            })
+            order = response.data;
           })
-          order = response.data;
-        })
+        });
       });
-
-    });
-  }
+    }
   };
 
   const { total, addItem, clear, removeItem, cart, changeItemAmount , changePriceItem } =
