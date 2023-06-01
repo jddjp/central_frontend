@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { IOrderAttributes, Item } from 'types/Order';
 import { discountStock } from './stocks';
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = 'http://54.165.25.186:1380/api'
 
 export const newOrder = async (payload: IOrderAttributes) => {
     const response = await axios.post(`${API_URL}/pedidos`, {data: { ...payload }});

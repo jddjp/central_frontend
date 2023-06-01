@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { deleteProduct } from './products'
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = 'http://54.165.25.186:1380/api'
 
 export const extractStock = async (id: number) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)

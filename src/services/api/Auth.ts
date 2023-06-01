@@ -2,7 +2,7 @@ import axios from 'axios';
 import { renameKey } from 'helpers/objects';
 import { User } from 'types/User';
 
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = 'http://54.165.25.186:1380/api'
 
 // const toast = useToast();
 export interface AuthKey {

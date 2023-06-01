@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { sumStr } from 'helpers/sumStringNumbers'
 import { postStock, updateStock } from './stocks'
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = 'http://54.165.25.186:1380/api'
 
 
 export const getProducts = async () => {

@@ -10,7 +10,7 @@ import { ArticleAttributes } from "types/Article";
 import { ContentType } from "types/core";
 import { WithRequired } from "types/utils";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = 'http://54.165.25.186:1380'
 
 
 export interface CatalogueArticleProps {

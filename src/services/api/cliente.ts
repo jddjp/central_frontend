@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ContentType } from 'types/core';
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = 'http://54.165.25.186:1380/api'
 
 export interface client {
   attributes: {

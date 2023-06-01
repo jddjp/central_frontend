@@ -7,7 +7,7 @@ import { TiTag } from 'react-icons/ti'
 import RecieveArticle from "../../components/modals/ReceiveArticle";
 import moment from 'moment';
 import { IoMdCalendar } from 'react-icons/io';
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = 'http://54.165.25.186:1380'
 
 interface InventoryProps {
   items: Article[]

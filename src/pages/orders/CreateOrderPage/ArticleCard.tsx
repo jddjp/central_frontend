@@ -9,7 +9,7 @@ import { ShoppingCartArticle } from "./types";
 import { extractStock } from "services/api/stocks";
 import { useQuery } from "react-query";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL
+const BASE_URL = 'http://54.165.25.186:1380'
 
 interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;
