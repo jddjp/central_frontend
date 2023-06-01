@@ -6,12 +6,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { Center, Square, Text } from '@chakra-ui/react'
+import { Center, Text } from '@chakra-ui/react'
 import { useQuery } from 'react-query';
 import moment from 'moment';
 import { getDespachadores, getPedidos } from 'services/api/users';
-import { elementDragControls } from 'framer-motion/types/gestures/drag/VisualElementDragControls';
-
 
 export default function AccountsPage() {
   const atribute = {
@@ -26,19 +24,19 @@ export default function AccountsPage() {
   const [articulos, setArticulos] = useState(articulo);
   const [visible, setVisible] = useState(false);
   const [visibleArticulo, setVisibleArticulo] = useState(false);
- 
+
   const open = (data :  any) => {
     let despachador;
     let pedidosD : any = [];
-   pedidos.data.forEach((pedido: any) =>{
-     despachador = pedido.attributes.Despachador
-      if(despachador === data.toString()){
-        pedidosD.push(pedido);
-      }
-    } 
-   );
-   DespaPedidos.pedidos = pedidosD;
-   setVisible(true);
+    pedidos.data.forEach((pedido: any) =>{
+      despachador = pedido.attributes.Despachador
+        if(despachador === data.toString()){
+          pedidosD.push(pedido);
+        }
+      } 
+    );
+    DespaPedidos.pedidos = pedidosD;
+    setVisible(true);
   }
   const openArticulos = (data :  any) => {
     const articulosData = data.attributes.articulos
@@ -94,7 +92,7 @@ export default function AccountsPage() {
                 <Column  header="Hora Pedido" body={(data:any) => {
                     return moment(data.attributes.hora_pedido, 'hhmm ').format('hh:mm a')
                 }}/>
-                <Column field="comentario" header="Comentario" />
+                <Column field="attributes.comentario" header="Comentario" />
                 <Column header="Artículos " body={(data: any) => (
                   <>
                     <Button
