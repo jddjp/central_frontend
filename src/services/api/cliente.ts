@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ContentType } from 'types/core';
-const API_URL = 'http://54.165.25.186:1380/api'
+import { API_URL } from '../../config/env';
 
 export interface client {
   attributes: {

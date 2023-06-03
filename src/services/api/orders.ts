@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { IOrderAttributes, Item } from 'types/Order';
 import { discountStock } from './stocks';
-const API_URL = 'http://54.165.25.186:1380/api'
+import { API_URL } from '../../config/env';
 
 export const newOrder = async (payload: IOrderAttributes) => {
     const response = await axios.post(`${API_URL}/pedidos`, {data: { ...payload }});
@@ -62,6 +62,12 @@ export const deleteOrder = async (id: number) => {
 
 export const extractFlagOrders = async () => {
     const { data } = await axios.get(`${API_URL}/pedidos?populate=*`)
+
+    return data.data
+}
+
+export const getOrdersPending = async () => {
+    const { data } = await axios.get(`${API_URL}/pedidos?filters[estatus]=pendiente&populate=*`)
 
     return data.data
 }

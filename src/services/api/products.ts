@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { sumStr } from 'helpers/sumStringNumbers'
 import { postStock, updateStock } from './stocks'
-const API_URL = 'http://54.165.25.186:1380/api'
-
+import { API_URL } from '../../config/env';
 
 export const getProducts = async () => {
   const { data } = await axios.get(`${API_URL}/articulos?populate=*`)

@@ -7,7 +7,7 @@ import RecieveArticle from "../../components/modals/ReceiveArticle";
 import { updateFreshProduct } from "services/api/products";
 import { useMutation } from "react-query";
 import { MdEdit } from "react-icons/md";
-const BASE_URL = 'http://54.165.25.186:1380'
+import { BASE_URL } from "../../config/env";
 
 interface FreshedProps {
   items: Article[],

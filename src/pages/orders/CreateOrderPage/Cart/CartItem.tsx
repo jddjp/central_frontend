@@ -13,9 +13,7 @@ import { getFinalPrice } from "../useCart/reducer";
 import { ChangeEvent, useEffect, useState } from "react";
 import { ShoppingCartItem } from "../types";
 import { useQueryClient } from 'react-query';
-const BASE_URL = 'http://54.165.25.186:1380'
-
-
+import { BASE_URL } from "../../../../config/env";
 
 type CartItemProps = {
   item: ShoppingCartItem;

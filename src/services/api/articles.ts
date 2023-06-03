@@ -5,7 +5,7 @@ import { ContentType } from "types/core";
 import { WithRequired } from "types/utils";
 import { ListResponse, PaginationConfig } from "./types";
 import { buildFilter, defaultPaginationConfig } from "./utils";
-const API_URL = 'http://54.165.25.186:1380/api'
+import { API_URL } from '../../config/env';
 
 export type SearchArticle = ContentType<
   WithRequired<ArticleAttributes, "foto" | "unidad_de_medida">

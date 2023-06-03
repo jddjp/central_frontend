@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { renameKey } from 'helpers/objects';
 import { User } from 'types/User';
-
-const API_URL = 'http://54.165.25.186:1380/api'
+import { API_URL } from '../../config/env';
 
 // const toast = useToast();
 export interface AuthKey {

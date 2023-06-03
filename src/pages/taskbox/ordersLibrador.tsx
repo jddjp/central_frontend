@@ -1,41 +1,42 @@
-import React from 'react';
-import { Box, Flex, Stack } from '@chakra-ui/react';
-import { useState } from "react";
-import { Card } from 'primereact/card';
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import { Box, Center, Flex, Stack, Text } from "@chakra-ui/react";
+import moment from "moment";
 import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
-import { Center, Text } from '@chakra-ui/react'
-import { useQuery } from 'react-query';
-import moment from 'moment';
-import { getDespachadores, getPedidos } from 'services/api/users';
+import { useState } from "react";
+import { useQuery } from "react-query";
+import { getOrdersPending } from "services/api/orders";
+import { getLibradores } from "services/api/users";
 
-export default function AccountsPage() {
+const OrderLibrador = () => {
+
   const atribute = {
     pedidos : []
   }
   const articulo = {
     articulosP : []
   }
-  const { data: users } = useQuery(["users"], getDespachadores)
-  const { data: pedidos } = useQuery(["pedidos"], getPedidos);
-  const [DespaPedidos, setDespaPedidos] = useState(atribute);
-  const [articulos, setArticulos] = useState(articulo);
+  const { data: users } = useQuery(["users"], getLibradores)
+  const { data: pedidos } = useQuery(["pedidos"], getOrdersPending);
+  const [libraPedidos] = useState(atribute);
+  const [articulos] = useState(articulo);
   const [visible, setVisible] = useState(false);
   const [visibleArticulo, setVisibleArticulo] = useState(false);
 
   const open = (data :  any) => {
-    let despachador;
-    let pedidosD : any = [];
-    pedidos.data.forEach((pedido: any) =>{
-      despachador = pedido.attributes.Despachador
-        if(despachador === data.toString()){
-          pedidosD.push(pedido);
+    let librador;
+    let pedidosL : any = [];
+    pedidos?.forEach((pedido: any) =>{
+      console.log(pedido.attributes.librador);
+      librador = pedido.attributes.librador;
+        if(librador === data.toString()){
+          pedidosL.push(pedido);
         }
       } 
     );
-    DespaPedidos.pedidos = pedidosD;
+    libraPedidos.pedidos = pedidosL;
     setVisible(true);
   }
   const openArticulos = (data :  any) => {
@@ -63,8 +64,8 @@ export default function AccountsPage() {
   return (
     <Box width='90%' display='flex' margin='auto'>
       <Stack spacing='3.5' direction='row' wrap='wrap'>
-        {users?.map((user: any) => (
-          <Card title={user.username} subTitle={user.email}  style={{width: '250px', marginTop: '1.25em'}}>
+        {users?.map((user: any, idx: number) => (
+          <Card title={user.username} subTitle={user.email}  style={{width: '250px', marginTop: '1.25em'}} key={idx}>
             <>
               <Flex mt='5px'>
                   <Center  w='50%'>
@@ -84,9 +85,9 @@ export default function AccountsPage() {
         ))
         }
         
-      <Dialog header="Pedidos de despachador" style={{ width: '80%' }} modal className="p-fluid" visible={visible} footer={pedidosDialogoFooter} onHide={hideDialog}>
+      <Dialog header="Pedidos de Librador" style={{ width: '80%' }} modal className="p-fluid" visible={visible} footer={pedidosDialogoFooter} onHide={hideDialog}>
             <>
-              <DataTable value={DespaPedidos?.pedidos?.map((element : any) => element)}>
+              <DataTable value={libraPedidos?.pedidos?.map((element : any) => element)}>
                 <Column field="id" header="Pedido" />
                 <Column field="attributes.estatus" header="Estatus" />
                 <Column field='attributes.fecha_pedido' header="Fecha de pedido" />
@@ -119,3 +120,5 @@ export default function AccountsPage() {
     </Box>
   )
 }
+
+export default OrderLibrador;

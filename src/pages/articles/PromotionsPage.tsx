@@ -3,8 +3,8 @@ import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css/core';
 import { getPromotions } from 'services/api/promotions';
 import { useQuery } from 'react-query';
+import { BASE_URL } from "../../config/env";
 import "./style.css"
-const BASE_URL = 'http://54.165.25.186:1380' 
 
 const PromotionsPage = () => {
 

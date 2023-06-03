@@ -8,8 +8,7 @@ import { motion } from "framer-motion";
 import { ShoppingCartArticle } from "./types";
 import { extractStock } from "services/api/stocks";
 import { useQuery } from "react-query";
-
-const BASE_URL = 'http://54.165.25.186:1380'
+import { BASE_URL } from "../../../config/env";
 
 interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;

@@ -9,9 +9,7 @@ import {
 import { ArticleAttributes } from "types/Article";
 import { ContentType } from "types/core";
 import { WithRequired } from "types/utils";
-
-const BASE_URL = 'http://54.165.25.186:1380'
-
+import { BASE_URL } from "../../config/env";
 
 export interface CatalogueArticleProps {
   article: ContentType<WithRequired<ArticleAttributes, "foto">>;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { User } from 'types/User';
-const API_URL = 'http://54.165.25.186:1380/api'
+import { API_URL } from '../../config/env';
 
 export const autocompleteByName = async (config: {search: string}): Promise<User[]>  => {
   const { search } = config;
