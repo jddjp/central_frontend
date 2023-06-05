@@ -64,13 +64,9 @@ export const listArticles = async (
 
 export const getArticlePrices = async (
   article: Article
-): Promise<ListResponse<PriceBreakage>> => {
-  const queryParams = {
-    [buildFilter(["article", "id"], "eq")]: article.id,
-  };
-
-  return (await axios.get(`${API_URL}/rupturaprecios`, { params: queryParams })).data;
-};
+  ): Promise<ListResponse<PriceBreakage>> => {
+  return (await axios.get(`${API_URL}/rupturaprecios?filters[articulo]=${article.id}`)).data;
+  };  
 
 export const getUnidades = async () => {
   const { data } = await axios.get(`${API_URL}/unidadmedidas`)

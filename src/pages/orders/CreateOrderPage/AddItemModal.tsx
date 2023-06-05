@@ -10,6 +10,8 @@ import {
   HStack,
   Text,
   Spacer,
+  Badge,
+  Center
 } from "@chakra-ui/react";
 import { ArticleCard } from "pages/orders/CreateOrderPage/ArticleCard";
 import { Formik } from "formik";
@@ -38,19 +40,39 @@ export const AddItemModal = (props: AddItemModalProps) => {
   const [customPrice, setCustomPrice] = useState<number | undefined>(
     article?.attributes.precio_lista
   );
+  const [discountPrices, setDiscountPrices] = useState<string>("");
   const [amount, setAmount] = useState<number | undefined>(1);
-  const [_, setPrice] = useState<PriceBreakage[] | null>(null);
+  const [priceBreakage, setPriceBreakage] = useState<PriceBreakage[] | null>(null);
 
   useEffect(() => {
+    setCustomPrice(undefined);
     if (article !== undefined && isOpen) {
       const fetchPrices = async () => {
         const prices = await getArticlePrices(article!);
-        setPrice(prices.data);
+        setPriceBreakage(prices.data);
       };
-
       fetchPrices();
     }
   }, [article, isOpen]);
+
+  useEffect(() => {
+    if(priceBreakage !== null){
+      if (priceBreakage?.length >0 && typeof amount !== 'undefined') {
+        const prices = priceBreakage.filter((element)=>{
+          if (amount >= element.attributes.peso_inferior && amount <= element.attributes.peso_superior) {
+            return element;
+          }
+        });
+        if (prices.length > 0) {
+          setDiscountPrices(prices[0].attributes.descripcion_descuento);
+          setCustomPrice(prices[0].attributes.precio);
+        }else{  
+          setDiscountPrices("");
+          setCustomPrice(undefined);
+        }
+      }
+    }
+  },[amount]);
 
   const handleChangeAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -118,10 +140,19 @@ export const AddItemModal = (props: AddItemModalProps) => {
                     Precio
                   </Text>
                   <Spacer />
-                  <EditablePrice
-                    originalPrice={article?.attributes.precio_lista ?? 0}
-                    onSetCustomPrice={setCustomPrice}
-                  />
+                  {discountPrices ? (
+                  <>
+                    <Center>
+                      <Badge p={2} colorScheme='green'>% {discountPrices} </Badge>
+                    </Center>
+                    <Text fontWeight="semibold"> $ {customPrice} </Text>
+                  </>
+                  ):(
+                    <EditablePrice
+                      originalPrice={article?.attributes.precio_lista ?? 0}
+                      onSetCustomPrice={setCustomPrice}
+                    />
+                  )}
                 </HStack>
                 {customPrice && (
                   <Text color="gray.400" fontSize="sm">
