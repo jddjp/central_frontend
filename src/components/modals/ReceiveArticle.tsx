@@ -26,8 +26,6 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
   const [weight, setWeight] = useState('')
   const renderBigTotal = bigTotal(historialApi)
 
-  console.log(historialApi);
-
   const dispatchPost = useMutation(() => postHistorialPayload(historial, weight, props.idProduct), {
     onSuccess: () => {
       setHistorial('')
