@@ -33,9 +33,9 @@ export type ArticlePresentation = ContentType<ArticlePresentationAttributes>;
 
 export interface PriceBreakageAttributes {
   precio: number;
-  descripciondescuento: number;
-  pesoinferior: number;
-  pesosuperior: number;
+  descripcion_descuento: string;
+  peso_inferior: number;
+  peso_superior: number;
   unidadMedida: UnidadMedida;
 }
 
