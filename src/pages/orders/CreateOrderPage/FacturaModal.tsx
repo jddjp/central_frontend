@@ -1,8 +1,8 @@
-import { Button, Heading, Input, Stack } from "@chakra-ui/react";
+import { Button, Heading, Input, Stack, Select, useToast } from "@chakra-ui/react";
 import { useFormikContext } from "formik";
 import { useNavigate } from "react-router-dom";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { Menu } from "components/Menu";
 import { Option } from "components/Option";
@@ -13,6 +13,8 @@ import { Dialog } from "primereact/dialog";
 import { Button as ButtonPrime } from "primereact/button";
 import { client } from 'services/api/cliente';
 import {TiPrinter } from 'react-icons/ti';
+import ConectorPluginV3 from "./ConectorPluginV3";
+
 export const SearchClientStage = () => {
   return (
     <>
@@ -109,6 +111,9 @@ export const FacturaModal = (cart:any) => {
   const [position, setPosition] = useState("center");
   const [displayBasic, setDisplayBasic] = useState(false);
 
+  const [impresoraSeleccionada,setImpresoraSeleccionada] = useState("");
+  const [impresoras, setImpresoras] = useState([]);
+  const toast = useToast()
   const onClick = (name:any) => {
     setDisplayBasic(true);
 
@@ -117,9 +122,49 @@ export const FacturaModal = (cart:any) => {
     }*/
   };
 
-  console.log("FacturaModal:");
-  console.log(cart.cart.cart.items);
-  console.log(cartTemp.cart.client);
+  useEffect(()=>{
+    const fetchData = async () => {
+      const res = await ConectorPluginV3.obtenerImpresoras();
+      setImpresoras(res);
+      console.log("res",res);
+    }
+    fetchData();
+  },[]);
+
+  const handlePrint = async () =>{
+    if (!impresoraSeleccionada) {
+      return  toast({
+        title: 'Seleccione una impresora',
+        status: 'error',
+        isClosable: true,
+        duration: 2000,
+      })
+    }
+    
+    setDisplayBasic(false);
+
+    const conector = new ConectorPluginV3();
+    conector
+      .Iniciar()
+      .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
+      .EscribirTexto("Hola REACT datos datos")
+      .Feed(1)
+      .EscribirTexto("MENSAJE")
+      .Feed(1)
+      .DescargarImagenDeInternetEImprimir("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/1200px-Angular_full_color_logo.svg.png", ConectorPluginV3.TAMAÑO_IMAGEN_NORMAL, 400)
+      .Iniciar()
+      .Feed(1);
+    const respuesta = await conector.imprimirEn(impresoraSeleccionada);
+    if (respuesta == true) {
+      console.log("Impresión correcta");
+    } else {
+      console.log("Error: " + respuesta);
+    }
+  }
+
+  //console.log("FacturaModal:");
+  //console.log(cart.cart.cart.items);
+  //console.log(cartTemp.cart.client);
   
   
   
@@ -132,12 +177,17 @@ export const FacturaModal = (cart:any) => {
           onClick={() => setDisplayBasic(false)}
           variant='outline'
         >Cancelar</Button>
-        <ReactToPrint
+        <Button
+        leftIcon={<TiPrinter  />}
+        onClick={handlePrint}>
+            Imprimir
+        </Button>
+        {/* <ReactToPrint
           trigger={() => (
             <Button leftIcon={<TiPrinter  />} onClick={() => setDisplayBasic(false)}>Ingresar</Button>
           )}
           content={() => componentRef.current}
-        />
+        /> */}
       </div>
     );
   };
@@ -162,6 +212,14 @@ export const FacturaModal = (cart:any) => {
         <div ref={componentRef}>
           <Nota client={cart.cart.client}  items={cart.cart.cart.items}/>
         </div>
+        <Select bg='#E2E8F0' value={impresoraSeleccionada} onChange={(event)=>{setImpresoraSeleccionada(event.target.value)}}>
+          <option value="" disabled>Seleccione una impresora</option>
+          {impresoras.map((impresora) => (
+            <option key={impresora} value={impresora}>
+              {impresora}
+            </option>
+          ))}
+        </Select>
       </Dialog>
     </>
   );
