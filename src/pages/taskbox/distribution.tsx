@@ -1,12 +1,13 @@
 // import { useState } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Badge, Box, Text } from "@chakra-ui/react";
 import { ListBox } from "primereact/listbox";
 // import { Button } from "primereact/button";
 // import RecieveArticle from "../../components/modals/ReceiveArticle";
-import { IoMdCalendar, IoMdClock } from "react-icons/io";
+import { IoMdCalendar } from "react-icons/io";
 import { useQuery } from "react-query";
 import { getOrderDistribution } from "services/api/orders";
 import moment from "moment";
+import { MdOutlineHomeWork, MdTrolley } from "react-icons/md";
 
 const Distribution = () => {
   const { data: orders } = useQuery(["orders"], getOrderDistribution);
@@ -26,28 +27,31 @@ const Distribution = () => {
 
   const itemTemplate = (order: any) => {
     return (
-      <Box display="flex">
-        <Box display="flex" w="100%" gap="3">
-          <Box display="flex" justifyContent="space-between" w="100%">
-            <Box>
-              <Text fontWeight="bold">{order.attributes.comentario}</Text>
-              <Box display="flex" alignItems="center" gap="2">
-                <IoMdClock />
-                <Text>{order.attributes.estatus}</Text>
-              </Box>
-              <Box display="flex" alignItems="center" gap="2">
-                <IoMdCalendar />
-                <Text>{moment(order.attributes.createdAt).format("L")}</Text>
-              </Box>
+      <Box w="100%">
+        <Box display='flex' alignItems='center' gap='2'>
+          <Text fontWeight="bold" fontSize='17'>{order.attributes.comentario}</Text>
+          <Badge colorScheme="red" marginBottom='1'>{order.attributes.estatus}</Badge>
+        </Box>
+        <Box mt='1.5'>
+            <Box display="flex" alignItems="center" gap="2">
+              <IoMdCalendar />
+              <Text>{moment(order.attributes.createdAt).format("L")}</Text>
             </Box>
-            {/* <Box display="flex" alignItems="center" marginRight="5">
-              <Button
-                icon="pi pi-eye"
-                className="p-button-rounded"
-                onClick={() => OpenDialog(order)}
-              ></Button>
-            </Box> */}
+          <Box display="flex" alignItems="center" gap="2">
+            <MdOutlineHomeWork/> 
+            <Text>{order.attributes.sucursal.data.attributes.nombre}</Text>
           </Box>
+          <Box display="flex" alignItems="center" gap="2">
+            <MdTrolley/>
+            <Text>{order.attributes.bodega.data.attributes.nombre}</Text>
+          </Box>
+          {/* <Box display="flex" alignItems="center" marginRight="5">
+            <Button
+              icon="pi pi-eye"
+              className="p-button-rounded"
+              onClick={() => OpenDialog(order)}
+            ></Button>
+          </Box> */}
         </Box>
       </Box>
     );

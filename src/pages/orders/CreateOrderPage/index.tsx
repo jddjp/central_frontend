@@ -50,7 +50,6 @@ export const CreateOrderPage = () => {
   const [cliente, setCliente] = useState<any>();
   const [paymentsDetails ,setPaymentsDetails] = useState<string>();
   const itemMutation = useMutation(newItem)
-  const orderMutation = useMutation(newOrder)
   const { data: libradores } = useQuery(["users_librador"], getLibradores, {
     select: (data) => data.map((users: any) => users.id),
   })
@@ -292,7 +291,7 @@ export const CreateOrderPage = () => {
 
   const submitDistribution = () => {
     var date = new Date();
-    var order = {
+    let orderdistribution: any = {
       id: 0,
       attributes: {
         fecha_pedido: date.toISOString(),
@@ -303,7 +302,6 @@ export const CreateOrderPage = () => {
           ":" +
           (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()),
         estatus: "pendiente",
-        cliente: 0,
         receptor: distribution.receptor,
         sucursal: distribution.sucursal,
         bodega: distribution.bodega,
@@ -317,19 +315,41 @@ export const CreateOrderPage = () => {
       }
     };
 
-    orderMutation.mutate(order, {
-      onSuccess() {
-        setDistribution({ sucursal: 0, bodega: 0, receptor: 0})
-        clear();
-        toast({
-          title: 'Enviado para distribucion',
-          description: 'En un momento el receptor lo tendra en su panel',
-          status: 'success',
-          duration: 8000,
-          isClosable: true,
+    let responseNewOrder = newOrder(orderdistribution.attributes);
+      responseNewOrder.then((response) => {
+        console.log(response);
+        cart.items.forEach((item: any) => {
+          extractUnidad(item.article.id)
+          .then((extract: number) => {
+            var itemNew: Item = {
+              id: 0,
+              attributes: {
+                cantidad: item.amount,
+                pesado: false,
+                cantidad_real: item.amount,
+                precio_venta: item.article.attributes.precio_lista,
+                pedido: response.data.id,
+                articulos: item.article.id,
+                unidad_de_medida: extract,
+                nombre_articulo: item.article.attributes.nombre
+              }
+            };
+            itemMutation.mutate(itemNew, {
+              onSuccess: () => {
+                setDistribution({ sucursal: 0, bodega: 0, receptor: 0})
+                clear();
+                toast({
+                  title: 'Enviado para distribucion',
+                  description: 'En un momento el receptor lo tendra en su panel',
+                  status: 'success',
+                  duration: 8000,
+                  isClosable: true,
+                });
+              }
+            })
+          })
         });
-      }
-    })
+      });
   }
 
   return (

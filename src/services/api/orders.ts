@@ -40,9 +40,7 @@ export const getOrderPendiente = async () => {
 }
 
 export const getOrderDistribution = async () => {
-    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[distribution]=true&populate=articulos`)
-    console.log("======================================")
-    console.log(data)
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=*&filters[distribution]=true`)
     return data.data
 }
 
