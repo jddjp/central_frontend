@@ -20,7 +20,7 @@ export default function AccountsPage() {
   const articulo = {
     articulosP : []
   }
-  const { data: users } = useQuery(["users"], getDespachadores)
+  const { data: users } = useQuery(["despachadores"], getDespachadores)
   const { data: pedidos } = useQuery(["pedidos"], getPedidos);
   const [id, setId] = useState(0)
   const [DespaPedidos, setDespaPedidos] = useState(atribute);

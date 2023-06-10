@@ -21,7 +21,7 @@ const TaskBox = () => {
           {auth?.user?.roleCons === 'Supervisor' && (
             <Tab>Inventario</Tab>
           )}
-          {(auth?.user?.roleCons === 'Supervisor' || auth?.user?.roleCons === 'Despachador') && (
+          {(auth?.user?.roleCons === 'Supervisor' || auth?.user?.roleCons === 'Receptor') && (
             <Tab>Distribuidor</Tab>
           )}
           {auth?.user?.roleCons === 'Librador' && (
@@ -37,7 +37,7 @@ const TaskBox = () => {
               <Inventory items={products?.filter((e: Article) => e.attributes.fresh === false)}/>
             </TabPanel>
           )}
-          {(auth?.user?.roleCons === 'Supervisor' || auth?.user?.roleCons === 'Despachador') && (
+          {(auth?.user?.roleCons === 'Supervisor' || auth?.user?.roleCons === 'Receptor') && (
             <TabPanel>
               <Distribution/>
             </TabPanel>
