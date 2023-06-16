@@ -64,8 +64,14 @@ export const extractFlagOrders = async () => {
     return data.data
 }
 
-export const getOrdersPending = async (id: number) => {
-    const { data } = await axios.get(`${API_URL}/pedidos?populate=articulos&filters[estatus]=pendiente&filters[librador][id]=${id}`)
+export const getOrdersPendingLibrador = async (id: number) => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=articulos&filters[estatus]=pendiente&filters[despachador_check]=true&filters[librador_check]=false&filters[librador][id]=${id}`)
+
+    return data.data
+}
+
+export const getOrdersPendingDespachador = async (id: number) => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=articulos&filters[estatus]=pendiente&filters[despachador_check]=false&filters[Despachador]=${id}`)
 
     return data.data
 }

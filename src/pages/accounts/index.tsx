@@ -9,50 +9,36 @@ import { Dialog } from "primereact/dialog";
 import { Center, Text } from '@chakra-ui/react'
 import { useMutation, useQuery } from 'react-query';
 import moment from 'moment';
-import { getDespachadores, getPedidos } from 'services/api/users';
+import { getDespachadores } from 'services/api/users';
 import { MdCheckCircle, MdUnpublished } from 'react-icons/md';
-import { putCheckOrders } from 'services/api/orders';
+import { getOrdersPendingDespachador, putCheckOrders } from 'services/api/orders';
 
 export default function AccountsPage() {
-  const atribute = {
-    pedidos : []
-  }
-  const articulo = {
-    articulosP : []
-  }
+
   const { data: users } = useQuery(["despachadores"], getDespachadores)
-  const { data: pedidos } = useQuery(["pedidos"], getPedidos);
   const [id, setId] = useState(0)
-  const [DespaPedidos, setDespaPedidos] = useState(atribute);
-  const [articulos, setArticulos] = useState(articulo);
+  const { data: pedidos, mutate } = useMutation(getOrdersPendingDespachador)
   const checkMutation = useMutation(putCheckOrders)
+  const [articulos, setArticulos] = useState([])
   const [visible, setVisible] = useState(false);
   const [visibleArticulo, setVisibleArticulo] = useState(false);
 
   const open = (data :  any) => {
-    let despachador;
-    let pedidosD : any = [];
-    pedidos.data.forEach((pedido: any) =>{
-      despachador = pedido.attributes.Despachador
-        if(despachador === data.toString()){
-          pedidosD.push(pedido);
-        }
-      } 
-    );
-    DespaPedidos.pedidos = pedidosD;
+    mutate(data)
     setVisible(true);
   }
   const openArticulos = (data :  any, id: number) => {
     setId(id);
-    const articulosData = data.attributes.articulos
-    articulos.articulosP = articulosData.data ;
+    setArticulos(data)
     setVisibleArticulo(true)
   }
   const hideDialog = () => {
+    setId(0)
     setVisible(false);
   }
   const hideDialogArticulo = () => {
     setId(0);
+    setArticulos([])
     setVisibleArticulo(false);
   }
   const pedidosDialogoFooter = (
@@ -66,6 +52,8 @@ export default function AccountsPage() {
       <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={hideDialogArticulo} />
     </>
   );
+
+  console.log(pedidos);
   return (
     <Box width='90%' display='flex' margin='auto'>
       <Stack spacing='3.5' direction='row' wrap='wrap'>
@@ -92,7 +80,7 @@ export default function AccountsPage() {
         
       <Dialog header="Pedidos de despachador" style={{ width: '80%' }} modal className="p-fluid" visible={visible} footer={pedidosDialogoFooter} onHide={hideDialog}>
             <>
-              <DataTable value={DespaPedidos?.pedidos?.map((element : any) => element)}>
+              <DataTable value={pedidos?.map((element : any) => element)}>
                 <Column field="id" header="Pedido" />
                 <Column field="attributes.estatus" header="Estatus" />
                 <Column field='attributes.fecha_pedido' header="Fecha de pedido" />
@@ -110,7 +98,7 @@ export default function AccountsPage() {
                       icon="pi pi-eye"
                       className="p-button-rounded p-button-success mr-2 p-button-text"
                       title='Articulos del pedido'
-                      onClick={() => openArticulos(data, data.id)}
+                      onClick={() => openArticulos(data.attributes.articulos.data, data.id)}
                     />
                 )}
                 exportable={false}
@@ -120,7 +108,7 @@ export default function AccountsPage() {
       </Dialog>
       <Dialog header="Artículos" style={{ width: '30%' }} modal className="p-fluid" visible={visibleArticulo} footer={articulosDialogoFooter} onHide={hideDialogArticulo}>
             <>
-            <DataTable value={articulos.articulosP.map((elementos : any) => elementos)}> 
+            <DataTable value={articulos.map((elementos : any) => elementos)}> 
               <Column field="attributes.nombre" header="Nombre" />
               <Column field="attributes.descripcion" header="Descripción" />
             </DataTable>

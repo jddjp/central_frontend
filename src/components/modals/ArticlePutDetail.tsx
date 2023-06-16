@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { editProduct, getProductById } from "services/api/products";
-import { Stack } from '@chakra-ui/react';
+import { Box, Checkbox, Stack } from '@chakra-ui/react';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber, InputNumberChangeParams } from 'primereact/inputnumber';
 import { Dropdown, DropdownChangeParams } from 'primereact/dropdown';
@@ -35,6 +35,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         codigo_barras: data.articulo ? data.articulo.data.attributes.codigo_barras : '',
         codigo_qr: data.articulo ? data.articulo.data.attributes.codigo_qr : '',
         estado: data.articulo ? data.articulo.data.attributes.estado : '',
+        isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
         unidad_de_medida: data.articulo ? data.articulo.data.attributes.unidad_de_medida : '',
       })
       setStock({...stock, 
@@ -57,6 +58,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
+    isFiscal: false,
     unidad_de_medida: 0
   })
   const [stock, setStock] = useState<any>({
@@ -99,6 +101,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   }
   const onUpload = (e: any) => {
     setProduct({...product, [e.target.name]: e.target.files[0]})
+  }
+  const onHandleFiscal = () => {
+    setProduct({...product, isFiscal: !product.isFiscal})
   }
 
   return (  
@@ -171,7 +176,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               onChange={(e: any) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
             />
           </div>
-
+          <Box display='flex' alignItems='center' gap='2'>
+            <label>Facturable</label>
+            <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
+          </Box>
           <div >
             <form action="">
               <input type="file" accept="image/*" onChange={onUpload} name='foto'/>

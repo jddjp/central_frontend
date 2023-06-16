@@ -21,10 +21,10 @@ export const getDespachadores = async () => {
   return data
 }
 
-export const getPedidos = async () => {
-  const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos`)
-  return data
-}
+// export const getPedidos = async () => {
+//   const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos`)
+//   return data
+// }
 
 export const getDispatchers = async () => {
   const { data } = await axios.get(`${API_URL}/users/?populate=pedidos&filters[roleCons][$contains]=Despachador`)

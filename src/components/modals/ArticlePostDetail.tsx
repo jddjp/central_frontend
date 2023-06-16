@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react'
-import { Stack } from "@chakra-ui/react";
+import { Box, Checkbox, Stack } from "@chakra-ui/react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
@@ -35,6 +35,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
+    isFiscal: false,
     fresh: true,
     unidad_de_medida: 0
   });
@@ -81,6 +82,9 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   }
   const onUpload = (e: any) => {
     setProduct({...product, [e.target.name]: e.target.files[0]})
+  }
+  const onHandleFiscal = () => {
+    setProduct({...product, isFiscal: !product.isFiscal})
   }
 
   return (  
@@ -151,6 +155,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             onChange={(e) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
           />
         </div>
+        <Box display='flex' alignItems='center' gap='2'>
+          <label>Facturable</label>
+          <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
+        </Box>
         <div >
           <form action="">
             <input type="file"  accept="image/*" onChange={onUpload} name='foto'/>

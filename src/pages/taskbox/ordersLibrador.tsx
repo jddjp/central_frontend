@@ -8,14 +8,14 @@ import { Dialog } from "primereact/dialog";
 import { useState } from "react";
 import { MdCheckCircle, MdUnpublished } from "react-icons/md";
 import { useMutation, useQuery } from "react-query";
-import { getOrdersPending, putCheckOrders } from "services/api/orders";
+import { getOrdersPendingLibrador, putCheckOrders } from "services/api/orders";
 import { getLibradores } from "services/api/users";
 
 const OrderLibrador = () => {
 
   const { data: users } = useQuery(["users"], getLibradores)
   const [id, setId] = useState(0)
-  const { data: pedidos, mutate } = useMutation(getOrdersPending)
+  const { data: pedidos, mutate } = useMutation(getOrdersPendingLibrador)
   const checkMutation = useMutation(putCheckOrders)
   const [articulos, setArticulos] = useState([])
   const [visible, setVisible] = useState(false);
