@@ -8,9 +8,8 @@ import { Dialog } from "primereact/dialog";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
-import {getArticulosPopulate } from 'services/api/articles';
+import {getArticulosNoFiscal } from 'services/api/articles';
 import {getArticulosSustituto,  updateArticulosSustituto } from 'services/api/articles';
-
 
 
 const Contador = () => {
@@ -20,7 +19,7 @@ const Contador = () => {
   }
   const tab ='\u00A0';
   const queryClient = useQueryClient()
-    const { data: articulo } = useQuery(["articulos"], getArticulosPopulate);
+    const { data: articulo } = useQuery(["articulos"], getArticulosNoFiscal);
     const updateArticuloSustito = useMutation( updateArticulosSustituto);
     const { data: articuloSustito } = useQuery(["articulosSustitutos"], getArticulosSustituto);
     const [globalFilterValue1, setGlobalFilterValue1] = useState('');

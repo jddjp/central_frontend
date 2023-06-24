@@ -21,11 +21,13 @@ export const getArticulos = async () => {
   
   return data;
 };
-export const getArticulosPopulate = async () => {
-  const { data } = await axios.get(`${API_URL}/articulos?populate=*`)
+
+export const getArticulosNoFiscal = async () => {
+  const { data } = await axios.get(`${API_URL}/articulos?filters[isFiscal][$eq]=false`)
   
   return data;
 };
+
 export const getArticulosSustituto = async () => {
   const { data } = await axios.get(`${API_URL}/ArticulosSustitutos?populate=*`)
   
