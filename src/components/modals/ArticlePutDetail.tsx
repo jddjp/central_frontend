@@ -5,8 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { editProduct, getProductById } from "services/api/products";
 import { Box, Checkbox, Stack } from '@chakra-ui/react';
 import { InputText } from 'primereact/inputtext';
-import { InputNumber, InputNumberChangeParams } from 'primereact/inputnumber';
-import { Dropdown, DropdownChangeParams } from 'primereact/dropdown';
+import { InputNumber, InputNumberChangeEvent } from 'primereact/inputnumber';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { getSubsidiaries } from 'services/api/subsidiary';
 import { categoria, estado, initProduct, initStock, unidadMedida } from 'helpers/constants';
 
@@ -87,16 +87,16 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const onInputTextChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setProduct({...product, [e.target.name]: e.target.value});
   }
-  const onInputNumberChange = (e: InputNumberChangeParams, tag: string) => {
+  const onInputNumberChange = (e: InputNumberChangeEvent, tag: string) => {
     setProduct({...product, [tag]: e.value});
   }
-  const onDropdownChange = (e: DropdownChangeParams, tag: string) => {
+  const onDropdownChange = (e: DropdownChangeEvent, tag: string) => {
     setProduct({...product, [tag]: e.target.value});
   }
-  const onInputNumberChangeStock = (e: InputNumberChangeParams, tag: string) => {
+  const onInputNumberChangeStock = (e: InputNumberChangeEvent, tag: string) => {
     setStock({...stock, [tag]: e.value});
   }
-  const onDropdownChangeStock = (e: DropdownChangeParams, tag: string) => {
+  const onDropdownChangeStock = (e: DropdownChangeEvent, tag: string) => {
     setStock({...stock, [tag]: e.target.value});
   }
   const onUpload = (e: any) => {

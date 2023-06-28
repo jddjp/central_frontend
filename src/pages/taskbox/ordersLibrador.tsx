@@ -104,12 +104,10 @@ const OrderLibrador = () => {
             </>
       </Dialog>
       <Dialog header="Artículos" style={{ width: '30%' }} modal className="p-fluid" visible={visibleArticulo} footer={articulosDialogoFooter} onHide={hideDialogArticulo}>
-            <>
-            <DataTable value={articulos.map((elementos : any) => elementos)}> 
-              <Column field="attributes.nombre" header="Nombre" />
-              <Column field="attributes.descripcion" header="Descripción" />
-            </DataTable>
-            </>
+        <DataTable value={articulos.map((elementos : any) => elementos)}> 
+          <Column field="attributes.nombre" header="Nombre" />
+          <Column field="attributes.descripcion" header="Descripción" />
+        </DataTable>
       </Dialog>
       </Stack>
     </Box>

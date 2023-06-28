@@ -23,31 +23,29 @@ export const getArticulos = async () => {
 };
 
 export const getArticulosNoFiscal = async () => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[isFiscal][$eq]=false`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[isFiscal][$eq]=false&populate[articulos_sustitutos][populate][0]=articulo_sustituto`)
   
   return data;
 };
 
 export const getArticulosSustituto = async () => {
-  const { data } = await axios.get(`${API_URL}/ArticulosSustitutos?populate=*`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[isFiscal][$eq]=true`)
   
-  return data;
+  return data.data;
 };
-export const updateArticulosSustituto = async (payload: any) => {
-  console.log(payload);
-  axios
-  .put(`${API_URL}/articulos/${payload.update.data.dataArticulo.id}`, {
-      data:{
-        articulos_sustituto:
-          [
-           {id:payload.articulo.data.id} 
-          ]
-      } 
-  })
-  .then(response => {
-    console.log(response);
-  });
+
+export const updateArticulosSustituto = async (payload: { articulo_sustituto: number, articulo: number}) => {
+  const { data } = await axios.post(`${API_URL}/articulosSustitutos`, { data: payload })
+
+  return data
 };
+
+export const deleteArticulosSustituto = async (payload: number) => {
+  const { data } = await axios.delete(`${API_URL}/articulosSustitutos/${payload}`)
+
+  return data
+};
+
 export const listArticles = async (
   options: PaginationConfig = defaultPaginationConfig
 ): Promise<ListResponse<SearchArticle>> => {

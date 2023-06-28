@@ -9379,10 +9379,10 @@
   "resolved" "https://registry.npmjs.org/primeicons/-/primeicons-5.0.0.tgz"
   "version" "5.0.0"
 
-"primereact@^8.1.1":
-  "integrity" "sha512-D2zzpoRHyv/3jw3TmqNWh55/geInebULYNmT+DD1k4i1tVHFZE1DG1EQqC/Wl7AJmcNOS1mgHgYJWsO3/YXzLw=="
-  "resolved" "https://registry.npmjs.org/primereact/-/primereact-8.1.1.tgz"
-  "version" "8.1.1"
+"primereact@^9.6.0":
+  "integrity" "sha512-+9nhZkh914aSDh2phuSm3BQNKQW0kpcBZqUd+Jdlpg+f6fvgNGGUr2wgZiqfXljkHeCEHdWO/wqB8WvfzqjOVw=="
+  "resolved" "https://registry.npmjs.org/primereact/-/primereact-9.6.0.tgz"
+  "version" "9.6.0"
   dependencies:
     "@types/react-transition-group" "^4.4.1"
     "react-transition-group" "^4.4.1"

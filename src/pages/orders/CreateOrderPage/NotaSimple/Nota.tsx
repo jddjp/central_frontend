@@ -43,7 +43,7 @@ export const Nota = ( props: NotaProps) => {
           key={col.field}
           field={col.field}
           header={col.header}
-          headerStyle={{ width: "4%", textColor: "blue" }}
+          headerStyle={{ width: "4%"}}
           body={(data, props) => (
             <div>
               {products[props.rowIndex].article.attributes.precio_lista} x {products[props.rowIndex].amount}
@@ -59,7 +59,7 @@ export const Nota = ( props: NotaProps) => {
             key={col.field}
             field={col.field}
             header={col.header}
-            headerStyle={{ width: "4%", textColor: "blue" }}
+            headerStyle={{ width: "4%" }}
             body={(data, props) => (
               <div>
                 ${products[props.rowIndex].amount * products[props.rowIndex].article.attributes.precio_lista}
@@ -74,7 +74,7 @@ export const Nota = ( props: NotaProps) => {
         key={col.field}
         field={col.field}
         header={col.header}
-        headerStyle={{ width: "4%", textColor: "blue" }}
+        headerStyle={{ width: "4%" }}
       />
     );
   });
