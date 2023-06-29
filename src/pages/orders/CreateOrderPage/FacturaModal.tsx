@@ -187,6 +187,7 @@ export const TypeInvoice = () => {
   const location = useLocation();
   const [cartTemp, setCart] = useState(location.state?.cart);
   const [flagCheck, setFlagCheck] = useState(false);
+  const [flagArticulosSustituir, setFlagArticulosSustituir] = useState(false);
   const [dataToSend, setDataToSend] = useState<{
     articulo_sustituir: string;
     id_articulo_sustituir: any;
@@ -195,6 +196,7 @@ export const TypeInvoice = () => {
     opciones_sustitutos: any[];
     opcion_selected: any;
   }[]>([]);
+  const [executeOnly,setExecuteOnly] = useState(true)
 
   const navigate = useNavigate();
   const redirectTo = (route: string) => () => navigate(route, { state: { cart: cartTemp,  datosFactura : dataToSend}});
@@ -219,7 +221,7 @@ export const TypeInvoice = () => {
   };  
   
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       cartTemp.cart.items.forEach(async (element: any) => {
         const data = await getArticulosSustituto_especifico(element.article.id);
         if (data.data.length > 0) {
@@ -241,70 +243,95 @@ export const TypeInvoice = () => {
       });
     };
     fetchData();
-  }, []);  
+  }, []);
+
+  useEffect(()=>{
+    if(executeOnly){//verifica si hay articulos no facturables para facturar solo una vez en cuanto se actualiza los datosSend
+      if (dataToSend.length > 0) {
+        setFlagArticulosSustituir(true)
+        setExecuteOnly(false);
+      }else{
+        setFlagArticulosSustituir(false)
+      }
+    }
+  },[dataToSend]);
 
   return (
     <>
-      <Heading fontWeight="bold">Factura</Heading>
-      <Stack>
-        {flagCheck ? (
-            <>
-            <Alert status='success'>
-              <AlertIcon />
-              <Box>
-                <AlertTitle>¡Genial!</AlertTitle>
-                <AlertDescription> No quedan articulos pendientes, selecciona un cliente para progresar.</AlertDescription>
-              </Box>
-            </Alert>
-            </>
-          ) : (
-            <>
-              <Alert status='warning'>
+      {flagArticulosSustituir ? (
+      <>
+        <Heading fontWeight="bold">Factura</Heading>
+        <Stack>
+          {flagCheck ? (
+              <>
+              <Alert status='success'>
                 <AlertIcon />
                 <Box>
-                  <AlertTitle>¡Espera!</AlertTitle>
-                  <AlertDescription> Hay Articulos que no son facturables, sustituye los articulos para facturar.</AlertDescription>
+                  <AlertTitle>¡Genial!</AlertTitle>
+                  <AlertDescription> No quedan articulos pendientes, selecciona un cliente para progresar.</AlertDescription>
                 </Box>
               </Alert>
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                <Alert status='warning'>
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>¡Espera!</AlertTitle>
+                    <AlertDescription> Hay Articulos que no son facturables, sustituye los articulos para facturar.</AlertDescription>
+                  </Box>
+                </Alert>
+              </>
+            )}
 
+          <Spacer/>
+          <Heading as='h4' size='md'>Articulos Pendientes </Heading>
+          <List spacing={3}>
+            {dataToSend && dataToSend.map((item:any, index:any) => (         
+              <ListItem key={index}>
+                <Flex minWidth='max-content' alignItems='center' gap='2'>
+                  <Box fontSize='lg'>
+                    <ListIcon boxSize={6} as={MdWarning} color='yellow.500' />
+                    <label>{item.articulo_sustituir}</label>
+                  </Box>
+                  <Spacer />
+                  <Box w='40%'>
+                    <Select placeholder='Sleccione articulo'  onChange={(event) => handleSeleccionar(index, event.target.selectedOptions[0].textContent, event.target.value)} size='sm' >
+                      {item.opciones_sustitutos.map((opcion: any, index: any) => (
+                        <option key={index} value={opcion.value}>{opcion.label}</option>
+                      ))}
+                    </Select>
+                  </Box>
+                </Flex>
+              </ListItem>
+            ))}
+          </List>
+        </Stack>
         <Spacer/>
-        <Heading as='h4' size='md'>Articulos Pendientes </Heading>
-        <List spacing={3}>
-          {dataToSend && dataToSend.map((item:any, index:any) => (         
-            <ListItem key={index}>
-              <Flex minWidth='max-content' alignItems='center' gap='2'>
-                <Box fontSize='lg'>
-                  <ListIcon boxSize={6} as={MdWarning} color='yellow.500' />
-                  <label>{item.articulo_sustituir}</label>
-                </Box>
-                <Spacer />
-                <Box w='40%'>
-                  <Select placeholder='Sleccione articulo'  onChange={(event) => handleSeleccionar(index, event.target.selectedOptions[0].textContent, event.target.value)} size='sm' >
-                    {item.opciones_sustitutos.map((opcion: any, index: any) => (
-                      <option key={index} value={opcion.value}>{opcion.label}</option>
-                    ))}
-                  </Select>
-                </Box>
-              </Flex>
-            </ListItem>
-          ))}
-        </List>
-      </Stack>
-      <Spacer/>
-      <Menu w="80%">
-        {flagCheck ? (
-          <>
-            <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
-              Cliente existente
-            </Option>
-            <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
-              Registrar Nuevo Cliente
-            </Option>
-          </>
-        ) : null}
-      </Menu>
+        <Menu w="80%">
+          {flagCheck ? (
+            <>
+              <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
+                Cliente existente
+              </Option>
+              <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
+                Registrar Nuevo Cliente
+              </Option>
+            </>
+          ) : null}
+        </Menu>
+      </>):(
+      <>
+        <Menu w="80%">
+          <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
+            Cliente existente
+          </Option>
+          <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
+            Registrar Nuevo Cliente
+          </Option>
+        </Menu>
+      </>)}
+
     </>
   );
 };
