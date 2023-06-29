@@ -4,9 +4,14 @@ const bigTotal = (arr: ArrayNumbers[]) =>  {
   
   let totalBts = 0
   let totalKg = 0
+  let totalRecibido = 0
   
   const separate = arr?.map((e: ArrayNumbers) => {
     return e.attributes.array_numeros.split('=')
+  }).flat()
+
+  const separateNums = arr?.map((e: ArrayNumbers) => {
+    return e.attributes.array_numeros.split('=')[0].split(',');
   }).flat()
   
   const extract = separate?.filter(e => e.includes('Bts') || e.includes('Kg/L'))
