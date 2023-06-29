@@ -1,9 +1,21 @@
-import { Button, Heading, Input, Stack } from "@chakra-ui/react";
+import { Button, Heading, Input, Stack,    Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription, Box,
+  List,
+  ListItem,
+  ListIcon,
+  Select,
+  Flex,
+  Text,
+  Spacer,
+  OrderedList,
+  UnorderedList, } from "@chakra-ui/react";
 import { useFormikContext } from "formik";
 import { useNavigate } from "react-router-dom";
 
-import React, { useState, useRef } from "react";
-
+import React, { useState, useRef, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Menu } from "components/Menu";
 import { Option } from "components/Option";
 import { InputField } from "components/InputField";
@@ -12,7 +24,11 @@ import { Nota } from "./NotaSimple/Nota";
 import { Dialog } from "primereact/dialog";
 import { Button as ButtonPrime } from "primereact/button";
 import { client } from 'services/api/cliente';
+import { useLocation } from 'react-router-dom';
 import {TiPrinter } from 'react-icons/ti';
+import { MdCheckCircle, MdSettings, MdWarning } from "react-icons/md";
+import { getArticulosNoFiscal, getArticulosSustituto, getArticulosSustituto_especifico, searchArticles } from "services/api/articles";
+import { CheckIcon } from "components/icons";
 export const SearchClientStage = () => {
   return (
     <>
@@ -99,10 +115,9 @@ export const RegisterOfElectrictFactura = () => {
 };
 
 export const FacturaModal = (cart:any) => {
-
   const [cartTemp, setCart] = useState(cart);
   const navigate = useNavigate();
-  const redirectTo = (route: string) => () => navigate(route);
+  const redirectTo = (route: string) => () => navigate(route,{ state: { cart: cartTemp.cart }});
   const [millisegundos, setMillisegundos] = useState("1000");
   const componentRef = useRef<HTMLDivElement>(null);
 
@@ -168,19 +183,127 @@ export const FacturaModal = (cart:any) => {
 };
 
 export const TypeInvoice = () => {
+
+  const location = useLocation();
+  const [cartTemp, setCart] = useState(location.state?.cart);
+  const [flagCheck, setFlagCheck] = useState(false);
+  const [dataToSend, setDataToSend] = useState<{
+    articulo_sustituir: string;
+    id_articulo_sustituir: any;
+    cantidad: any;
+    precio_venta: any;
+    opciones_sustitutos: any[];
+    opcion_selected: any;
+  }[]>([]);
+
   const navigate = useNavigate();
-  const redirectTo = (route: string) => () => navigate(route);
+  const redirectTo = (route: string) => () => navigate(route, { state: { cart: cartTemp,  datosFactura : dataToSend}});
+
+  const checkAll = ()=>{
+    const filteredData = dataToSend.filter(obj => obj.opcion_selected && obj.opcion_selected.id);
+    if (filteredData.length > 0) {
+      setFlagCheck(true);
+    } else {
+      setFlagCheck(false);
+    }
+  }
+
+  const handleSeleccionar = (index: number, label:any,value: any) => {
+    if (!value) {
+      dataToSend[index].opcion_selected = {};
+      checkAll();
+      return;
+    }
+    dataToSend[index].opcion_selected = {'label':label,'id':value};
+    checkAll();
+  };  
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      cartTemp.cart.items.forEach(async (element: any) => {
+        const data = await getArticulosSustituto_especifico(element.article.id);
+        if (data.data.length > 0) {
+          console.log('SI',data.data);
+          let options:any = [];
+          data.data.forEach((element:any) => {
+            options.push  ( {value: element.attributes.articulo_sustituto.data.id, label:element.attributes.articulo_sustituto.data.attributes.nombre})
+          });
+          const objeto1 = { 
+            articulo_sustituir: element.article.attributes.nombre, 
+            id_articulo_sustituir: element.article.id,
+            cantidad: element.amount,
+            precio_venta: element.customPrice ? element.customPrice : element.article.attributes.precio_lista,
+            opciones_sustitutos: options,
+            opcion_selected:{},
+          };
+          setDataToSend([...dataToSend,objeto1]);
+        }
+      });
+    };
+    fetchData();
+  }, []);  
+
   return (
     <>
       <Heading fontWeight="bold">Factura</Heading>
+      <Stack>
+        {flagCheck ? (
+            <>
+            <Alert status='success'>
+              <AlertIcon />
+              <Box>
+                <AlertTitle>¡Genial!</AlertTitle>
+                <AlertDescription> No quedan articulos pendientes, selecciona un cliente para progresar.</AlertDescription>
+              </Box>
+            </Alert>
+            </>
+          ) : (
+            <>
+              <Alert status='warning'>
+                <AlertIcon />
+                <Box>
+                  <AlertTitle>¡Espera!</AlertTitle>
+                  <AlertDescription> Hay Articulos que no son facturables, sustituye los articulos para facturar.</AlertDescription>
+                </Box>
+              </Alert>
+            </>
+          )}
 
+        <Spacer/>
+        <Heading as='h4' size='md'>Articulos Pendientes </Heading>
+        <List spacing={3}>
+          {dataToSend && dataToSend.map((item:any, index:any) => (         
+            <ListItem key={index}>
+              <Flex minWidth='max-content' alignItems='center' gap='2'>
+                <Box fontSize='lg'>
+                  <ListIcon boxSize={6} as={MdWarning} color='yellow.500' />
+                  <label>{item.articulo_sustituir}</label>
+                </Box>
+                <Spacer />
+                <Box w='40%'>
+                  <Select placeholder='Sleccione articulo'  onChange={(event) => handleSeleccionar(index, event.target.selectedOptions[0].textContent, event.target.value)} size='sm' >
+                    {item.opciones_sustitutos.map((opcion: any, index: any) => (
+                      <option key={index} value={opcion.value}>{opcion.label}</option>
+                    ))}
+                  </Select>
+                </Box>
+              </Flex>
+            </ListItem>
+          ))}
+        </List>
+      </Stack>
+      <Spacer/>
       <Menu w="80%">
-        <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
-          Cliente existente
-        </Option>
-        <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
-          Registrar Nuevo Cliente
-        </Option>
+        {flagCheck ? (
+          <>
+            <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
+              Cliente existente
+            </Option>
+            <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
+              Registrar Nuevo Cliente
+            </Option>
+          </>
+        ) : null}
       </Menu>
     </>
   );

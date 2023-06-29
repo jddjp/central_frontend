@@ -24,7 +24,6 @@ export const getArticulos = async () => {
 
 export const getArticulosNoFiscal = async () => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[isFiscal][$eq]=false&populate[articulos_sustitutos][populate][0]=articulo_sustituto`)
-  
   return data;
 };
 
@@ -32,6 +31,10 @@ export const getArticulosSustituto = async () => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[isFiscal][$eq]=true`)
   
   return data.data;
+};
+export const getArticulosSustituto_especifico = async (id: any) => {
+  const { data } = await axios.get(`${API_URL}/ArticulosSustitutos?filters[articulo]=${id}&populate=*`)
+  return data;
 };
 
 export const updateArticulosSustituto = async (payload: { articulo_sustituto: number, articulo: number}) => {
