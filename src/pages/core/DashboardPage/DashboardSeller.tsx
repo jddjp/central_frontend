@@ -42,7 +42,6 @@ export const DashboardSeller = () => {
     {name: 'Recuadro de tareas', route: '/taskbox'}
   ];
   const optionsContador = [
-    {name: 'Asignacion de articulos', route: '/'},
     {name: 'Articulos no facturables', route: '/contador'},
     {name: 'Lista de Asistencia', route: '/asistencia'} 
   ];

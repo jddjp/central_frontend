@@ -135,23 +135,17 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
           <Input value={weight} fontWeight='bold' borderRadius='5px' onChange={onHandleChangeWeight} variant='filled' width='20%' />
         </Box>
       )}
-      <Box style={{ display: 'flex', flexDirection: 'column', marginTop: "6px" }} >
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ flex: 1 }}>
-            <Text fontSize='13' fontWeight='medium'>Cantidad a Recibir: <span >{stock.cantidad}</span></Text>
-          </div>
-          <div style={{ flex: 1,textAlign: "center" }}>
-            <Text fontSize='13' fontWeight='medium'>Cantidad Descargada: {renderBigTotal.totalBts}</Text>
-          </div>
 
-          <div style={{ flex: 1 , textAlign: "right"}}>
-            {stock.cantidad > renderBigTotal.totalBts && (
-              <Text fontSize='13' fontWeight='medium'>Cantidad Faltante: {stock.cantidad - renderBigTotal.totalBts}</Text>
-            )}
-            {stock.cantidad < renderBigTotal.totalBts && (
-              <Text fontSize='13' fontWeight='medium'>Cantidad Sobrante: {renderBigTotal.totalBts - stock.cantidad}</Text>
-            )}
-          </div>
+      <Box display='flex' flexDirection='row' justifyContent='space-between' my='1rem'>
+        <Text fontSize='13' fontWeight='bold'>Cantidad a Recibir: <span >{stock.cantidad}</span></Text>
+        <Text fontSize='13' fontWeight='bold'>Cantidad Descargada: {renderBigTotal.totalBts}</Text>
+        <div>
+          {stock.cantidad > renderBigTotal.totalBts && (
+            <Text fontSize='13' fontWeight='bold'>Cantidad Faltante: {stock.cantidad - renderBigTotal.totalBts}</Text>
+          )}
+          {stock.cantidad < renderBigTotal.totalBts && (
+            <Text fontSize='13' fontWeight='bold'>Cantidad Sobrante: {renderBigTotal.totalBts - stock.cantidad}</Text>
+          )}
         </div>
       </Box>
 

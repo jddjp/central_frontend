@@ -36,6 +36,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     estado: "",
     foto: "",
     isFiscal: false,
+    isFisical: false,
     fresh: true,
     unidad_de_medida: 0
   });
@@ -85,6 +86,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   }
   const onHandleFiscal = () => {
     setProduct({...product, isFiscal: !product.isFiscal})
+  }
+
+  const onHandleFisical = () => {
+    setProduct({...product, isFisical: !product.isFisical})
   }
 
   return (  
@@ -155,9 +160,15 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             onChange={(e) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
           />
         </div>
-        <Box display='flex' alignItems='center' gap='2'>
-          <label>Facturable</label>
-          <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
+        <Box display='flex'gap='2rem'>
+          <Box display='flex' alignItems='center' gap='2'>
+            <label>Facturable</label>
+            <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
+          </Box>
+          <Box display='flex' alignItems='center' gap='2'>
+            <label>Fisico</label>
+            <Checkbox isChecked={product.isFisical} onChange={onHandleFisical}/>
+          </Box>
         </Box>
         <div >
           <form action="">

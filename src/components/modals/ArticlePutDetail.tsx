@@ -36,6 +36,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         codigo_qr: data.articulo ? data.articulo.data.attributes.codigo_qr : '',
         estado: data.articulo ? data.articulo.data.attributes.estado : '',
         isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
+        isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
         unidad_de_medida: data.articulo ? data.articulo.data.attributes.unidad_de_medida : '',
       })
       setStock({...stock, 
@@ -59,6 +60,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     estado: "",
     foto: "",
     isFiscal: false,
+    isFisical: false,
     unidad_de_medida: 0
   })
   const [stock, setStock] = useState<any>({
@@ -104,6 +106,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   }
   const onHandleFiscal = () => {
     setProduct({...product, isFiscal: !product.isFiscal})
+  }
+  const onHandleFisical = () => {
+    setProduct({...product, isFisical: !product.isFisical})
   }
 
   return (  
@@ -176,10 +181,16 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               onChange={(e: any) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
             />
           </div>
+          <Box display='flex'gap='2rem'>
           <Box display='flex' alignItems='center' gap='2'>
             <label>Facturable</label>
             <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
           </Box>
+          <Box display='flex' alignItems='center' gap='2'>
+            <label>Fisico</label>
+            <Checkbox isChecked={product.isFisical} onChange={onHandleFisical}/>
+          </Box>
+        </Box>
           <div >
             <form action="">
               <input type="file" accept="image/*" onChange={onUpload} name='foto'/>
