@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { SimpleGrid, StackProps } from "@chakra-ui/react";
+import { Image, SimpleGrid, StackProps, Text } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 //import styles from "./DataTableTicket.css";
 import { ShoppingCartItem } from "../types";
-
+import { useAuth } from "hooks/useAuth";
 export interface NotaProps extends StackProps {
   client: any
   items: any
 }
 
 export const Nota = ( props: NotaProps) => {
+  const auth = useAuth();
   const columns = [
-    { field: "article.attributes.nombre", header: "Producto" },
+    { field: "article.attributes.nombre", header: "Descripcion" },
     { field: "article.amount", header: " " },
     { field: "article.attributes.precio_lista", header: "Precio" },
   ];
@@ -33,10 +34,7 @@ export const Nota = ( props: NotaProps) => {
   }
 
   const dynamicColumns = columns.map((col, i) => {
-    console.log("..............");
-    console.log(col);
-    
-    
+
     if (col.field == "article.amount") {
       return (
         <Column
@@ -86,38 +84,29 @@ export const Nota = ( props: NotaProps) => {
     current.getMinutes() < 10
       ? "0" + current.getMinutes()
       : current.getMinutes()
-  }`;
-  console.log(".....-");
-  console.log(products);
-  console.log(props.client);
+  }`
 
   return (
-    <>
-      <div style={{ padding: "15px" }}>
-        <p style={{ width: "100%", textAlign: "center", fontWeight: "bold" }}>
-          Comercializadora
-        </p>
-        <p>{date}</p>
-        <SimpleGrid columns={2} spacing={10}>
-          <Box height="40px">Cliente: {props.client?.label}</Box>
-        </SimpleGrid>
-        <div>
-          <DataTable
-            value={products}
-            responsiveLayout="scroll"
-          >
-            {dynamicColumns}
-          </DataTable>
+    <Box p='1rem' >
+      <Text display='block' fontWeight='bold' fontSize='20px' mb='1rem' textAlign='center'>Comercializadora "San Jose"</Text>
+      <Text fontWeight='bold'>Central de abastos, puebla</Text>
+      <Text as='cite' fontWeight='bold'>"El exito en la vida no se mide por lo que logras si no por los obstaculos que superas"</Text>
+      <Text color='blackAlpha.600' my='0.5rem' fontWeight='bold'>{date}</Text>
+      <Box my='0.5rem' display='flex' justifyContent='space-between' fontWeight='bold'>
+        <Text height="40px">Cliente: {props.client?.label}</Text>
+        <Text height="40px">Vendedor: {auth!.user!.nombre}</Text>
+      </Box>
 
-          <SimpleGrid columns={2} spacing={2} >
-            
-            <Box height="30px" style={{paddingLeft: "15px"}}>Total:</Box>
-            <Box height="30px;" style={{textAlign: "center"}}>
-              ${calculateTotal(products)}
-            </Box>
-          </SimpleGrid>
-        </div>
+      <div>
+        <DataTable
+          value={products}
+        >
+          {dynamicColumns}
+        </DataTable>
+        <Text display='block' textAlign='end' mt='1rem' fontWeight='bold'>Total: {calculateTotal(products)}</Text>
+        <Text display='block' textAlign='end' fontWeight='bold'>Articulos vendidos: {products.length}</Text>
+        <Text display='block' textAlign='end' fontWeight='bold'>Gracias por su compra</Text>
       </div>
-    </>
+    </Box>
   );
 };
