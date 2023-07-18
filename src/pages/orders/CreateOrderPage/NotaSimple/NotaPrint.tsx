@@ -3,7 +3,6 @@ import { ShoppingCartItem } from '../types';
 import { StackProps } from '@chakra-ui/react';
 import '../../../../global.css'
 import { numeroALetras } from 'helpers/numbersToText';
-// import { useTicketDetail } from 'zustand/useTicketDetails';
 
 export interface NotaProps extends StackProps {
   client: any
@@ -14,7 +13,6 @@ export interface NotaProps extends StackProps {
 const NotaPrint = ( props: NotaProps) => {
 
   const auth = useAuth();
-  // const { detail } = useTicketDetail()
   const products = props.items;
   let totalLetra = numeroALetras(calculateTotal(products), {
     plural: 'PESOS MEXICANOS',
@@ -65,8 +63,9 @@ const NotaPrint = ( props: NotaProps) => {
         {
           products.map((product: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', marginTop: '0.5rem'}}>
-              <h5>{product.article.attributes.nombre}</h5>
-              <h5>{product.article.attributes.precio_lista}</h5>
+              <h5 style={{textOverflow: "ellipsis", width: '150px', whiteSpace: 'nowrap', overflow: 'hidden'}}>{product.article.attributes.nombre}</h5>
+              <h5>{`${product.article.attributes.precio_lista} x ${product.amount}`}</h5>
+              <h5>${product.article.attributes.precio_lista}</h5>
             </div>
           ))
         }
@@ -74,20 +73,20 @@ const NotaPrint = ( props: NotaProps) => {
       <hr/>
       <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
         <h5>subtotal:</h5>
-        <h5>{calculateTotal(products)}</h5>
+        <h5>${calculateTotal(products)}</h5>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
         <h5>Total:</h5>
-        <h5>{calculateTotal(products)}</h5>
+        <h5>${calculateTotal(products)}</h5>
       </div>
       <h5>{totalLetra}</h5>
       <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
         <h5>efectivo:</h5>
-        <h5>{calculateTotal(products)}</h5>
+        <h5>${calculateTotal(products)}</h5>
       </div>
       <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
         <h5>total pagos:</h5>
-        <h5>{calculateTotal(products)}</h5>
+        <h5>${calculateTotal(products)}</h5>
       </div>
       {/* <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
         <h5>peso total: ....</h5>

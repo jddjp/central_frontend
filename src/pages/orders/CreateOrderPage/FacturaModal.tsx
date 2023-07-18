@@ -163,6 +163,8 @@ export const FacturaModal = (cart:any) => {
     );
   };
 
+  console.log(cart.cart.cart.items);
+
   return (
     <>
       <Box className="nota-digital">
