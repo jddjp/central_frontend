@@ -27,6 +27,7 @@ import { AxiosError } from 'axios';
 
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
 import { extractUnidad } from 'services/api/stocks';
+import { useTicketDetail } from '../../../zustand/useTicketDetails';
 
 const initialClient = { name: 'ss' };
 const initialPayment = {
@@ -44,6 +45,7 @@ export interface LocationOrdenEdit {
 export const CreateOrderPage = () => {
 
   const [type, setType] = useState(false)
+  const { setOrderData } = useTicketDetail()
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -128,6 +130,7 @@ export const CreateOrderPage = () => {
         };
         let responseNewOrder = newOrder(order.attributes);
           responseNewOrder.then((response) => {
+            setOrderData(response)
             cart.items.forEach((item: any) => {
               extractUnidad(item.article.id)
               .then((extract: number)=> {
@@ -209,7 +212,7 @@ export const CreateOrderPage = () => {
     if(client.id!==undefined){
       let responseNewOrder = newOrder(order.attributes);
       responseNewOrder.then((response) => {
-        console.log(response);
+        setOrderData(response)
         cart.items.forEach((item: any) => {
           extractUnidad(item.article.id)
           .then((extract: number) => {

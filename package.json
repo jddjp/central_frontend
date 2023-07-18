@@ -30,7 +30,8 @@
     "react-to-print": "^2.14.12",
     "web-vitals": "^0.2.2",
     "xlsx": "^0.18.5",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "zustand": "^4.3.9"
   },
   "scripts": {
     "start": "react-scripts start",

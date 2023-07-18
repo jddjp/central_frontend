@@ -6510,7 +6510,7 @@
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.2.4.tgz"
   "version" "5.2.4"
 
-"immer@^9.0.7":
+"immer@^9.0.7", "immer@>=9.0":
   "integrity" "sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA=="
   "resolved" "https://registry.npmjs.org/immer/-/immer-9.0.21.tgz"
   "version" "9.0.21"
@@ -11420,6 +11420,11 @@
     "detect-node-es" "^1.1.0"
     "tslib" "^2.0.0"
 
+"use-sync-external-store@1.2.0":
+  "integrity" "sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA=="
+  "resolved" "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
+  "version" "1.2.0"
+
 "use@^3.1.0":
   "integrity" "sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ=="
   "resolved" "https://registry.npmjs.org/use/-/use-3.1.1.tgz"
@@ -12050,3 +12055,10 @@
     "nanoclone" "^0.2.1"
     "property-expr" "^2.0.4"
     "toposort" "^2.0.2"
+
+"zustand@^4.3.9":
+  "integrity" "sha512-Tat5r8jOMG1Vcsj8uldMyqYKC5IZvQif8zetmLHs9WoZlntTHmIoNM8TpLRY31ExncuUvUOXehd0kvahkuHjDw=="
+  "resolved" "https://registry.npmjs.org/zustand/-/zustand-4.3.9.tgz"
+  "version" "4.3.9"
+  dependencies:
+    "use-sync-external-store" "1.2.0"

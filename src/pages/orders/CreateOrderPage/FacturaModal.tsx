@@ -31,6 +31,7 @@ import { getArticulosNoFiscal, getArticulosSustituto, getArticulosSustituto_espe
 import { CheckIcon } from "components/icons";
 import NotaPrint from "./NotaSimple/NotaPrint";
 import '../../../global.css'
+import { useTicketDetail } from "../../../zustand/useTicketDetails";
 
 export const SearchClientStage = () => {
   return (
@@ -123,6 +124,7 @@ export const FacturaModal = (cart:any) => {
   const redirectTo = (route: string) => () => navigate(route,{ state: { cart: cartTemp.cart }});
   const [millisegundos, setMillisegundos] = useState("1000");
   const componentRef = useRef<HTMLDivElement>(null);
+  const { detail } = useTicketDetail()
 
   const [position, setPosition] = useState("center");
   const [displayBasic, setDisplayBasic] = useState(false);
@@ -134,7 +136,7 @@ export const FacturaModal = (cart:any) => {
       setPosition(position);
     }*/
   };
-
+  console.log(detail);
   console.log("FacturaModal:");
   console.log(cart.cart.cart.items);
   console.log(cartTemp.cart.client);
@@ -185,7 +187,7 @@ export const FacturaModal = (cart:any) => {
           <Nota client={cart.cart.client}  items={cart.cart.cart.items}/>
         </div>
       </Dialog> */}
-      <NotaPrint client={cart.cart.client}  items={cart.cart.cart.items}/>
+      <NotaPrint client={cart.cart.client}  items={cart.cart.cart.items} folio={detail.data.id}/>
     </>
   );
 };

@@ -3,15 +3,18 @@ import { ShoppingCartItem } from '../types';
 import { StackProps } from '@chakra-ui/react';
 import '../../../../global.css'
 import { numeroALetras } from 'helpers/numbersToText';
+// import { useTicketDetail } from 'zustand/useTicketDetails';
 
 export interface NotaProps extends StackProps {
   client: any
-  items: any
+  items: any,
+  folio: number
 }
 
 const NotaPrint = ( props: NotaProps) => {
 
   const auth = useAuth();
+  // const { detail } = useTicketDetail()
   const products = props.items;
   let totalLetra = numeroALetras(calculateTotal(products), {
     plural: 'PESOS MEXICANOS',
@@ -46,7 +49,7 @@ const NotaPrint = ( props: NotaProps) => {
       <cite style={{ display: 'block'}}>"El exito en la vida no se mide por lo que logras si no por los obstaculos que superas"</cite>
       <div style={{marginTop: '0.5rem', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between'}}>
         <h5>{date}</h5>
-        <h5>folio: .....</h5>
+        <h5>folio: {`00${props.folio}`}</h5>
       </div>
       {/* <div style={{marginTop: '0.5rem', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold'}}> */}
         {/* <label style={{height: '40px'}}>Cliente: {props.client?.label}</label> */}
@@ -86,9 +89,9 @@ const NotaPrint = ( props: NotaProps) => {
         <h5>total pagos:</h5>
         <h5>{calculateTotal(products)}</h5>
       </div>
-      <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
+      {/* <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
         <h5>peso total: ....</h5>
-      </div>
+      </div> */}
       <label style={{ display: 'block', fontWeight: 'bold',  marginTop: '1rem', textAlign: 'center'}}>{products.length} Articulos vendidos</label>
       <label style={{ display: 'block', fontWeight: 'bold',  marginTop: '1rem', textAlign: 'center'}}>Gracias por su compra</label>
     </div>
