@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import { Box, Text, HStack, Flex, Avatar } from '@chakra-ui/react';
 import { useAuth } from 'hooks/useAuth';
-
+import '../../global.css'
 interface MainLayoutProps {
   children: ReactNode
 }
@@ -23,6 +23,7 @@ const AuthNavBar = () => {
       justify="space-between"
       p={3}
       h="50px"
+      className='nota-digital'
     >
       <HStack spacing={1}>
         <Text>Bienvenido</Text><Text fontWeight="bold">{auth!.user!.nombre}</Text>

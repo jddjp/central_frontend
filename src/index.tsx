@@ -3,7 +3,6 @@ import { AuthProvider } from "providers/AuthProvider";
 import ReactDOM from "react-dom/client"
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider} from "react-query";
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { App } from "./App"
 import { ChakraProvider } from "@chakra-ui/react";
 
@@ -28,7 +27,6 @@ root.render(
       <BrowserRouter>
         <AuthProvider>
           <App />
-        <ReactQueryDevtools/>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>

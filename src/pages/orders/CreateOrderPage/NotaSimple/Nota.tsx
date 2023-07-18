@@ -87,7 +87,7 @@ export const Nota = ( props: NotaProps) => {
   }`
 
   return (
-    <Box p='1rem' >
+    <Box p='1rem'>
       <Text display='block' fontWeight='bold' fontSize='20px' mb='1rem' textAlign='center'>Comercializadora "San Jose"</Text>
       <Text fontWeight='bold'>Central de abastos, puebla</Text>
       <Text as='cite' fontWeight='bold'>"El exito en la vida no se mide por lo que logras si no por los obstaculos que superas"</Text>

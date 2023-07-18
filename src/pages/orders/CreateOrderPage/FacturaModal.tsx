@@ -29,6 +29,9 @@ import {TiPrinter } from 'react-icons/ti';
 import { MdCheckCircle, MdSettings, MdWarning } from "react-icons/md";
 import { getArticulosNoFiscal, getArticulosSustituto, getArticulosSustituto_especifico, searchArticles } from "services/api/articles";
 import { CheckIcon } from "components/icons";
+import NotaPrint from "./NotaSimple/NotaPrint";
+import '../../../global.css'
+
 export const SearchClientStage = () => {
   return (
     <>
@@ -137,7 +140,10 @@ export const FacturaModal = (cart:any) => {
   console.log(cartTemp.cart.client);
   
   
-  
+  const handleAgree = () => {
+    setDisplayBasic(false)
+    window.print()
+  }
 
   const renderFooter = (name:any) => {
     return (
@@ -147,37 +153,39 @@ export const FacturaModal = (cart:any) => {
           onClick={() => setDisplayBasic(false)}
           variant='outline'
         >Cancelar</Button>
-        <ReactToPrint
-          trigger={() => (
-            <Button leftIcon={<TiPrinter  />} onClick={() => setDisplayBasic(false)}>Ingresar</Button>
-          )}
-          content={() => componentRef.current}
-        />
+        <Button
+          onClick={handleAgree}
+          variant='outline'
+        >Ingresar</Button>
       </div>
     );
   };
 
   return (
     <>
-      <Heading fontWeight="bold">Pago realizado con éxito!</Heading>
-      <Heading fontWeight="light">Se requiere de:</Heading>
+      <Box className="nota-digital">
+        <Heading fontWeight="bold">Pago realizado con éxito!</Heading>
+        <Heading fontWeight="light">Se requiere de:</Heading>
 
-      <Menu w="80%">
-        <Option onClick={redirectTo("/orders/typeInvoice")}>Factura</Option>
+        <Menu w="80%">
+          <Option onClick={redirectTo("/orders/typeInvoice")}>Factura</Option>
 
-        <Option onClick={() => onClick("displayBasic")}>Nota simple</Option>
-      </Menu>
+          <Option onClick={() => window.print()}>Nota simple</Option>
+        </Menu>
+      </Box>
 
-      <Dialog
+      {/* <Dialog
         visible={displayBasic}
         style={{ width: "50vw" }}
         footer={renderFooter("displayBasic")}
         onHide={() => setDisplayBasic(false)}
+        // 
       >
-        <div ref={componentRef}>
+        <div ref={componentRef} >
           <Nota client={cart.cart.client}  items={cart.cart.cart.items}/>
         </div>
-      </Dialog>
+      </Dialog> */}
+      <NotaPrint client={cart.cart.client}  items={cart.cart.cart.items}/>
     </>
   );
 };
