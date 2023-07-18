@@ -16,3 +16,9 @@
   }
 
 }
+
+@font-face {
+  font-family: 'Ticketing';
+  src: url('./fonts/Ticketing.ttf');
+  font-display: swap;
+}
