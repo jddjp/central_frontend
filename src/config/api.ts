@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-export const baseMediaUrl = 'https://localhost:1337/uploads';
-export const baseUrl = 'https://localhost:1337';
+export const baseMediaUrl = 'https://api-dev.comercializadorasanjose.mx/uploads';
+export const baseUrl = 'https://api-dev.comercializadorasanjose.mx';
 export const baseApiUrl = `${baseUrl}/api/`;
 
 export const appAxios = axios.create({ baseURL: baseApiUrl });
