@@ -23,7 +23,6 @@ const AuthNavBar = () => {
       justify="space-between"
       p={3}
       h="50px"
-      className='nota-digital'
     >
       <HStack spacing={1}>
         <Text>Bienvenido</Text><Text fontWeight="bold">{auth!.user!.nombre}</Text>

@@ -19,7 +19,7 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Menu } from "components/Menu";
 import { Option } from "components/Option";
 import { InputField } from "components/InputField";
-import ReactToPrint from "react-to-print";
+import ReactToPrint, { useReactToPrint } from "react-to-print";
 import { Nota } from "./NotaSimple/Nota";
 import { Dialog } from "primereact/dialog";
 import { Button as ButtonPrime } from "primereact/button";
@@ -142,10 +142,9 @@ export const FacturaModal = (cart:any) => {
   console.log(cartTemp.cart.client);
   
   
-  const handleAgree = () => {
-    setDisplayBasic(false)
-    window.print()
-  }
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current
+  });
 
   const renderFooter = (name:any) => {
     return (
@@ -156,7 +155,7 @@ export const FacturaModal = (cart:any) => {
           variant='outline'
         >Cancelar</Button>
         <Button
-          onClick={handleAgree}
+          onClick={handlePrint}
           variant='outline'
         >Ingresar</Button>
       </div>
@@ -167,29 +166,29 @@ export const FacturaModal = (cart:any) => {
 
   return (
     <>
-      <Box className="nota-digital">
+      <Box>
         <Heading fontWeight="bold">Pago realizado con éxito!</Heading>
         <Heading fontWeight="light">Se requiere de:</Heading>
 
         <Menu w="80%">
           <Option onClick={redirectTo("/orders/typeInvoice")}>Factura</Option>
 
-          <Option onClick={() => window.print()}>Nota simple</Option>
+          <Option onClick={() => onClick("displayBasic")}>Nota simple</Option>
         </Menu>
       </Box>
 
-      {/* <Dialog
+      <Dialog
         visible={displayBasic}
         style={{ width: "50vw" }}
         footer={renderFooter("displayBasic")}
         onHide={() => setDisplayBasic(false)}
         // 
       >
-        <div ref={componentRef} >
-          <Nota client={cart.cart.client}  items={cart.cart.cart.items}/>
-        </div>
-      </Dialog> */}
-      <NotaPrint client={cart.cart.client}  items={cart.cart.cart.items} folio={detail.data.id}/>
+        <Box display='flex' justifyContent='center' alignItems='center' height='100vh' ref={componentRef}>
+          <NotaPrint client={cart.cart.client} items={cart.cart.cart.items} folio={detail.data.id}/>
+        </Box>
+          {/* <Nota client={cart.cart.client}  items={cart.cart.cart.items}/> */}
+      </Dialog>
     </>
   );
 };
