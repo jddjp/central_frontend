@@ -39,7 +39,7 @@ const NotaPrint = ( props: NotaProps) => {
   }`
 
   return (  
-    <div style={{padding: 1, textTransform: 'uppercase', fontFamily: 'Ticketing'}}>
+    <div style={{padding: 1, textTransform: 'uppercase', fontFamily: 'Ticketing', paddingLeft: '1rem', paddingRight: '1rem'}}>
       <label style={{ display: 'block', fontWeight: 'bold', fontSize: '15px',  marginBottom: '1rem', textAlign: 'center'}}>Comercializadora "San Jose"</label>
       <h6 style={{textAlign: 'center'}}>Central de abastos, puebla, pue.</h6>
       <h6 style={{textAlign: 'center'}}>Nave a bodega 43 y 45</h6>
@@ -64,7 +64,7 @@ const NotaPrint = ( props: NotaProps) => {
           products.map((product: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', marginTop: '0.5rem'}}>
               <h6 style={{textOverflow: "ellipsis", width: '70px', whiteSpace: 'nowrap', overflow: 'hidden'}}>{product.article.attributes.nombre}</h6>
-              <h6>{`${product.article.attributes.precio_lista} x ${product.amount}`}</h6>
+              <h6>{`$${product.article.attributes.precio_lista} x ${product.amount}`}</h6>
               <h6>${product.article.attributes.precio_lista}</h6>
             </div>
           ))
