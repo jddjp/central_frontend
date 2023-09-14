@@ -25,7 +25,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
 
   const [product, setProduct] = useState({
     nombre: '',
-    // precio_lista: 0,
+    precio_lista: 0,
     marca: '',
     inventario_fiscal: 0,
     inventario_fisico: 0,
