@@ -7,28 +7,19 @@ import { Button, Heading, Input, Stack,    Alert,
   ListIcon,
   Select,
   Flex,
-  Text,
-  Spacer,
-  OrderedList,
-  UnorderedList, } from "@chakra-ui/react";
+  Spacer } from "@chakra-ui/react";
 import { useFormikContext } from "formik";
 import { useNavigate } from "react-router-dom";
 
 import React, { useState, useRef, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Menu } from "components/Menu";
 import { Option } from "components/Option";
 import { InputField } from "components/InputField";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
-import { Nota } from "./NotaSimple/Nota";
+import { useReactToPrint } from "react-to-print";
 import { Dialog } from "primereact/dialog";
-import { Button as ButtonPrime } from "primereact/button";
-import { client } from 'services/api/cliente';
 import { useLocation } from 'react-router-dom';
-import {TiPrinter } from 'react-icons/ti';
-import { MdCheckCircle, MdSettings, MdWarning } from "react-icons/md";
-import { getArticulosNoFiscal, getArticulosSustituto, getArticulosSustituto_especifico, searchArticles } from "services/api/articles";
-import { CheckIcon } from "components/icons";
+import { MdWarning } from "react-icons/md";
+import { getArticulosSustituto_especifico } from "services/api/articles";
 import NotaPrint from "./NotaSimple/NotaPrint";
 import '../../../global.css'
 import { useTicketDetail } from "../../../zustand/useTicketDetails";
@@ -119,14 +110,11 @@ export const RegisterOfElectrictFactura = () => {
 };
 
 export const FacturaModal = (cart:any) => {
-  const [cartTemp, setCart] = useState(cart);
+  const [cartTemp] = useState(cart);
   const navigate = useNavigate();
   const redirectTo = (route: string) => () => navigate(route,{ state: { cart: cartTemp.cart }});
-  const [millisegundos, setMillisegundos] = useState("1000");
   const componentRef = useRef<HTMLDivElement>(null);
   const { detail } = useTicketDetail()
-
-  const [position, setPosition] = useState("center");
   const [displayBasic, setDisplayBasic] = useState(false);
 
   const onClick = (name:any) => {
@@ -196,7 +184,7 @@ export const FacturaModal = (cart:any) => {
 export const TypeInvoice = () => {
 
   const location = useLocation();
-  const [cartTemp, setCart] = useState(location.state?.cart);
+  const [cartTemp] = useState(location.state?.cart);
   const [flagCheck, setFlagCheck] = useState(false);
   const [flagArticulosSustituir, setFlagArticulosSustituir] = useState(false);
   const [dataToSend, setDataToSend] = useState<{

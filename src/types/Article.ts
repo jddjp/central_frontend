@@ -17,8 +17,15 @@ export interface ArticleAttributes {
   foto?: RelatedContentType<Media>;
   contador?: RelatedContentType<User>;
   proveedor?: RelatedContentType<Proveedor>;
-  unidad_de_medida?: RelatedContentType<UnidadMedida>;
+  unidad_de_medida?: {
+    data: {
+      attributes: {
+        nombre: string
+      }
+    }
+  };
   historial_numeros?: RelatedContentType<Array<number>>
+  ruptura_precio?: any,
   createdAt: string
 }
 

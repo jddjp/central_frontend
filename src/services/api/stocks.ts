@@ -26,14 +26,23 @@ export const extractStock = async (id: number) => {
 export const deleteStock = async (id: number) => {
   const extract = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
 
-  if (extract.data.data.length !== 0) {
-    axios.delete(`${API_URL}/stocks/${extract.data.data[0].id}`)
-    .then(() => {
+  return new Promise((resolve, reject) => {
+    if (extract.data.data.length !== 0) {
+      axios.delete(`${API_URL}/stocks/${extract.data.data[0].id}`)
+      .then(() => {
+        deleteProduct(id)
+        .then((data) => {
+          resolve(data)
+        })
+      })
+    } else {
       deleteProduct(id)
-    })
-  } else {
-    deleteProduct(id)
-  }
+      .then((data) => {
+        resolve(data)
+      })
+    }
+  })
+
 }
 
 export const postStock = async (stockData: any) => {

@@ -4,7 +4,7 @@ import { Article, ArticleAttributes, PriceBreakage } from "types/Article";
 import { ContentType } from "types/core";
 import { WithRequired } from "types/utils";
 import { ListResponse, PaginationConfig } from "./types";
-import { buildFilter, defaultPaginationConfig } from "./utils";
+import { defaultPaginationConfig } from "./utils";
 import { API_URL } from '../../config/env';
 
 export type SearchArticle = ContentType<
@@ -12,7 +12,7 @@ export type SearchArticle = ContentType<
 >;
 
 export const searchArticles = async ( name: string) => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=foto`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=*`)
   
   return data;
 };

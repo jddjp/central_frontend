@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react'
-import { Box, Checkbox, Stack } from "@chakra-ui/react";
+import { Box, Checkbox, NumberInput, NumberInputField, Stack } from "@chakra-ui/react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
@@ -25,7 +25,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
 
   const [product, setProduct] = useState({
     nombre: '',
-    precio_lista: 0,
+    // precio_lista: 0,
     marca: '',
     inventario_fiscal: 0,
     inventario_fisico: 0,
@@ -35,6 +35,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
+    // peso: "",
     isFiscal: false,
     isFisical: false,
     fresh: true,
@@ -108,10 +109,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
           <InputText value={product.marca}  onChange={onInputTextChange} name='marca'/>
         </div>
         <div className="field">
-          <label htmlFor="name">Precio</label>
-          <InputNumber value={product.precio_lista} onChange={(e) => onInputNumberChange(e, 'precio_lista')} required/>
-        </div>
-        <div className="field">
           <label htmlFor="name">Inventario fiscal</label>
           <InputNumber value={product.inventario_fiscal} onChange={(e) => onInputNumberChange(e, 'inventario_fiscal')} required />
         </div>
@@ -139,10 +136,18 @@ const ArticleDetail = (props: PropsArticleDetail) => {
           <label htmlFor="name">Categoria</label>
           <Dropdown value={product.categoria} inputId="dropdown" options={categoria} onChange={(e) => onDropdownChange(e, 'categoria')} optionLabel="name"/>
         </div>
+        {/* <div className="field">
+          <label htmlFor="name">Precio</label>
+          <InputNumber disabled={true} placeholder='Se llenara de forma automatica'/>
+        </div> */}
+        {/* <div className="field">
+          <label htmlFor="peso">Peso</label>
+            <InputText value={product.peso} onChange={onInputTextChange} name='peso'/>
+        </div> */}
 
         {/* STOCKS  */}
         <div className="field">
-          <label htmlFor="name">Cantidad</label>
+          <label htmlFor="name">Cantidad / Stock</label>
           <InputNumber value={stock.cantidad} onChange={(e) => onInputNumberChangeStock(e, 'cantidad')} required/>
         </div>
         <div className="field">

@@ -95,17 +95,17 @@ const CataloguePage = () => {
         <Column field="attributes.marca" header="Marca" />
         <Column field="attributes.inventario_fiscal" header="inventario_fiscal" style={{ width: "5%" }} />
         <Column field="attributes.inventario_fisico" header="Inventario fisico" style={{ width: "5%" }} />
-        <Column field="attributes.descripcion" header="Dsscripcion" style={{ width: "20%" }} />
+        <Column field="attributes.descripcion" header="Descripción" style={{ width: "20%" }} />
         <Column field="attributes.categoria" header="Categoria" />
         <Column field="attributes.codigo_barras" header="Cod. Barra" />
         <Column field="attributes.codigo_qr" header="Cod. Qr" />
         <Column field="attributes.estado" header="Estado"/>
         {rolFlag && (
-        <Column body={(data: any) => ( 
-          <>
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => openDialogEdit(data)} />
+        <Column header='Acciones' body={(data: any) => ( 
+          <Box display='flex' >
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => openDialogEdit(data)} />
             <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDelete(data.id)} />
-          </>)} 
+          </Box>)} 
           exportable={false} style={{ minWidth: '8rem' }} />
           )}
       </DataTable>

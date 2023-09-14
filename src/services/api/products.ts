@@ -72,6 +72,7 @@ export const editProduct = async (param: any) => {
 }
 
 export const getProductById = async (id: number) => {
+  //populate=sucursal&populate=unidad_de_medida&populate=articulo&populate[1]=articulo.ruptura_precio&filters[articulo][id]=${id}
   const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
   
   if(data.data.length === 0) {

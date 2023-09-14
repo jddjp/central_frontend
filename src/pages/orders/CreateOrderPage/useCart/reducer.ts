@@ -46,7 +46,9 @@ export const cartReducer = (cart: ShoppingCart, action: Action): ShoppingCart =>
           {
             article: newArticle,
             amount: amount + existedAmount,
-            customPrice: payload.customPrice
+            customPrice: payload.customPrice,
+            priceBroken: payload.priceBroken,
+            unidad: payload.unidad
           }
         ]
       };

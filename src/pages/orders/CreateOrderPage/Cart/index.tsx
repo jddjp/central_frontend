@@ -22,7 +22,7 @@ export const Cart = (props: ShoppingCartProps) => {
   return (
     <Stack {...rest}>
       <Text fontWeight="bold" fontSize="xl" mb={1}>Orden</Text>
-      <CartBody position='relative' height='full' pt='50px'>
+      <CartBody position='relative' height='full'>
         <List
           items={cart.items}
           onRender={

@@ -1,10 +1,11 @@
-import * as React from "react"
-import { AuthProvider } from "providers/AuthProvider";
 import ReactDOM from "react-dom/client"
+import { AuthProvider } from "providers/AuthProvider";
+
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider} from "react-query";
-import { App } from "./App"
 import { ChakraProvider } from "@chakra-ui/react";
+import { App } from "./App"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,8 +14,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       keepPreviousData: false,
-      staleTime: 5*(60*1000), // 5 mins
-      cacheTime: 10*(60*1000), // 10 mins
+      staleTime: 30 * 1000
     }
   }
 })
@@ -27,6 +27,7 @@ root.render(
       <BrowserRouter>
         <AuthProvider>
           <App />
+          <ReactQueryDevtools/>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>

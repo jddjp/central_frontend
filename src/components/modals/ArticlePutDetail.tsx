@@ -26,7 +26,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     onSuccess(data: any) {
       setProduct({...product,
         nombre: data.articulo ? data.articulo.data.attributes.nombre : '',
-        precio_lista: data.articulo ? data.articulo.data.attributes.precio_lista : 0,
+        // precio_lista: pricingCalculator(data.articulo ? data.articulo.data.attributes.ruptura_precio.data.attributes.rangos : [], 
+        //   data.articulo ? data.articulo.data.attributes.peso : 0
+        // ),
         marca: data.articulo ? data.articulo.data.attributes.marca : '',
         inventario_fiscal: data.articulo ? data.articulo.data.attributes.inventario_fiscal: 0,
         inventario_fisico: data.articulo ? data.articulo.data.attributes.inventario_fisico : 0,
@@ -49,7 +51,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const [product, setProduct] = useState<any>({
     nombre: "",
-    precio_lista: 0,
+    // precio_lista: 0,
     marca: "",
     inventario_fiscal: 0,
     inventario_fisico: 0,
@@ -59,6 +61,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
+    // peso: "",
     isFiscal: false,
     isFisical: false,
     unidad_de_medida: 0
@@ -127,10 +130,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             <InputText value={product.marca} onChange={onInputTextChange} name='marca' />
           </div>
           <div className="field">
-            <label htmlFor="name">Precio</label>
-            <InputNumber value={product.precio_lista} onChange={(e: any) => onInputNumberChange(e, 'precio_lista')} required />
-          </div>
-          <div className="field">
             <label htmlFor="name">Inventario fiscal</label>
             <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
           </div>
@@ -158,10 +157,18 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             <label htmlFor="name">Categoria</label>
             <Dropdown inputId="dropdown" value={product.categoria} options={categoria} onChange={(e: any) => onDropdownChange(e, 'categoria')} optionLabel="name" />
           </div>
+          {/* <div className="field">
+          <label htmlFor="name">Precio</label>
+          <InputNumber value={product.precio_lista} disabled={true} placeholder='Se llenara de forma automatica'/>
+        </div> */}
+        {/* <div className="field">
+          <label htmlFor="peso">Peso</label>
+            <InputText value={product.peso} onChange={onInputTextChange} name='peso'/>
+        </div> */}
 
           {/* STOCKS */}
           <div className="field">
-            <label htmlFor="name">Cantidad</label>
+            <label htmlFor="name">Cantidad / Stock</label>
             <InputNumber value={stock.cantidad} onChange={(e: any) => onInputNumberChangeStock(e, 'cantidad')} required />
           </div>
 

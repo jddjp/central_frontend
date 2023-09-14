@@ -55,7 +55,7 @@ export const EditablePrice = forwardRef<HTMLInputElement, EditablePriceProps>((p
 
   return (
     <Editable
-      defaultValue={originalPrice.toString()}
+      value={originalPrice.toString()}
       isPreviewFocusable={false}
       as={HStack}
 

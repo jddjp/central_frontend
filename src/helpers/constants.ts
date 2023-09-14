@@ -9,6 +9,7 @@ const initProduct = {
   codigo_barras: "",
   codigo_qr: "",
   estado: "",
+  peso: "",
   foto: "",
   isFiscal: false,
   isFisical: false,

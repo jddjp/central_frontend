@@ -20,11 +20,12 @@ const NotaPrint = ( props: NotaProps) => {
     centPlural: 'CENTAVOS',
     centSingular: 'CENTAVO'
   })
+  console.log(props.items, 'este es la factura');
 
   function calculateTotal(products: ShoppingCartItem[]) {
     let total = 0;
     products.forEach((product) => {
-      total += (product.article.attributes.precio_lista * product.amount);
+      total += (product.priceBroken! * product.amount);
     });
     return total;
   }
@@ -39,7 +40,7 @@ const NotaPrint = ( props: NotaProps) => {
   }`
 
   return (  
-    <div style={{padding: 1, textTransform: 'uppercase', fontFamily: 'Ticketing', paddingLeft: '1rem', paddingRight: '1rem'}}>
+    <div style={{textTransform: 'uppercase', fontFamily: 'Ticketing', paddingLeft: '1rem', paddingRight: '1rem'}}>
       <label style={{ display: 'block', fontWeight: 'bold', fontSize: '15px',  marginBottom: '1rem', textAlign: 'center'}}>Comercializadora "San Jose"</label>
       <h6 style={{textAlign: 'center'}}>Central de abastos, puebla, pue.</h6>
       <h6 style={{textAlign: 'center'}}>Nave a bodega 43 y 45</h6>
@@ -49,10 +50,7 @@ const NotaPrint = ( props: NotaProps) => {
         <h6 style={{textAlign: 'center'}}>{date}</h6>
         <h6 style={{textAlign: 'center'}}>folio: {`00${props.folio}`}</h6>
       </div>
-      {/* <div style={{marginTop: '0.5rem', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold'}}> */}
-        {/* <label style={{height: '40px'}}>Cliente: {props.client?.label}</label> */}
         <h6 style={{textAlign: 'end', marginBottom: '0.5rem'}}>Vend: {auth!.user!.nombre}</h6>
-      {/* </div> */}
       <hr/>
       <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', marginTop: '0.5rem'}}>
         <h5>descripcion</h5>
@@ -64,8 +62,8 @@ const NotaPrint = ( props: NotaProps) => {
           products.map((product: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', marginTop: '0.5rem'}}>
               <h6 style={{textOverflow: "ellipsis", width: '70px', whiteSpace: 'nowrap', overflow: 'hidden'}}>{product.article.attributes.nombre}</h6>
-              <h6>{`$${product.article.attributes.precio_lista} x ${product.amount}`}</h6>
-              <h6>${product.article.attributes.precio_lista}</h6>
+              <h6>{`$${product.priceBroken} x ${product.amount}`}</h6>
+              <h6>${product.customPrice}</h6>
             </div>
           ))
         }

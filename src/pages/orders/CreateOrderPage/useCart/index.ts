@@ -16,7 +16,9 @@ export const useCart = (config: usePurchaseOrderConfig = {}) => {
   const clear = () => dispatch({type: 'clear', payload: undefined});
   const changeItemAmount = (data: {item: ShoppingCartItem, amount: number}) => dispatch({type: 'changeAmountItem', payload: data})
   const changePriceItem = (data: {item: ShoppingCartItem, newprice: number}) => dispatch({type: 'changePriceItem', payload: data})
-  const total  = cart.items.reduce((a, i) => a + (i.customPrice ? i.customPrice  * i.amount : i.article.attributes.precio_lista * i.amount), 0);
+  const total  = cart.items.reduce((a, i) => a + (i.customPrice ? i.priceBroken!  * i.amount : i.priceBroken! * i.amount), 0);
+
+  console.log(cart);
 
   return {
     cart,

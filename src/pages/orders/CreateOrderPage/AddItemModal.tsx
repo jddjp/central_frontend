@@ -22,10 +22,11 @@ import {
   IncrementButton,
   InputCounter,
 } from "components/Counter";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EditablePrice } from "components/EditablePrice";
-import { getArticlePrices } from "services/api/articles";
+// import { getArticlePrices } from "services/api/articles";
 import { ShoppingCartArticle, ShoppingCartItem } from "./types";
+import { pricingCalculator } from "helpers/pricingCalculator";
 
 export interface AddItemModalProps {
   isOpen: boolean;
@@ -37,23 +38,19 @@ export interface AddItemModalProps {
 export const AddItemModal = (props: AddItemModalProps) => {
   const { isOpen, onClose, article, onAddItemModal } = props;
   const toast = useToast();
-  const [customPrice, setCustomPrice] = useState<number | undefined>(
-    article?.attributes.precio_lista
-  );
+  const tagRef = useRef(0)
+  const [customPrice, setCustomPrice] = useState<number | undefined>(0);
   const [discountPrices, setDiscountPrices] = useState<string>("");
-  const [amount, setAmount] = useState<number | undefined>(1);
+  const [amount, setAmount] = useState<number>(1);
   const [priceBreakage, setPriceBreakage] = useState<PriceBreakage[] | null>(null);
 
   useEffect(() => {
-    setCustomPrice(undefined);
-    if (article !== undefined && isOpen) {
-      const fetchPrices = async () => {
-        const prices = await getArticlePrices(article!);
-        setPriceBreakage(prices.data);
-      };
-      fetchPrices();
+    if (amount) {
+      const { price, tag } = pricingCalculator(article?.attributes.ruptura_precio.data.attributes.rangos, amount!);
+      setCustomPrice(price)
+      tagRef.current = tag
     }
-  }, [article, isOpen]);
+  }, [amount, article]);
 
   useEffect(() => {
     if(priceBreakage !== null){
@@ -72,12 +69,12 @@ export const AddItemModal = (props: AddItemModalProps) => {
         }
       }
     }
-  },[amount]);
+  },[amount, priceBreakage]);
 
   const handleChangeAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     if (value.trim().length === 0) {
-      setAmount(undefined);
+      setAmount(1);
     } else {
       setAmount(Number(event.target.value));
     }
@@ -92,13 +89,17 @@ export const AddItemModal = (props: AddItemModalProps) => {
     onClose();
   };
 
+  console.log(article, 'additemmodal');
+
   const handleAdd = () => {
-    console.log({ article });
+    // console.log({ article });
     try {
       onAddItemModal({
         article: article!,
         amount: amount!,
         customPrice: customPrice,
+        priceBroken: tagRef.current,
+        unidad: article?.attributes.unidad_de_medida.data.attributes.nombre
       });
       toast({
         title: "Artículo agregado.",
@@ -149,16 +150,16 @@ export const AddItemModal = (props: AddItemModalProps) => {
                   </>
                   ):(
                     <EditablePrice
-                      originalPrice={article?.attributes.precio_lista ?? 0}
+                      originalPrice={customPrice!}
                       onSetCustomPrice={setCustomPrice}
                     />
                   )}
                 </HStack>
-                {customPrice && (
+                {/* {customPrice && (
                   <Text color="gray.400" fontSize="sm">
                     El precio original es de ${article?.attributes.precio_lista}
                   </Text>
-                )}
+                )} */}
                 <Counter>
                   <DecrementButton onClick={handleStepAmount(-1)} />
                   <InputCounter
