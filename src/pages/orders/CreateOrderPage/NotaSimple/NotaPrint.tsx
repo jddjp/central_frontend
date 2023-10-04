@@ -62,7 +62,7 @@ const NotaPrint = ( props: NotaProps) => {
           products.map((product: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', marginTop: '0.5rem'}}>
               <h6 style={{textOverflow: "ellipsis", width: '70px', whiteSpace: 'nowrap', overflow: 'hidden'}}>{product.article.attributes.nombre}</h6>
-              <h6>{`$${product.priceBroken} x ${product.amount} ${product.unidad}`}</h6>
+              <h6>{`${product.amount} ${product.unidad} x $${product.priceBroken}`}</h6>
               <h6>${product.customPrice}</h6>
             </div>
           ))
