@@ -58,12 +58,14 @@ export const editProduct = async (param: any) => {
     })
 
   } else if(param.edit.data.foto) {
-    let file = new FormData();
-    file.append("files", param.edit.data.foto);
+    const formData = new FormData()
+    formData.append("files", param.edit.data.foto[0]);
 
-    axios.post(`${API_URL}/upload`, param.edit.foto)
+    axios.post(`${API_URL}/upload`, formData)
     .then((response) => {
+      console.log(response.data[0].id);
       param.edit.data.foto = response.data[0].id
+      console.log(param.edit.data.foto);
 
       axios.put(`${API_URL}/articulos/${param.id}`, param.edit )
     })  
@@ -73,7 +75,7 @@ export const editProduct = async (param: any) => {
 
 export const getProductById = async (id: number) => {
   //populate=sucursal&populate=unidad_de_medida&populate=articulo&populate[1]=articulo.ruptura_precio&filters[articulo][id]=${id}
-  const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
+  const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&filters[articulo][id]=${id}`)
   
   if(data.data.length === 0) {
     return {}

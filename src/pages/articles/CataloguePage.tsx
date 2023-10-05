@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Box } from "@chakra-ui/react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -19,7 +19,7 @@ import ArticlePutDetail from 'components/modals/ArticlePutDetail';
 const CataloguePage = () => {
   
   const queryClient = useQueryClient()
-  const [id, setId] = useState(0);
+  const idRef = useRef(0);
   const [rolFlag, setRolFlag] = useState(true);
   const [ visibleCreate, setVisibleCreate] = useState(false);
   const [ visibleEdit, setVisibleEdit ] = useState(false);
@@ -33,29 +33,29 @@ const CataloguePage = () => {
   const openDialogPost = () => {
     setVisibleCreate(true);
   }
-  const openDialogEdit = (data:  any) => {
-    setId(data.id)
-    setVisibleEdit (true);
+  const openDialogEdit = (id: number) => {
+    idRef.current = id
+    setVisibleEdit(true);
   }
 
   const hideDialogPost = () => {
     setVisibleCreate(false)
   }
   const hideDialogPut = () => {
-    setId(0)
+    idRef.current = 0
     setVisibleEdit(false)
   }
   const hideDialogDelete = () => {
-    setId(0)
+    idRef.current = 0
     setVisibleDelete(false);
   }
   const confirmDelete = (id: number) => {
-    setId(id)
+    idRef.current = id
     setVisibleDelete(true);
   }
 
   const handleDeleteProduct = () => {
-    removeProduct.mutate(id, {
+    removeProduct.mutate(idRef.current, {
       onSuccess: () => {
         queryClient.invalidateQueries(['products'])
         hideDialogDelete()
@@ -69,7 +69,7 @@ const CataloguePage = () => {
 
   useEffect(()=>{
     const role = localStorage.getItem('role');
-    if (role == 'Cajero') {
+    if (role === 'Cajero' || role === 'Vendedor') {
       setRolFlag(false);
     }
   },[]);
@@ -103,7 +103,7 @@ const CataloguePage = () => {
         {rolFlag && (
         <Column header='Acciones' body={(data: any) => ( 
           <Box display='flex' >
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => openDialogEdit(data)} />
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => openDialogEdit(data.id)} />
             <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDelete(data.id)} />
           </Box>)} 
           exportable={false} style={{ minWidth: '8rem' }} />
@@ -118,7 +118,7 @@ const CataloguePage = () => {
       onHandleAgree={handleDeleteProduct}/>
 
       <ArticlePostDetail isVisible={visibleCreate} onHandleHide={hideDialogPost}/> 
-      <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={id}/>
+      <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={idRef.current}/>
     </Box>
   );
 }

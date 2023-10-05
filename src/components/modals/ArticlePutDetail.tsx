@@ -1,14 +1,16 @@
-import { useState, ChangeEvent } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { editProduct, getProductById } from "services/api/products";
-import { Box, Checkbox, Stack } from '@chakra-ui/react';
+import { Link, Stack } from '@chakra-ui/react';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber, InputNumberChangeEvent } from 'primereact/inputnumber';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { getSubsidiaries } from 'services/api/subsidiary';
 import { categoria, estado, initProduct, initStock, unidadMedida } from 'helpers/constants';
+import { BASE_URL } from 'config/env';
+import { RiExternalLinkLine } from 'react-icons/ri';
 
 interface PropArticleDetail {
   isVisible: boolean,
@@ -22,36 +24,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const queryClient = useQueryClient()
   const updateProduct = useMutation(editProduct)
   const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
-  useQuery(["productEdit", props.referenceId], () => getProductById(props.referenceId), {
-    onSuccess(data: any) {
-      setProduct({...product,
-        nombre: data.articulo ? data.articulo.data.attributes.nombre : '',
-        // precio_lista: pricingCalculator(data.articulo ? data.articulo.data.attributes.ruptura_precio.data.attributes.rangos : [], 
-        //   data.articulo ? data.articulo.data.attributes.peso : 0
-        // ),
-        marca: data.articulo ? data.articulo.data.attributes.marca : '',
-        inventario_fiscal: data.articulo ? data.articulo.data.attributes.inventario_fiscal: 0,
-        inventario_fisico: data.articulo ? data.articulo.data.attributes.inventario_fisico : 0,
-        descripcion: data.articulo ? data.articulo.data.attributes.descripcion : '',
-        categoria: data.articulo ? data.articulo.data.attributes.categoria : '',
-        codigo_barras: data.articulo ? data.articulo.data.attributes.codigo_barras : '',
-        codigo_qr: data.articulo ? data.articulo.data.attributes.codigo_qr : '',
-        estado: data.articulo ? data.articulo.data.attributes.estado : '',
-        isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
-        isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
-        unidad_de_medida: data.articulo ? data.articulo.data.attributes.unidad_de_medida : '',
-      })
-      setStock({...stock, 
-        cantidad: data.cantidad ? data.cantidad : 0,
-        unidad_de_medida: data.cantidad ? data.unidad_de_medida.data.id : '',
-        sucursal: data.sucursal ? data.sucursal.data.id : '',
-      })
-    },
-  })
 
-  const [product, setProduct] = useState<any>({
+  const [product, setProduct] = useState({
     nombre: "",
-    // precio_lista: 0,
     marca: "",
     inventario_fiscal: 0,
     inventario_fisico: 0,
@@ -61,15 +36,38 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
-    // peso: "",
-    isFiscal: false,
-    isFisical: false,
-    unidad_de_medida: 0
+    // isFiscal: false,
+    // isFisical: false,
   })
-  const [stock, setStock] = useState<any>({
+  const [stock, setStock] = useState({
     cantidad: 0,
     sucursal: 0,
     unidad_de_medida: 0
+  })
+
+  useQuery(["productEdit", props.referenceId], () => getProductById(props.referenceId), {
+    onSuccess(data: any) {
+      console.log(data);
+      setProduct({
+        nombre: data.articulo ? data.articulo.data.attributes.nombre : '',
+        marca: data.articulo ? data.articulo.data.attributes.marca : '',
+        inventario_fiscal: data.articulo ? data.articulo.data.attributes.inventario_fiscal: 0,
+        inventario_fisico: data.articulo ? data.articulo.data.attributes.inventario_fisico : 0,
+        descripcion: data.articulo ? data.articulo.data.attributes.descripcion : '',
+        categoria: data.articulo ? data.articulo.data.attributes.categoria : '',
+        codigo_barras: data.articulo ? data.articulo.data.attributes.codigo_barras : '',
+        codigo_qr: data.articulo ? data.articulo.data.attributes.codigo_qr : '',
+        estado: data.articulo ? data.articulo.data.attributes.estado : '',
+        // isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
+        // isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
+        foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : ''
+      })
+      setStock({ 
+        cantidad: data.cantidad ? data.cantidad : 0,
+        unidad_de_medida: data.cantidad ? data.unidad_de_medida.data.id : '',
+        sucursal: data.sucursal ? data.sucursal.data.id : '',
+      })
+    },
   })
 
   const handleUpdateProduct = () => {
@@ -105,21 +103,21 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     setStock({...stock, [tag]: e.target.value});
   }
   const onUpload = (e: any) => {
-    setProduct({...product, [e.target.name]: e.target.files[0]})
+    setProduct({...product, [e.target.name]: e.target.files})
   }
-  const onHandleFiscal = () => {
-    setProduct({...product, isFiscal: !product.isFiscal})
-  }
-  const onHandleFisical = () => {
-    setProduct({...product, isFisical: !product.isFisical})
-  }
+  // const onHandleFiscal = () => {
+  //   setProduct({...product, isFiscal: !product.isFiscal})
+  // }
+  // const onHandleFisical = () => {
+  //   setProduct({...product, isFisical: !product.isFisical})
+  // }
 
   return (  
     <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
     visible={props.isVisible}  
     footer={productDialogFooter} 
     onHide={props.onHandleHide}>
-        <Stack spacing='2'>
+        <Stack spacing='1rem'>
 
           <div className="field">
             <label htmlFor="name">Nombre</label>
@@ -157,16 +155,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             <label htmlFor="name">Categoria</label>
             <Dropdown inputId="dropdown" value={product.categoria} options={categoria} onChange={(e: any) => onDropdownChange(e, 'categoria')} optionLabel="name" />
           </div>
-          {/* <div className="field">
-          <label htmlFor="name">Precio</label>
-          <InputNumber value={product.precio_lista} disabled={true} placeholder='Se llenara de forma automatica'/>
-        </div> */}
-        {/* <div className="field">
-          <label htmlFor="peso">Peso</label>
-            <InputText value={product.peso} onChange={onInputTextChange} name='peso'/>
-        </div> */}
 
-          {/* STOCKS */}
           <div className="field">
             <label htmlFor="name">Cantidad / Stock</label>
             <InputNumber value={stock.cantidad} onChange={(e: any) => onInputNumberChangeStock(e, 'cantidad')} required />
@@ -188,23 +177,15 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               onChange={(e: any) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
             />
           </div>
-          <Box display='flex'gap='2rem'>
-          <Box display='flex' alignItems='center' gap='2'>
-            <label>Facturable</label>
-            <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
-          </Box>
-          <Box display='flex' alignItems='center' gap='2'>
-            <label>Fisico</label>
-            <Checkbox isChecked={product.isFisical} onChange={onHandleFisical}/>
-          </Box>
-        </Box>
-          <div >
-            <form action="">
-              <input type="file" accept="image/*" onChange={onUpload} name='foto'/>
-            </form>
-          </div>
+          {/* <FileUpload mode="basic" name="foto" accept="image/*" maxFileSize={1000000} onUpload={onUpload} /> */}
+          <input type="file" accept="image/*" onChange={onUpload} name='foto'/>
+          {typeof product.foto === 'string' && (
+            // <a href=>{product.nombre}</a>
+            <Link href={`${BASE_URL}${product?.foto}`} isExternal display='inline-flex' alignItems='center' gap='0.5rem' color='blue.600' width='fit-content'>
+              {product?.foto}<RiExternalLinkLine size='22px'/>
+            </Link>
+          )}
         </Stack>
-
     </Dialog>
   );
 }
