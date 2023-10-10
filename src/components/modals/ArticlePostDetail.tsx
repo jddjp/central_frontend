@@ -1,5 +1,5 @@
-import { ChangeEvent, useState } from 'react'
-import { Box, Checkbox, NumberInput, NumberInputField, Stack } from "@chakra-ui/react";
+import { ChangeEvent, useEffect, useState } from 'react'
+import { Stack } from "@chakra-ui/react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
@@ -71,7 +71,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     setProduct({...product, [e.target.name]: e.target.value});
   }
   const onInputNumberChange = (e: InputNumberChangeEvent, tag: string) => {
-    setProduct({...product, [tag]: e.value});
+    setProduct({...product, [tag]: e.value ?? 0});
   }
   const onDropdownChange = (e: DropdownChangeEvent, tag: string) => {
     setProduct({...product, [tag]: e.target.value});
@@ -85,13 +85,16 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   const onUpload = (e: any) => {
     setProduct({...product, [e.target.name]: e.target.files[0]})
   }
-  const onHandleFiscal = () => {
-    setProduct({...product, isFiscal: !product.isFiscal})
-  }
 
-  const onHandleFisical = () => {
-    setProduct({...product, isFisical: !product.isFisical})
-  }
+  useEffect(() => {
+    setProduct({...product, isFiscal: product.inventario_fiscal ? true : false})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.inventario_fiscal]);
+  
+  useEffect(() => {
+    setProduct({...product, isFisical: product.inventario_fisico ? true : false})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.inventario_fisico]);
 
   return (  
     <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
@@ -136,14 +139,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
           <label htmlFor="name">Categoria</label>
           <Dropdown value={product.categoria} inputId="dropdown" options={categoria} onChange={(e) => onDropdownChange(e, 'categoria')} optionLabel="name"/>
         </div>
-        {/* <div className="field">
-          <label htmlFor="name">Precio</label>
-          <InputNumber disabled={true} placeholder='Se llenara de forma automatica'/>
-        </div> */}
-        {/* <div className="field">
-          <label htmlFor="peso">Peso</label>
-            <InputText value={product.peso} onChange={onInputTextChange} name='peso'/>
-        </div> */}
 
         {/* STOCKS  */}
         <div className="field">
@@ -165,16 +160,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             onChange={(e) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
           />
         </div>
-        <Box display='flex'gap='2rem'>
-          <Box display='flex' alignItems='center' gap='2'>
-            <label>Facturable</label>
-            <Checkbox isChecked={product.isFiscal} onChange={onHandleFiscal}/>
-          </Box>
-          <Box display='flex' alignItems='center' gap='2'>
-            <label>Fisico</label>
-            <Checkbox isChecked={product.isFisical} onChange={onHandleFisical}/>
-          </Box>
-        </Box>
         <div >
           <form action="">
             <input type="file"  accept="image/*" onChange={onUpload} name='foto'/>

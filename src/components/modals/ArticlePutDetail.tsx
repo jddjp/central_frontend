@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -36,8 +36,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     codigo_qr: "",
     estado: "",
     foto: "",
-    // isFiscal: false,
-    // isFisical: false,
+    isFiscal: false,
+    isFisical: false,
   })
   const [stock, setStock] = useState({
     cantidad: 0,
@@ -47,7 +47,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   useQuery(["productEdit", props.referenceId], () => getProductById(props.referenceId), {
     onSuccess(data: any) {
-      console.log(data);
       setProduct({
         nombre: data.articulo ? data.articulo.data.attributes.nombre : '',
         marca: data.articulo ? data.articulo.data.attributes.marca : '',
@@ -58,8 +57,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         codigo_barras: data.articulo ? data.articulo.data.attributes.codigo_barras : '',
         codigo_qr: data.articulo ? data.articulo.data.attributes.codigo_qr : '',
         estado: data.articulo ? data.articulo.data.attributes.estado : '',
-        // isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
-        // isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
+        isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
+        isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
         foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : ''
       })
       setStock({ 
@@ -105,12 +104,16 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const onUpload = (e: any) => {
     setProduct({...product, [e.target.name]: e.target.files})
   }
-  // const onHandleFiscal = () => {
-  //   setProduct({...product, isFiscal: !product.isFiscal})
-  // }
-  // const onHandleFisical = () => {
-  //   setProduct({...product, isFisical: !product.isFisical})
-  // }
+
+  useEffect(() => {
+    setProduct({...product, isFiscal: product.inventario_fiscal ? true : false})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.inventario_fiscal]);
+  
+  useEffect(() => {
+    setProduct({...product, isFisical: product.inventario_fisico ? true : false})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.inventario_fisico]);
 
   return (  
     <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"

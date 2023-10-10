@@ -4,7 +4,7 @@ import { postStock, updateStock } from './stocks'
 import { API_URL } from '../../config/env';
 
 export const getProducts = async () => {
-  const { data } = await axios.get(`${API_URL}/articulos?populate=*`)
+  const { data } = await axios.get(`${API_URL}/articulos`)
   return data.data
 }
 
