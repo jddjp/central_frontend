@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
 import { Box, Button, Input, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
 import { Dialog } from "primereact/dialog";
 import { RiCheckLine, RiBookmark2Fill } from 'react-icons/ri'
@@ -42,6 +42,9 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
     unidad_de_medida: 0
   })
 
+  
+  const [currentStore, setCurrentStore] = useState('');
+  
   const { data: historialApi, refetch } = useQuery(['product', props.idProduct], () => getSimpleHistorial(props.idProduct))
   useQuery(["productEdit", props.idProduct], () => {
     if (props.idProduct !== undefined) {
@@ -72,6 +75,13 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
       })
     },
   })
+
+  useEffect(()=>{
+    const storedStore = localStorage.getItem("sucursal");
+    if(storedStore !== null){
+      setCurrentStore(storedStore)
+    }
+  },[]);
 
   const [historial, setHistorial] = useState('')
   const [weight, setWeight] = useState('')

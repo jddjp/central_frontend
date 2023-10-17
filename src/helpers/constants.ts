@@ -14,7 +14,8 @@ const initProduct = {
   isFiscal: false,
   isFisical: false,
   fresh: true,
-  unidad_de_medida: 0
+  unidad_de_medida: 0,
+  cantidad_stock:0,
 }
 
 const initStock = {

@@ -45,9 +45,22 @@ export const deleteStock = async (id: number) => {
 
 }
 
+export const deleteStockById = async (id: number) => {
+  const data = await axios.delete(`${API_URL}/stocks/${id}`)
+  return data
+}
+
 export const postStock = async (stockData: any) => {
   const { data } = await axios.post(`${API_URL}/stocks`, stockData)
   return data
+}
+
+export const putStock = async (id: number, stockData: any) => {
+  const extract = await axios.get(`${API_URL}/stocks/${id}`)
+  console.log("putStock");
+  console.log(extract);
+  const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data.id}`, stockData)
+  return { data }
 }
 
 export const updateStock = async (id: number, stockData: any) => {
@@ -80,4 +93,10 @@ export const extractUnidad = async (id: number) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
 
   return data.data[0].attributes.unidad_de_medida.data.id
+}
+
+export const getStock = async (id_prod: number, id_unidad: any) => {
+  const { data } = await axios.get(`${API_URL}/stocks?filters[articulo][id]=${id_prod}&filters[sucursal][id]=${id_unidad}`)
+
+  return data
 }

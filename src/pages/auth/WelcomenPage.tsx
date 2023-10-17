@@ -62,11 +62,11 @@ const WelcomenPage = () =>{
         <label htmlFor="name">Sucursal</label>
         <Dropdown style={{width: '100%'}} placeholder='Ingresa una sucursal' value={sucursal} inputId="dropdown" options={subsidiaries?.map((subsiduary: any) => {
             return {
-              name: subsiduary.id,
-              value: subsiduary.attributes.nombre
+              name: subsiduary.attributes.nombre,
+              value: subsiduary.id
             }
           })} 
-          onChange={(e) => setSucursal(e.target.value)} optionLabel="value" required
+          onChange={(e) => setSucursal(e.target.value)} optionLabel="name" required
         />
       </Box>
 

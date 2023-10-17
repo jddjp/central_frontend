@@ -25,6 +25,7 @@ const CataloguePage = () => {
   const [ visibleEdit, setVisibleEdit ] = useState(false);
   const [ visibleDelete, setVisibleDelete ] = useState(false);
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
+  const [currentStore, setCurrentStore] = useState('');
 
   const { data: products } = useQuery(["products"], getProducts)
 
@@ -72,6 +73,11 @@ const CataloguePage = () => {
     if (role === 'Cajero' || role === 'Vendedor') {
       setRolFlag(false);
     }
+
+    const storedStore = localStorage.getItem("sucursal");
+    if(storedStore !== null){
+      setCurrentStore(storedStore)
+    }
   },[]);
 
   return (
@@ -118,7 +124,7 @@ const CataloguePage = () => {
       onHandleAgree={handleDeleteProduct}/>
 
       <ArticlePostDetail isVisible={visibleCreate} onHandleHide={hideDialogPost}/> 
-      <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={idRef.current}/>
+      <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={idRef.current} referenceSucursal={currentStore}/>
     </Box>
   );
 }
