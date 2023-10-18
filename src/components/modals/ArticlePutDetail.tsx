@@ -20,7 +20,7 @@ import { DataTable } from 'primereact/datatable';
 import { Stock } from '../../types/Stock'
 
 
-import {cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock} from 'helpers/inventario'
+import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
 
 
 interface PropArticleDetail {
@@ -132,6 +132,13 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     },
   })
 
+  const onHandleHide = () => {
+    props.onHandleHide()
+    setSelectedStoresForDeletion([]);
+    setStockProduct([]);
+    setStockProductTemp([]);
+    setStoresSelected([])
+  }
   const HandleUpdateProduct = async () => {
     //Valida que no se ingrese una cantidad de stock mayor a la general
     if (product.cantidad_stock < validLimitStock(stockProduct)) {
@@ -143,18 +150,17 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     }
 
     updateProduct.mutate({ id: props.referenceId, edit: { data: product }, stock: { data: stock } }, {
-      onSuccess: () => {
+      onSuccess: async () => {
         queryClient.invalidateQueries(['products'])
         setProduct(initProduct)
         //setStock(initStock)
-        props.onHandleHide()
+        //Actualiza el stock de las unidades
+        await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
+        onHandleHide()
       }
     })
 
-    //Actualiza el stock de las unidades
-    await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
-    //Limpia la lista de stocks a eliminar al deseleccionar una unidad
-    setSelectedStoresForDeletion([]);
+
   }
 
 
@@ -194,7 +200,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const productDialogFooter = (
     <>
-      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={props.onHandleHide} />
+      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onHandleHide} />
       <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={HandleUpdateProduct} />
     </>
   );
@@ -209,7 +215,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     setProduct({ ...product, [tag]: e.target.value });
   }
   const onInputNumberChangeStock = (e: InputNumberChangeEvent, tag: string) => {
-    setStock({ ...stock, [tag]: e.value });
+    setProduct({ ...product, [tag]: e.value });
   }
   const onDropdownChangeStock = (e: DropdownChangeEvent, tag: string) => {
     setProduct({ ...product, [tag]: e.target.value });
@@ -239,11 +245,13 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fisico]);
 
+
+
   return (
     <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
       visible={props.isVisible}
       footer={productDialogFooter}
-      onHide={props.onHandleHide}>
+      onHide={onHandleHide}>
       <Stack spacing='1rem'>
 
         <TabView activeIndex={activeIndex}>
@@ -287,7 +295,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
             <div className="field">
               <label htmlFor="name">Cantidad / Stock</label>
-              <InputNumber value={product.cantidad_stock} onChange={(e: any) => onInputNumberChangeStock(e, 'cantidad')} required />
+              <InputNumber value={product.cantidad_stock} onChange={(e: any) => onInputNumberChangeStock(e, 'cantidad_stock')} required />
             </div>
 
             <div className="field">

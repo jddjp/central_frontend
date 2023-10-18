@@ -71,6 +71,14 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     unidad_de_medida: 0
   })
 
+  const onHandleHide = () =>{
+    props.onHandleHide()
+    setSelectedStoresForDeletion([]);
+    setStockProduct([]);
+    setStockProductTemp([]);
+    setStoresSelected([])
+  }
+
   const handleSaveProduct = () => {
     //Valida que no se ingrese una cantidad de stock mayor a la general
     if (product.cantidad_stock < validLimitStock(stockProduct)) {
@@ -85,15 +93,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       onSuccess: async (data) => {
         queryClient.invalidateQueries(['products'])
         setProduct(initProduct)
-        //setStock(initStock)
-        props.onHandleHide()
-        console.log("////////////////////");
-        console.log(data.data.id);
-
         //Guarda el stock de las unidades
         await saveStockProd(data.data.id, stockProduct, product, selectedStoresForDeletion);
-        //Limpia la lista de stocks a eliminar al deseleccionar una unidad
-         setSelectedStoresForDeletion([]);
+        
+        onHandleHide()
       }
     })
 
@@ -101,7 +104,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
 
   const productDialogFooter = (
     <>
-      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={props.onHandleHide} />
+      <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onHandleHide} />
       <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={handleSaveProduct} />
     </>
   );
@@ -170,7 +173,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
       visible={props.isVisible}
       footer={productDialogFooter}
-      onHide={props.onHandleHide}>
+      onHide={onHandleHide}>
       <Stack spacing='2'>
         <TabView activeIndex={activeIndex}>
           <TabPanel header="Datos" leftIcon="pi pi-fw pi-home">
