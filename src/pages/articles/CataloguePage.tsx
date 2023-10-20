@@ -5,16 +5,16 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
-import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
-import "primereact/resources/primereact.min.css";                  //core css
-import "primeicons/primeicons.css";
-import "./style.css"
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getProducts } from 'services/api/products';
 import { deleteStock } from 'services/api/stocks';
 import Confirmation from 'components/modals/Confirmation';
 import ArticlePostDetail from 'components/modals/ArticlePostDetail';
 import ArticlePutDetail from 'components/modals/ArticlePutDetail';
+import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
+import "primereact/resources/primereact.min.css";                  //core css
+import "primeicons/primeicons.css";
+import "./style.css"
 
 const CataloguePage = () => {
   

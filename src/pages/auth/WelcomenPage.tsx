@@ -18,19 +18,26 @@ const WelcomenPage = () =>{
   const auth = useAuth();
   const now = new Date();
 
+  console.log(auth);
+
   const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
 
   const handleContinue = () => {
-    if (!sucursal) {
-      toast({
-        title: 'seleccion una sucursal',
-        status: 'warning'
-      })
+
+    if(auth.user?.roleCons !== 'Supervisor') {
+      if (!sucursal) {
+        toast({
+          title: 'seleccion una sucursal',
+          status: 'warning'
+        })
+        return;
+      }
+      localStorage.setItem('sucursal', JSON.stringify(sucursal))
+      setSucursal('')
+      navigate('/dashboard');
       return;
     }
 
-    localStorage.setItem('sucursal', JSON.stringify(sucursal))
-    setSucursal('')
     navigate('/dashboard');
   }
 
@@ -58,17 +65,19 @@ const WelcomenPage = () =>{
         </VStack>
       </CardWithAvatar>
 
-      <Box display='flex' gap='0.5rem' width='100%' flexDirection='column'>
-        <label htmlFor="name">Sucursal</label>
-        <Dropdown style={{width: '100%'}} placeholder='Ingresa una sucursal' value={sucursal} inputId="dropdown" options={subsidiaries?.map((subsiduary: any) => {
-            return {
-              name: subsiduary.attributes.nombre,
-              value: subsiduary.id
-            }
-          })} 
-          onChange={(e) => setSucursal(e.target.value)} optionLabel="name" required
-        />
-      </Box>
+        {auth.user?.roleCons !== 'Supervisor' && (
+        <Box display='flex' gap='0.5rem' width='100%' flexDirection='column'>
+          <label htmlFor="name">Sucursal</label>
+            <Dropdown style={{width: '100%'}} placeholder='Ingresa una sucursal' value={sucursal} inputId="dropdown" options={subsidiaries?.map((subsiduary: any) => {
+                return {
+                  name: subsiduary.attributes.nombre,
+                  value: subsiduary.id
+                }
+              })} 
+              onChange={(e) => setSucursal(e.target.value)} optionLabel="name" required
+            />
+        </Box>
+      )}
 
       <Button 
         onClick={handleContinue}
