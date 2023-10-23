@@ -6,8 +6,9 @@ import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getProducts } from 'services/api/products';
+import { getProductBySucursal, getProducts } from 'services/api/products';
 import { deleteStock } from 'services/api/stocks';
+import { useAuth } from 'hooks/useAuth';
 import Confirmation from 'components/modals/Confirmation';
 import ArticlePostDetail from 'components/modals/ArticlePostDetail';
 import ArticlePutDetail from 'components/modals/ArticlePutDetail';
@@ -18,6 +19,8 @@ import "./style.css"
 
 const CataloguePage = () => {
   
+  const auth = useAuth()
+  const sucursalRef = localStorage.getItem('sucursal')
   const queryClient = useQueryClient()
   const idRef = useRef(0);
   const [rolFlag, setRolFlag] = useState(true);
@@ -27,7 +30,9 @@ const CataloguePage = () => {
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
   const [currentStore, setCurrentStore] = useState('');
 
-  const { data: products } = useQuery(["products"], getProducts)
+  const { data: products } = useQuery(["products"], auth.user?.roleCons !== 'Supervisor' ? () => getProductBySucursal(Number(sucursalRef)) : getProducts, {
+    refetchOnMount: true
+  })
 
   const removeProduct = useMutation(deleteStock)
 

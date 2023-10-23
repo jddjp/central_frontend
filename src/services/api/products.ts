@@ -1,12 +1,26 @@
 import axios from 'axios'
 import { sumStr } from 'helpers/sumStringNumbers'
-import { postStock, updateStock } from './stocks'
+// import { postStock, updateStock } from './stocks'
 import { API_URL } from '../../config/env';
 import { Stock } from '../../types/Stock'
 
 export const getProducts = async () => {
   const { data } = await axios.get(`${API_URL}/articulos`)
   return data.data
+}
+
+export const getProductBySucursal = async (sucursalRef: number) => {
+  const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal`)
+
+  console.log(data.data);
+
+  const result = data.data?.filter((product: any) => {
+    const extract = product.attributes.stocks.data.map((stock : any) => stock.attributes.sucursal.data.id)
+    product.attributes.stocks = extract
+    return product.attributes.stocks.includes(sucursalRef)
+  })
+
+  return result
 }
 
 export const postProduct = async (param: any) => {
