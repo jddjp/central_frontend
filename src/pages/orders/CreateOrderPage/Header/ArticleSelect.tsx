@@ -7,8 +7,9 @@ import {
   SingleValue,
 } from 'react-select';
 import { asyncSelectAppStyles } from 'theme';
-import { searchArticles } from 'services/api/articles';
+import { searchArticles, searchArticlesBySucursal } from 'services/api/articles';
 import { ShoppingCartArticle } from '../types';
+import { useAuth } from 'hooks/useAuth';
 
 const Input = (props: any) => <components.Input {...props} isHidden={false} />;
 
@@ -33,11 +34,14 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   // FIXED BUG: https://github.com/JedWatson/react-select/issues/4675
   const { article, setArticle } = props;
   const [inputValue, setInputValue] = useState('');
+  const auth = useAuth()
+  const sucursal = localStorage.getItem('sucursal')
 
   useEffect(() => {
     article?.id === null && setInputValue('');
-  }, [article?.id]);
 
+  }, [article?.id]);
+  
   const handleInputChange = (newValue: string, { action }: InputActionMeta) => {
     if (action === 'input-change') {
       setInputValue(newValue);
@@ -47,7 +51,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
 
   const handleChange = (
     option: MultiValue<ShoppingCartArticle> | SingleValue<ShoppingCartArticle>
-  ) => {
+    ) => {
     setArticle(option as ShoppingCartArticle);
     setInputValue(
       option ? (option as ShoppingCartArticle).attributes.nombre : ''
@@ -59,7 +63,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
     <>
       <Select
         defaultOptions
-        loadOptions={handleAutocomplete}
+        loadOptions={ auth.user?.roleCons !== 'Supervisor' ? () => searchArticlesBySucursal(inputValue, Number(sucursal)) : handleAutocomplete}
         value={article}
         inputValue={inputValue}
         onInputChange={handleInputChange}

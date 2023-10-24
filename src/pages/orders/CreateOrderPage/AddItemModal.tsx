@@ -46,9 +46,17 @@ export const AddItemModal = (props: AddItemModalProps) => {
 
   useEffect(() => {
     if (amount) {
-      const { price, tag } = pricingCalculator(article?.attributes.ruptura_precio.data.attributes.rangos, amount!);
-      setCustomPrice(price)
-      tagRef.current = tag
+      try {
+        const { price, tag } = pricingCalculator(article?.attributes.ruptura_precio.data.attributes.rangos, amount!);
+        setCustomPrice(price)
+        tagRef.current = tag
+      } catch (error) {
+        toast({
+          status: 'error',
+          title: 'No se pudo agregar',
+          description: 'Articulo no contiene ruptura de precios en su informacion'
+        })
+      }
     }
   }, [amount, article]);
 
@@ -120,67 +128,72 @@ export const AddItemModal = (props: AddItemModalProps) => {
   };
 
   return (
-    <Modal
-      isCentered
-      size="2xl"
-      colorScheme="brand"
-      isOpen={isOpen}
-      onClose={closeAndReset}
-      scrollBehavior="inside"
-    >
-      <ModalOverlay />
-      <ModalContent h="575px">
-        <ModalHeader>Agregando {article?.attributes.nombre}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Formik initialValues={{}} onSubmit={(e) => {}}>
-            <ArticleCard maxW="100%" article={article!}>
-              <>
-                <HStack>
-                  <Text fontWeight="semibold" mb="-1">
-                    Precio
-                  </Text>
-                  <Spacer />
-                  {discountPrices ? (
-                  <>
-                    <Center>
-                      <Badge p={2} colorScheme='green'>% {discountPrices} </Badge>
-                    </Center>
-                    <Text fontWeight="semibold"> $ {customPrice} </Text>
-                  </>
-                  ):(
-                    <EditablePrice
-                      originalPrice={customPrice!}
-                      onSetCustomPrice={setCustomPrice}
-                    />
-                  )}
-                </HStack>
-                {/* {customPrice && (
-                  <Text color="gray.400" fontSize="sm">
-                    El precio original es de ${article?.attributes.precio_lista}
-                  </Text>
-                )} */}
-                <Counter>
-                  <DecrementButton onClick={handleStepAmount(-1)} />
-                  <InputCounter
-                    min="1"
-                    name="counter"
-                    colorScheme="brand"
-                    value={amount}
-                    onChange={handleChangeAmount}
-                  />
-                  <IncrementButton onClick={handleStepAmount(+1)} />
-                </Counter>
+    <>
+      {article?.attributes.ruptura_precio ? (
 
-                <Button colorScheme="brand" onClick={handleAdd}>
-                  Agregar
-                </Button>
-              </>
-            </ArticleCard>
-          </Formik>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        <Modal
+          isCentered
+          size="2xl"
+          colorScheme="brand"
+          isOpen={isOpen}
+          onClose={closeAndReset}
+          scrollBehavior="inside"
+        >
+          <ModalOverlay />
+          <ModalContent h="575px">
+            <ModalHeader>Agregando {article?.attributes.nombre}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Formik initialValues={{}} onSubmit={(e) => {}}>
+                <ArticleCard maxW="100%" article={article!}>
+                  <>
+                    <HStack>
+                      <Text fontWeight="semibold" mb="-1">
+                        Precio
+                      </Text>
+                      <Spacer />
+                      {discountPrices ? (
+                      <>
+                        <Center>
+                          <Badge p={2} colorScheme='green'>% {discountPrices} </Badge>
+                        </Center>
+                        <Text fontWeight="semibold"> $ {customPrice} </Text>
+                      </>
+                      ):(
+                        <EditablePrice
+                          originalPrice={customPrice!}
+                          onSetCustomPrice={setCustomPrice}
+                        />
+                      )}
+                    </HStack>
+                    {/* {customPrice && (
+                      <Text color="gray.400" fontSize="sm">
+                        El precio original es de ${article?.attributes.precio_lista}
+                      </Text>
+                    )} */}
+                    <Counter>
+                      <DecrementButton onClick={handleStepAmount(-1)} />
+                      <InputCounter
+                        min="1"
+                        name="counter"
+                        colorScheme="brand"
+                        value={amount}
+                        onChange={handleChangeAmount}
+                      />
+                      <IncrementButton onClick={handleStepAmount(+1)} />
+                    </Counter>
+
+                    <Button colorScheme="brand" onClick={handleAdd}>
+                      Agregar
+                    </Button>
+                  </>
+                </ArticleCard>
+              </Formik>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      ) : null}
+    </>
   );
 };
 

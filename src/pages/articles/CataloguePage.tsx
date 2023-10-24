@@ -102,7 +102,6 @@ const CataloguePage = () => {
           'attributes.nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
         }}>
         <Column field="attributes.nombre" header="Nombre" />
-        <Column field="attributes.precio_lista" header="Precio" />
         <Column field="attributes.marca" header="Marca" />
         <Column field="attributes.inventario_fiscal" header="inventario_fiscal" style={{ width: "5%" }} />
         <Column field="attributes.inventario_fisico" header="Inventario fisico" style={{ width: "5%" }} />

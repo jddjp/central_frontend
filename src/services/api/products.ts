@@ -5,14 +5,12 @@ import { API_URL } from '../../config/env';
 import { Stock } from '../../types/Stock'
 
 export const getProducts = async () => {
-  const { data } = await axios.get(`${API_URL}/articulos`)
+  const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal`)
   return data.data
 }
 
 export const getProductBySucursal = async (sucursalRef: number) => {
   const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal`)
-
-  console.log(data.data);
 
   const result = data.data?.filter((product: any) => {
     const extract = product.attributes.stocks.data.map((stock : any) => stock.attributes.sucursal.data.id)
