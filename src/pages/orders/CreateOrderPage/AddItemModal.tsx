@@ -129,7 +129,7 @@ export const AddItemModal = (props: AddItemModalProps) => {
 
   return (
     <>
-      {article?.attributes.ruptura_precio ? (
+      {article?.attributes.ruptura_precio.data !== null ? (
 
         <Modal
           isCentered
