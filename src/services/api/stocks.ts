@@ -71,11 +71,20 @@ export const updateStock = async (id: number, stockData: any) => {
 }
 
 export const discountStock = async (data: { id: number, cantidad: number }) => {
+  const sucursalStorage = localStorage.getItem('sucursal')
+  console.log(data.id, data.cantidad);
+  const extract = await axios.get(`${API_URL}/articulos/${data.id}?populate=stocks&populate=stocks.sucursal&populate=stocks.unidad_de_medida`)
 
-  const extract = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${data.id}`)
+  const result = extract.data.data.attributes.stocks.data.find((stock: any) =>
+    stock.attributes.sucursal.data.id === Number(sucursalStorage) && stock
+  )
 
-  let descuento = extract.data.data[0].attributes.cantidad - data.cantidad
-  const response = await axios.put(`${API_URL}/stocks/${extract.data.data[0].id}`, {data: { cantidad: descuento }})
+  console.log(result);
+
+  let restante = result.attributes.cantidad - data.cantidad
+
+  console.log(result.id, restante);
+  const response = await axios.put(`${API_URL}/stocks/${result.id}`, {data: { cantidad: restante }})
 
   return response.data
 };

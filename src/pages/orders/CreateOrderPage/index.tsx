@@ -28,6 +28,7 @@ import { AxiosError } from 'axios';
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
 import { extractUnidad } from 'services/api/stocks';
 import { useTicketDetail } from '../../../zustand/useTicketDetails';
+import { useAuth } from 'hooks/useAuth';
 
 const initialClient = { name: 'ss' };
 const initialPayment = {
@@ -45,6 +46,7 @@ export interface LocationOrdenEdit {
 export const CreateOrderPage = () => {
 
   const [type, setType] = useState(false)
+  const auth = useAuth()
   const { setOrderData } = useTicketDetail()
   const location = useLocation();
   const navigate = useNavigate();
@@ -358,13 +360,15 @@ export const CreateOrderPage = () => {
   return (
     <Formik initialValues={{ client: initialClient, payment: initialPayment }} onSubmit={() => {}}>
       <Stack spacing="3" w="80%" mx="auto" my="5">
-        <Checkbox colorScheme='red' isChecked={type} onChange={() => {
-          setType(!type)
-          setCliente('')
-          setDistribution({sucursal: 0, bodega: 0, receptor: 0})
-        }} fontWeight='bold'>
-          { type ? 'Distribucion' : 'Normal' }
-        </Checkbox>
+        {auth.user?.roleCons === 'Supervisor' && (
+          <Checkbox colorScheme='red' isChecked={type} onChange={() => {
+            setType(!type)
+            setCliente('')
+            setDistribution({sucursal: 0, bodega: 0, receptor: 0})
+          }} fontWeight='bold'>
+            { type ? 'Distribucion' : 'Normal' }
+          </Checkbox>
+        )}
 
         <OrderMenu
           onOpenCatalogueModal={onOpenCatalogueModal}

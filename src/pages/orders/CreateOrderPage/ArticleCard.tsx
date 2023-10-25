@@ -2,24 +2,41 @@ import { AspectRatio, Box, Button, Image, Skeleton, Stack, StackProps, Tab, TabL
   TabPanels,
   Tabs,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 import { motion } from "framer-motion";
 import { ShoppingCartArticle } from "./types";
-import { extractStock } from "services/api/stocks";
-import { useQuery } from "react-query";
+// import { useQuery } from "react-query";
 import { BASE_URL } from "../../../config/env";
+// import { getStockBySucursal } from "services/api/subsidiary";
+import { Dispatch, useEffect } from "react";
 
 interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;
+  amount: number,
+  setAmount: Dispatch<number>,
+  stock: any
 }
 
 const MotionStack = motion(Stack);
 
 export const ArticleCard = (props: ArticleCardProps) => {
-  const { article, children, ...rest } = props;
+
+  const toast = useToast()
+  const { article, children, amount, setAmount,stock, ...rest } = props;
   const { nombre, descripcion } = article.attributes;
-  const { data: stock } = useQuery(['stock', props.article.id], () => extractStock(props.article.id))
+
+  useEffect(() => {
+    if (amount > stock?.attributes.cantidad) {
+      setAmount(1)
+      toast({
+        title: 'Stock excedido',
+        description: 'Has sobrepasado el stock que tiene la sucursal',
+        status: 'error'
+      })
+    }
+  }, [amount, setAmount, stock?.attributes.cantidad, toast])
 
   return (
     <Tabs isLazy={true}>
@@ -46,7 +63,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
             </Stack>
 
             <Stack dir="column" w="full">
-            {stock?.stock === 0 ? 
+            {stock?.attributes.cantidad === 0 ? 
                 <Button colorScheme="brand" disabled marginTop='4rem'>
                   Sin Stock
                 </Button> : children
@@ -73,7 +90,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Unidad</Text>
                 <Text>
-                  {stock?.medida !== '' ? stock?.medida :
+                  {stock?.attributes.unidad_de_medida.data.attributes.nombre !== '' ? stock?.attributes.unidad_de_medida.data.attributes.nombre :
                     "No hay una unidad de medida asignada."}
                 </Text>
               </Stack>
@@ -81,7 +98,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Cantidad</Text>
                 <Text>
-                  {stock?.stock ?? 0}
+                  {stock?.attributes.cantidad ?? 0}
                 </Text>
               </Stack>
             </Stack>

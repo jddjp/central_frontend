@@ -56,7 +56,7 @@ export const editProduct = async (param: any) => {
   console.log(param.edit, param.id);
   console.log(param.edit, param.id);
 
-  if (param.edit.data.foto != "") {
+  if (param.edit.data.foto !== "") {
     delete param.edit.data.foto;
 
     axios.put(`${API_URL}/articulos/${param.id}`, param.edit)

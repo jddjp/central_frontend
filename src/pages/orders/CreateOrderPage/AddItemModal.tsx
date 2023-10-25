@@ -27,6 +27,8 @@ import { EditablePrice } from "components/EditablePrice";
 // import { getArticlePrices } from "services/api/articles";
 import { ShoppingCartArticle, ShoppingCartItem } from "./types";
 import { pricingCalculator } from "helpers/pricingCalculator";
+import { useQuery } from "react-query";
+import { getStockBySucursal } from "services/api/subsidiary";
 
 export interface AddItemModalProps {
   isOpen: boolean;
@@ -43,9 +45,11 @@ export const AddItemModal = (props: AddItemModalProps) => {
   const [discountPrices, setDiscountPrices] = useState<string>("");
   const [amount, setAmount] = useState<number>(1);
   const [priceBreakage, setPriceBreakage] = useState<PriceBreakage[] | null>(null);
+  const { data: stock } = useQuery(['stock', article?.id], () => getStockBySucursal(article!.id))
+
 
   useEffect(() => {
-    if (amount) {
+    // if (amount) {
       try {
         const { price, tag } = pricingCalculator(article?.attributes.ruptura_precio.data.attributes.rangos, amount!);
         setCustomPrice(price)
@@ -53,12 +57,11 @@ export const AddItemModal = (props: AddItemModalProps) => {
       } catch (error) {
         toast({
           status: 'error',
-          title: 'No se pudo agregar',
-          description: 'Articulo no contiene ruptura de precios en su informacion'
+          description: 'Articulo podria no tener ruptura disponible'
         })
       }
-    }
-  }, [amount, article]);
+    // }
+  }, [amount, article, toast]);
 
   useEffect(() => {
     if(priceBreakage !== null){
@@ -97,8 +100,6 @@ export const AddItemModal = (props: AddItemModalProps) => {
     onClose();
   };
 
-  console.log(article, 'additemmodal');
-
   const handleAdd = () => {
     // console.log({ article });
     try {
@@ -107,7 +108,7 @@ export const AddItemModal = (props: AddItemModalProps) => {
         amount: amount!,
         customPrice: customPrice,
         priceBroken: tagRef.current,
-        unidad: article?.attributes.unidad_de_medida.data.attributes.nombre
+        unidad: stock?.attributes.unidad_de_medida.data.attributes.nombre
       });
       toast({
         title: "Artículo agregado.",
@@ -116,6 +117,7 @@ export const AddItemModal = (props: AddItemModalProps) => {
         isClosable: true,
       });
     } catch (e: any) {
+      console.log(e);
       toast({
         title: "Artículo existente.",
         description: e.message,
@@ -145,7 +147,7 @@ export const AddItemModal = (props: AddItemModalProps) => {
             <ModalCloseButton />
             <ModalBody>
               <Formik initialValues={{}} onSubmit={(e) => {}}>
-                <ArticleCard maxW="100%" article={article!}>
+                <ArticleCard maxW="100%" article={article!} amount={amount} setAmount={setAmount} stock={stock}>
                   <>
                     <HStack>
                       <Text fontWeight="semibold" mb="-1">
