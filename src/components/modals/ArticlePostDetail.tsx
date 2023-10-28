@@ -62,7 +62,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     isFisical: false,
     fresh: true,
     unidad_de_medida: 0,
-    cantidad_stock: 0,
+    // cantidad_stock: 0,
   });
 
   const [stock, setStock] = useState({
@@ -81,7 +81,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
 
   const handleSaveProduct = () => {
     //Valida que no se ingrese una cantidad de stock mayor a la general
-    if (product.cantidad_stock < validLimitStock(stockProduct)) {
+    if (product.inventario_fisico < validLimitStock(stockProduct)) {
       toast({
         title: 'El stock por sucursal es mayor al stock general',
         status: 'warning'
@@ -215,10 +215,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             </div>
 
             {/* STOCKS  */}
-            <div className="field">
+            {/* <div className="field">
               <label htmlFor="name">Cantidad / Stock</label>
               <InputNumber value={product.cantidad_stock} onChange={(e) => onInputNumberChangeStock(e, 'cantidad_stock')} required />
-            </div>
+            </div> */}
             <div className="field">
               <label htmlFor="name">Unidad de Medida</label>
               <Dropdown value={product.unidad_de_medida} inputId="dropdown" options={unidadMedida} onChange={(e) => onDropdownChangeStock(e, 'unidad_de_medida')} optionLabel="name" required />

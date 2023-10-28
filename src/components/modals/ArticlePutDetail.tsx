@@ -69,7 +69,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     foto: "",
     isFiscal: false,
     isFisical: false,
-    cantidad_stock: 0,
+    // cantidad_stock: 0,
     unidad_de_medida: 0
   })
   const [stock, setStock] = useState({
@@ -100,7 +100,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
         isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
         foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : '',
-        cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
+        // cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
         unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : ''
       })
       setStock({
@@ -141,7 +141,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   }
   const HandleUpdateProduct = async () => {
     //Valida que no se ingrese una cantidad de stock mayor a la general
-    if (product.cantidad_stock < validLimitStock(stockProduct)) {
+    if (product.inventario_fisico < validLimitStock(stockProduct)) {
       toast({
         title: 'El stock por sucursal es mayor al stock general',
         status: 'warning'
@@ -293,10 +293,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               <Dropdown inputId="dropdown" value={product.categoria} options={categoria} onChange={(e: any) => onDropdownChange(e, 'categoria')} optionLabel="name" />
             </div>
 
-            <div className="field">
+            {/* <div className="field">
               <label htmlFor="name">Cantidad / Stock</label>
               <InputNumber value={product.cantidad_stock} onChange={(e: any) => onInputNumberChangeStock(e, 'cantidad_stock')} required />
-            </div>
+            </div> */}
 
             <div className="field">
               <label htmlFor="name">Unidad de Medida</label>
@@ -346,6 +346,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
                 return <Column key={field} field={field} header={header} style={{ width: '25%' }} body={field === 'price' && priceBodyTemplate} editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete} />;
               })}
             </DataTable>
+          </TabPanel>
+
+          <TabPanel header="Pedidos" leftIcon="pi pi-fw pi-list">
+            
           </TabPanel>
         </TabView>
       </Stack>
