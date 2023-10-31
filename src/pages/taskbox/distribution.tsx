@@ -43,7 +43,7 @@ const Distribution = () => {
           </Box>
           <Box display="flex" alignItems="center" gap="2">
             <MdTrolley/>
-            <Text>{order.attributes.bodega.data.attributes.nombre}</Text>
+            <Text>{order?.attributes?.bodega?.data?.attributes?.nombre}</Text>
           </Box>
           {/* <Box display="flex" alignItems="center" marginRight="5">
             <Button
