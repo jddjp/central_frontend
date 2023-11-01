@@ -9,6 +9,7 @@ export interface ArticleAttributes {
   categoria: string;
   marca: string;
   precio_lista: number;
+  cantidad_stock:number;
   codigo_barras: string;
   codigo_qr: string;
   fresh: boolean,
