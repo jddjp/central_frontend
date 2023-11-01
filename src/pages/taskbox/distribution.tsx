@@ -29,17 +29,17 @@ const Distribution = () => {
     return (
       <Box w="100%">
         <Box display='flex' alignItems='center' gap='2'>
-          <Text fontWeight="bold" fontSize='17'>{order.attributes.comentario}</Text>
-          <Badge colorScheme="red" marginBottom='1'>{order.attributes.estatus}</Badge>
+          <Text fontWeight="bold" fontSize='17'>{order?.attributes?.comentario}</Text>
+          <Badge colorScheme="red" marginBottom='1'>{order?.attributes?.estatus}</Badge>
         </Box>
         <Box mt='1.5'>
             <Box display="flex" alignItems="center" gap="2">
               <IoMdCalendar />
-              <Text>{moment(order.attributes.createdAt).format("L")}</Text>
+              <Text>{moment(order?.attributes?.createdAt).format("L")}</Text>
             </Box>
           <Box display="flex" alignItems="center" gap="2">
             <MdOutlineHomeWork/> 
-            <Text>{order.attributes.sucursal.data.attributes.nombre}</Text>
+            <Text>{order?.attributes?.sucursal?.data?.attributes?.nombre}</Text>
           </Box>
           <Box display="flex" alignItems="center" gap="2">
             <MdTrolley/>

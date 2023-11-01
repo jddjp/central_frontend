@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Badge, Box, Image, Text, Button, IconButton } from '@chakra-ui/react'
+import { useRef, useState } from "react";
+import { Badge, Box, Image, Text, Button, IconButton, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, AlertDialogFooter, useDisclosure } from '@chakra-ui/react'
 import { Article } from "../../types/Article";
 import { ListBox } from 'primereact/listbox'
 import { TiTag } from 'react-icons/ti'
@@ -24,6 +24,9 @@ const Freshed = (props: FreshedProps) => {
       closeDialog()
     }
   })
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = useRef<HTMLInputElement>(null)
 
   const OpenDialog = (data: Article) => {
     setSelectedProduct(data)
@@ -70,10 +73,33 @@ const Freshed = (props: FreshedProps) => {
         <ListBox filter value={selectedProduct} options={props.items} optionLabel='attributes.nombre' itemTemplate={itemTemplate}/>
       </Box>
       <RecieveArticle isVisible={visible} onHandleHide={closeDialog} headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
-        <Button colorScheme='red' onClick={onRefreshSection}>
+        <Button colorScheme='red' onClick={onOpen}>
           Mover a inventario
         </Button>
       </RecieveArticle>
+
+        <AlertDialog
+        motionPreset='slideInBottom'
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        isOpen={isOpen}
+        isCentered
+      >
+        <AlertDialogOverlay />
+
+        <AlertDialogContent>
+          <AlertDialogHeader>Confirmar proceso</AlertDialogHeader>
+          <AlertDialogCloseButton />
+          <AlertDialogBody>
+            ¿Estas seguro para realizar esta acción?
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button colorScheme='red' ml={3} onClick={onRefreshSection}>
+              Confirmar
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </> 
   );
 }
