@@ -26,7 +26,7 @@ import { newCliente } from '../../../services/api/cliente';
 import { AxiosError } from 'axios';
 
 import { SERVER_ERROR_MESSAGE } from 'services/api/errors';
-import { extractUnidad } from 'services/api/stocks';
+import { extractUnidad, postStock } from 'services/api/stocks';
 import { useTicketDetail } from '../../../zustand/useTicketDetails';
 import { useAuth } from 'hooks/useAuth';
 
@@ -107,7 +107,6 @@ export const CreateOrderPage = () => {
       let clientesave  =  newCliente(client.attributes);
       clientesave.then((response) => {
         client.id = response.data.id
-        console.log(response.data.id)
         let order: any = {
           id: 0,
           attributes:{
@@ -294,7 +293,38 @@ export const CreateOrderPage = () => {
 
   console.log(cart);
 
-  const submitDistribution = () => {
+  const submitDistribution = async () => {
+    if(cart.items.length == 0 ){
+      toast({
+        title: 'Lista Vacia',
+        description: 'Selecciona al menos un articulo',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    if(distribution.receptor == 0 ){
+      toast({
+        title: 'Datos incompletos',
+        description: 'Seleccionar un receptor para continuar',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if(distribution.sucursal == 0 ){
+      toast({
+        title: 'Datos incompletos',
+        description: 'Seleccionar una sucursula para continuar',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
     var date = new Date();
     let orderdistribution: any = {
       id: 0,
@@ -319,10 +349,18 @@ export const CreateOrderPage = () => {
         })
       }
     };
-
     let responseNewOrder = newOrder(orderdistribution.attributes);
       responseNewOrder.then((response) => {
-        console.log(response);
+        cart.items.map((article) => {
+            let responseStock =  postStock({
+                data: {
+                  cantidad: article.amount,
+                  sucursal: distribution.sucursal,
+                  unidad_de_medida: 2,
+                  articulo:  article.article.id,
+                }
+              })
+        })
         cart.items.forEach((item: any) => {
           extractUnidad(item.article.id)
           .then((extract: number) => {
@@ -343,16 +381,16 @@ export const CreateOrderPage = () => {
               onSuccess: () => {
                 setDistribution({ sucursal: 0, bodega: 0, receptor: 0})
                 clear();
-                toast({
-                  title: 'Enviado para distribucion',
-                  description: 'En un momento el receptor lo tendra en su panel',
-                  status: 'success',
-                  duration: 8000,
-                  isClosable: true,
-                });
               }
             })
           })
+        });
+        toast({
+          title: 'Enviado para distribucion',
+          description: 'En un momento el receptor lo tendra en su panel',
+          status: 'success',
+          duration: 8000,
+          isClosable: true,
         });
       });
   }

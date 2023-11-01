@@ -25,7 +25,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
 
   const toast = useToast()
   const { article, children, amount, setAmount,stock, ...rest } = props;
-  const { nombre, descripcion } = article.attributes;
+  const { nombre, descripcion ,cantidad_stock} = article.attributes;
 
   useEffect(() => {
     if (amount > stock?.attributes.cantidad) {
@@ -90,7 +90,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Unidad</Text>
                 <Text>
-                  {stock?.attributes.unidad_de_medida.data.attributes.nombre !== '' ? stock?.attributes.unidad_de_medida.data.attributes.nombre :
+                  {article?.attributes.unidad_de_medida.data.attributes.nombre !== '' ? article?.attributes.unidad_de_medida.data.attributes.nombre :
                     "No hay una unidad de medida asignada."}
                 </Text>
               </Stack>
@@ -98,7 +98,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Cantidad</Text>
                 <Text>
-                  {stock?.attributes.cantidad ?? 0}
+                  {cantidad_stock ?? 0}
                 </Text>
               </Stack>
             </Stack>
