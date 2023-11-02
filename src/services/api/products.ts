@@ -3,6 +3,8 @@ import { sumStr } from 'helpers/sumStringNumbers'
 // import { postStock, updateStock } from './stocks'
 import { API_URL } from '../../config/env';
 import { Stock } from '../../types/Stock'
+import { OrderRefill } from 'types/OrderRefil';
+import { Article } from 'types/Article';
 
 export const getProducts = async () => {
   const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal`)
@@ -81,19 +83,34 @@ export const editProduct = async (param: any) => {
 }
 
 export const updateInventarioFisico = async (id: number, cantidad: number)=> {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[id]=${id}`)
-  if (data.data.length === 0) {
-    return {}
-  }  
-  console.log(data.data[0].attributes);
-  console.log(cantidad);
-  cantidad += data.data[0].attributes.inventario_fisico;
+  //const { data } = await axios.get(`${API_URL}/articulos?filters[id]=${id}`)
+  //if (data.data.length === 0) {
+  //  return {}
+ // }  
+  //console.log(data.data[0].attributes);
+  //console.log(cantidad);
+  const d = await getProductoById(id);
+  console.log("--------");
+  console.log(d);
+  
+  cantidad += d.attributes.inventario_fisico;
 
   const { data: dataUpdate}  = await axios.put(`${API_URL}/articulos/${id}`, { data: { inventario_fisico: cantidad } })
   console.log(dataUpdate);
   console.log(cantidad);
 
   await updateFreshProduct(id, true)
+}
+
+export const getProductoById = async (id: number) : Promise<Article> => {
+  const { data } = await axios.get(`${API_URL}/articulos?filters[id]=${id}`)
+  console.log(data);
+
+  if (data.data.length === 0) {
+    return Promise.reject("Error")
+  } 
+
+  return data.data[0]
 }
 
 export const getProductById = async (id: number) => {

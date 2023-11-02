@@ -23,7 +23,6 @@ import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil'
 
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
 import OrdenRefill, { CanShowAlert } from './OrdenRefill';
-import { getOrdenes } from 'services/api/orden_refill';
 
 
 interface PropArticleDetail {
@@ -119,7 +118,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     id: 1,
     attributes: {
       cantidad: 2,
-      creation_date: "12-01-2023",
+      createdAt: "12-01-2023",
       created__by: 0,
       articulo: 1
     }
@@ -141,15 +140,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     onSuccess(data: any) {
       setStockProduct(data);
       setStockProductTemp(data);
-    },
-  })
-
-  useQuery(["getOrdenes", props.referenceId, props.referenceSucursal], () => getOrdenes(), {
-    onSuccess(data: any) {
-      console.log("---ordenes");
-      console.log(data);
-      
-      
     },
   })
 

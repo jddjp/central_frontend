@@ -2,7 +2,7 @@ import { ContentType } from "./core";
 
 export interface OrderRefillAttributes {
     cantidad: number,
-    creation_date?: string,
+    createdAt?: string,
     created__by?: number,
     articulo: number
 
