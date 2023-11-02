@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SetStateAction, useEffect, useState } from 'react'
+import React, { ChangeEvent, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -18,9 +18,12 @@ import { getProductsMini } from 'services/api/productservice'
 import { Column, ColumnEvent, ColumnEditorOptions } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Stock } from '../../types/Stock'
+import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil'
 
 
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
+import OrdenRefill, { CanShowAlert } from './OrdenRefill';
+import { getOrdenes } from 'services/api/orden_refill';
 
 
 interface PropArticleDetail {
@@ -108,10 +111,19 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         unidad_de_medida: data.cantidad ? data.unidad_de_medida.data.id : '',
         sucursal: data.sucursal ? data.sucursal.data.id : '',
       })
-
+      setPedidos(
+        [...data.articulo.data.attributes.orden_refills.data])
     },
   })
-
+  const [pedidos, setPedidos] = useState<Array<OrderRefill>>([{
+    id: 1,
+    attributes: {
+      cantidad: 2,
+      creation_date: "12-01-2023",
+      created__by: 0,
+      articulo: 1
+    }
+  }]);
 
   //Obtiene los stocks de cada producto y genera un arreglo de ids de
   useQuery(["productStocks", props.referenceId, props.referenceSucursal], () => getStocksProductId(props.referenceId), {
@@ -129,6 +141,15 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     onSuccess(data: any) {
       setStockProduct(data);
       setStockProductTemp(data);
+    },
+  })
+
+  useQuery(["getOrdenes", props.referenceId, props.referenceSucursal], () => getOrdenes(), {
+    onSuccess(data: any) {
+      console.log("---ordenes");
+      console.log(data);
+      
+      
     },
   })
 
@@ -235,6 +256,13 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     { field: 'attributes.sucursal.data.attributes.nombre', header: 'Sucursal' },
     { field: 'attributes.cantidad', header: 'Cantidad' },
   ];
+
+  const columnsTablePedidos: ColumnMeta[] = [
+    { field: 'attributes.cantidad', header: 'Cantidad' },
+    { field: 'attributes.createdAt', header: 'Fecha' },
+    { field: 'attributes.created__by.data.attributes.nombre', header: 'Solicitante' },
+  ];
+
   useEffect(() => {
     getProductsMini().then((data) => setProducts(data));
   }, []);
@@ -245,7 +273,14 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fisico]);
 
+  const ordenRefillRef = useRef<CanShowAlert>(null);
 
+  const handleCreateOrder = () => {
+    ordenRefillRef.current?.open(props.referenceId);
+  }
+
+  const hideDialogOrder = () => {
+  }
 
   return (
     <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
@@ -349,7 +384,13 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
           </TabPanel>
 
           <TabPanel header="Pedidos" leftIcon="pi pi-fw pi-list">
-            
+            {/*<Button icon="pi pi-plus" style={{ marginLeft: 'auto', display: 'block', marginBottom: '9px' }} className="p-button-rounded p-button-secondary" onClick={() => handleCreateOrder()} />
+            <OrdenRefill referenceId={props.referenceId} ref={(ordenRefillRef)} onHandleHide={hideDialogOrder}></OrdenRefill>*/}
+            <DataTable value={pedidos?.map((element: any) => element)} tableStyle={{ minWidth: '50rem' }}>
+              {columnsTablePedidos.map(({ field, header }) => {
+                return <Column key={field} field={field} header={header} style={{ width: '25%' }} />;
+              })}
+            </DataTable>
           </TabPanel>
         </TabView>
       </Stack>

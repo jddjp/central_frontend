@@ -21,6 +21,9 @@ const TaskBox = () => {
           {auth?.user?.roleCons === 'Supervisor' && (
             <Tab>Inventario</Tab>
           )}
+          {auth?.user?.roleCons === 'Supervisor' && (
+            <Tab>Refill</Tab>
+          )}
           {(auth?.user?.roleCons === 'Supervisor' || auth?.user?.roleCons === 'Receptor') && (
             <Tab>Distribuidor</Tab>
           )}
@@ -32,6 +35,11 @@ const TaskBox = () => {
           <TabPanel>
             <Freshed items={products?.filter((e: Article) => e.attributes.fresh === true)} onHandleRefresh={refetch}/>
           </TabPanel>
+          {auth?.user?.roleCons === 'Supervisor' && (
+            <TabPanel>
+              <Inventory items={products?.filter((e: Article) => e.attributes.fresh === false)}/>
+            </TabPanel>
+          )}
           {auth?.user?.roleCons === 'Supervisor' && (
             <TabPanel>
               <Inventory items={products?.filter((e: Article) => e.attributes.fresh === false)}/>

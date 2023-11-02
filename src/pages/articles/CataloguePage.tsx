@@ -12,10 +12,12 @@ import { useAuth } from 'hooks/useAuth';
 import Confirmation from 'components/modals/Confirmation';
 import ArticlePostDetail from 'components/modals/ArticlePostDetail';
 import ArticlePutDetail from 'components/modals/ArticlePutDetail';
+import OrdenRefill, {CanShowAlert} from 'components/modals/OrdenRefill'
 import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";
 import "./style.css"
+import React from 'react';
 
 const CataloguePage = () => {
   
@@ -30,8 +32,15 @@ const CataloguePage = () => {
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
   const [currentStore, setCurrentStore] = useState('');
 
-  const { data: products } = useQuery(["products"], auth.user?.roleCons !== 'Supervisor' ? () => getProductBySucursal(Number(sucursalRef)) : getProducts, {
-    refetchOnMount: true
+  const ordenRefillRef = useRef<CanShowAlert>(null);
+
+
+  const { data: products,refetch } = useQuery(["products"], auth.user?.roleCons !== 'Supervisor' ? () => getProductBySucursal(Number(sucursalRef)) : getProducts, {
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+    cacheTime: 0,
+    refetchInterval: 0,
   })
 
   const removeProduct = useMutation(deleteStock)
@@ -51,6 +60,10 @@ const CataloguePage = () => {
     idRef.current = 0
     setVisibleEdit(false)
   }
+
+  const hideDialogOrder = () => {
+    queryClient.invalidateQueries(['products'])
+  }
   const hideDialogDelete = () => {
     idRef.current = 0
     setVisibleDelete(false);
@@ -67,6 +80,14 @@ const CataloguePage = () => {
         hideDialogDelete()
       }
     })
+  }
+
+  const handleCreateOrder =(id: number)=>{
+    console.log(id);
+    
+    idRef.current = id
+    
+    ordenRefillRef.current?.open(id);
   }
 
   const onGlobalFilterChange1 = (e: any) => {
@@ -113,8 +134,9 @@ const CataloguePage = () => {
         {rolFlag && (
         <Column header='Acciones' body={(data: any) => ( 
           <Box display='flex' >
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => openDialogEdit(data.id)} />
-            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDelete(data.id)} />
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success"  style={{marginRight:'5px'}} onClick={() => openDialogEdit(data.id)} />
+            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" style={{marginRight:'5px'}} onClick={() => confirmDelete(data.id)} />
+            <Button icon="pi pi-box" className="p-button-rounded p-button-secondary"  onClick={() => handleCreateOrder(data.id)} />
           </Box>)} 
           exportable={false} style={{ minWidth: '8rem' }} />
           )}
@@ -129,6 +151,7 @@ const CataloguePage = () => {
 
       <ArticlePostDetail isVisible={visibleCreate} onHandleHide={hideDialogPost}/> 
       <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={idRef.current} referenceSucursal={currentStore}/>
+      <OrdenRefill ref={(ordenRefillRef)} onHandleHide={hideDialogOrder} referenceId={idRef.current} ></OrdenRefill>
     </Box>
   );
 }
