@@ -7,7 +7,7 @@ import { OrderRefill } from 'types/OrderRefil';
 import { Article } from 'types/Article';
 
 export const getProducts = async () => {
-  const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal`)
+  const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal&populate=foto`)
   return data.data
 }
 
