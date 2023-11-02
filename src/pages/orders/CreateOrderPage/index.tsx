@@ -351,16 +351,6 @@ export const CreateOrderPage = () => {
     };
     let responseNewOrder = newOrder(orderdistribution.attributes);
       responseNewOrder.then((response) => {
-        cart.items.map((article) => {
-            let responseStock =  postStock({
-                data: {
-                  cantidad: article.amount,
-                  sucursal: distribution.sucursal,
-                  unidad_de_medida: 2,
-                  articulo:  article.article.id,
-                }
-              })
-        })
         cart.items.forEach((item: any) => {
           extractUnidad(item.article.id)
           .then((extract: number) => {
