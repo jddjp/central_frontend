@@ -1,23 +1,72 @@
 // import { useState } from "react";
-import { Badge, Box, IconButton, Text } from "@chakra-ui/react";
+import { Badge, Box, IconButton, Text, useToast } from "@chakra-ui/react";
 import { ListBox } from "primereact/listbox";
 // import { Button } from "primereact/button";
 // import RecieveArticle from "../../components/modals/ReceiveArticle";
 import { IoMdCalendar } from "react-icons/io";
-import { useQuery } from "react-query";
-import { getOrderDistribution } from "services/api/orders";
+import { useMutation, useQuery } from "react-query";
+import { getOrderDistribution, updateOrder } from "services/api/orders";
 import moment from "moment";
 import {
   MdDone,
-  MdDoneAll,
-  MdEdit,
   MdOutlineHomeWork,
   MdTrolley,
 } from "react-icons/md";
+import { useState } from "react";
 
 const Distribution = () => {
+  const toast = useToast()
   const { data: orders } = useQuery(["orders"], getOrderDistribution);
+  const updateOrderCall = useMutation(updateOrder)
+  var [orden, setOrder] = useState<any>();
+  const receiveOrder  = (ordenVal: any) => {
+    ordenVal.attributes.estatus = 'entregado'
+    //orden.attributes.estatus = 'entregado'
 
+ // useQuery(ordenVal,updateOrder)
+  setOrder(ordenVal)
+  HandleUpdateProduct()
+    //() => updateOrder(order)
+   // setOrder = ordenVal
+   //console.log(orden.attributes.estatus)
+  }
+
+  const HandleUpdateProduct = async () => {
+    updateOrderCall.mutate(orden,{
+      onSuccess: async () => {
+
+        toast({
+          title: 'El Pedido ha sido recido exitosamente!!',
+          status: 'warning'
+        })
+        //queryClient.invalidateQueries(['products'])
+        //setProduct(initProduct)
+        //setStock(initStock)
+        //Actualiza el stock de las unidades
+        //await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
+       // onHandleHide()
+      }
+    })
+    //Valida que no se ingrese una cantidad de stock mayor a la general
+   /* if (product.inventario_fisico < validLimitStock(stockProduct)) {
+      toast({
+        title: 'El stock por sucursal es mayor al stock general',
+        status: 'warning'
+      })
+      return
+    }
+
+    updateProduct.mutate({ id: props.referenceId, edit: { data: product }, stock: { data: stock } }, {
+      onSuccess: async () => {
+        queryClient.invalidateQueries(['products'])
+        setProduct(initProduct)
+        await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
+        onHandleHide()
+      }
+    })*/
+
+
+  }
   // const [selectedOrder, setSelectedOrder] = useState<any>();
   // const [visible, setVisible] = useState<boolean>(false);
 
@@ -29,9 +78,10 @@ const Distribution = () => {
   //   setVisible(false);
   // };
 
-  console.log(orders);
+  //console.log(orders);
 
   const itemTemplate = (order: any) => {
+    orden = order
     return (
       <Box w="100%">
         <Box display="flex" justifyContent="space-between" w="100%">
@@ -42,13 +92,13 @@ const Distribution = () => {
               </Text>
               <Badge
                 colorScheme={
-                  order?.attributes?.estatus === "pendiente"
+                  orden?.attributes?.estatus === "pendiente"
                     ? "yellow"
                     : "green"
                 }
                 marginBottom="1"
               >
-                {order?.attributes?.estatus}
+                {orden?.attributes?.estatus}
               </Badge>
             </Box>
             <Box display="flex" alignItems="center" gap="2">
@@ -87,7 +137,7 @@ const Distribution = () => {
               icon={<MdDone />}
               borderRadius="full"
               colorScheme="green"
-              onClick={() => {}}
+              onClick={() => receiveOrder(order)}
               fontSize="30px"
               size="lg"
             />

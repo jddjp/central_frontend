@@ -119,9 +119,9 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
     <Box>
       <Box display='flex' justifyContent='center' w='100%' py='4'>
         {
-          [1, 2, 3, 4, 5, 6, 7, 8, 9].map((num: number, idx: number) => (
+          /*[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num: number, idx: number) => (
             <Button key={idx} colorScheme='gray' variant='outline' onClick={() => onHandleItem(num)}>{num}</Button>
-          ))
+          ))*/
         }
       </Box>
       <Button colorScheme='gray' variant='ghost' onClick={() => refetch()}>

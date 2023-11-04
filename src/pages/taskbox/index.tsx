@@ -33,7 +33,7 @@ const TaskBox = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Freshed items={products?.filter((e: Article) => e.attributes.fresh === true)} onHandleRefresh={refetch}/>
+            <Freshed items={products} onHandleRefresh={refetch}/>
           </TabPanel>
           {auth?.user?.roleCons === 'Supervisor' && (
             <TabPanel>

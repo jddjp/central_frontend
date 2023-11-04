@@ -53,6 +53,18 @@ export const putCliente = async (params: any) => {
     return data.data;
 }
 
+
+export const updateOrder = async (order: any) => {
+
+    console.log(order, order.id);
+    console.log(order.edit, order.id);
+    //console.log(order);
+    //delete params.update.data.articulos
+    //delete params.update.data.fecha
+    //delete params.update.data.hora 
+    const { data } = await axios.put(`${API_URL}/pedidos/${order.id}`, order.attributes)
+    return data.data;
+}
 export const deleteOrder = async (id: number) => {
     const response = await axios.delete(`${API_URL}/pedidos/${id}`);
     return response.data;
