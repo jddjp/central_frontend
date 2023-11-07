@@ -7,81 +7,36 @@ import { IoMdCalendar } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { getOrderDistribution, updateOrder } from "services/api/orders";
 import moment from "moment";
-import {
-  MdDone,
-  MdOutlineHomeWork,
-  MdTrolley,
-} from "react-icons/md";
+import { MdDone, MdOutlineHomeWork, MdTrolley } from "react-icons/md";
 import { useState } from "react";
 
 const Distribution = () => {
-  const toast = useToast()
+  const toast = useToast();
   const { data: orders } = useQuery(["orders"], getOrderDistribution);
-  const updateOrderCall = useMutation(updateOrder)
+  const updateOrderCall = useMutation(updateOrder);
   var [orden, setOrder] = useState<any>();
-  const receiveOrder  = (ordenVal: any) => {
-    ordenVal.attributes.estatus = 'entregado'
-    //orden.attributes.estatus = 'entregado'
-
- // useQuery(ordenVal,updateOrder)
-  setOrder(ordenVal)
-  HandleUpdateProduct()
-    //() => updateOrder(order)
-   // setOrder = ordenVal
-   //console.log(orden.attributes.estatus)
-  }
+  const receiveOrder = (ordenVal: any) => {
+    ordenVal.attributes.estatus = "entregado";
+    setOrder(ordenVal);
+    HandleUpdateProduct();
+  };
 
   const HandleUpdateProduct = async () => {
-    updateOrderCall.mutate(orden,{
+    updateOrderCall.mutate(orden, {
       onSuccess: async () => {
-
         toast({
-          title: 'El Pedido ha sido recido exitosamente!!',
-          status: 'warning'
-        })
-        //queryClient.invalidateQueries(['products'])
-        //setProduct(initProduct)
-        //setStock(initStock)
-        //Actualiza el stock de las unidades
-        //await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
-       // onHandleHide()
-      }
-    })
-    //Valida que no se ingrese una cantidad de stock mayor a la general
-   /* if (product.inventario_fisico < validLimitStock(stockProduct)) {
-      toast({
-        title: 'El stock por sucursal es mayor al stock general',
-        status: 'warning'
-      })
-      return
-    }
-
-    updateProduct.mutate({ id: props.referenceId, edit: { data: product }, stock: { data: stock } }, {
-      onSuccess: async () => {
-        queryClient.invalidateQueries(['products'])
-        setProduct(initProduct)
-        await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
-        onHandleHide()
-      }
-    })*/
-
-
-  }
-  // const [selectedOrder, setSelectedOrder] = useState<any>();
-  // const [visible, setVisible] = useState<boolean>(false);
-
-  // const OpenDialog = (data: any) => {
-  //   setSelectedOrder(data);
-  //   setVisible(true);
-  // };
-  // const closeDialog = () => {
-  //   setVisible(false);
-  // };
-
-  //console.log(orders);
-
+          title: "El Pedido ha sido recido exitosamente!!",
+          status: "warning",
+        });
+      },
+      onError: async () => {
+        orden.attributes.estatus = "pendiente";
+        setOrder(orden);
+      },
+    });
+  };
   const itemTemplate = (order: any) => {
-    orden = order
+    orden = order;
     return (
       <Box w="100%">
         <Box display="flex" justifyContent="space-between" w="100%">
@@ -105,7 +60,7 @@ const Distribution = () => {
               <IoMdCalendar />
               <Text>{moment(order?.attributes?.createdAt).format("L")}</Text>
             </Box>
-            <Box display="flex" alignItems="center" gap="2" >
+            <Box display="flex" alignItems="center" gap="2">
               <MdOutlineHomeWork />
               <Text>
                 {order?.attributes?.sucursal?.data?.attributes?.nombre}
@@ -115,14 +70,6 @@ const Distribution = () => {
               <MdTrolley />
               <Text>{order?.attributes?.bodega?.data?.attributes?.nombre}</Text>
             </Box>
-
-            {/* <Box display="flex" alignItems="center" marginRight="5">
-            <Button
-              icon="pi pi-eye"
-              className="p-button-rounded"
-              onClick={() => OpenDialog(order)}
-            ></Button>
-          </Box> */}
             <br />
           </Box>
           <Box
@@ -132,7 +79,7 @@ const Distribution = () => {
             hidden={order?.attributes?.estatus === "pendiente" ? false : true}
           >
             <IconButton
-            data-pr-tooltip="Recibido"
+              data-pr-tooltip="Recibido"
               aria-label="show dialog"
               icon={<MdDone />}
               borderRadius="full"
@@ -152,7 +99,6 @@ const Distribution = () => {
       <Box w="70%" m="auto" mt="3">
         <ListBox
           filter
-          // value={selectedOrder}
           options={orders}
           optionLabel="attributes.comentario"
           itemTemplate={itemTemplate}
