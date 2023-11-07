@@ -291,7 +291,7 @@ export const CreateOrderPage = () => {
     }
   }, [state]);
 
-  console.log(cart);
+  //console.log(cart);
 
   const submitDistribution = async () => {
     if(cart.items.length == 0 ){
@@ -403,9 +403,9 @@ export const CreateOrderPage = () => {
           onOpenConfirmationClear={onOpenConfirmationClear}
           cart={cart}
           cliente={cliente}/>
-
+        <ExistingClient setCliente={setCliente} type={type} setDistribution={setDistribution} distribution={distribution} setOrigen={setDistribution} origen={distribution}/>
         <Header selectedArticle={article} onSelectArticle={handleSelectArticle}/>
-        <ExistingClient setCliente={setCliente} type={type} setDistribution={setDistribution} distribution={distribution}/>
+        
 
         <Cart minH="85vh" maxH="85vh"
           onOpenConfirmationClear={onOpenConfirmationClear}
