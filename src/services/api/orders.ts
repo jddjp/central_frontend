@@ -4,16 +4,16 @@ import { discountStock } from './stocks';
 import { API_URL } from '../../config/env';
 
 export const newOrder = async (payload: IOrderAttributes) => {
-    const response = await axios.post(`${API_URL}/pedidos`, {data: { ...payload }});
+    const response = await axios.post(`${API_URL}/pedidos`, { data: { ...payload } });
     return response.data;
 }
 
 export const newItem = async (payload: Item) => {
-    axios.post(`${API_URL}/items`, {data: { ...payload.attributes }})
-    .then(async () => {
-        const response = await discountStock({id: payload.attributes.articulos, cantidad: payload.attributes.cantidad})
-        return response.data
-    })
+    axios.post(`${API_URL}/items`, { data: { ...payload.attributes } })
+        .then(async () => {
+            const response = await discountStock({ id: payload.attributes.articulos, cantidad: payload.attributes.cantidad })
+            return response.data
+        })
 }
 
 export const getItems = async () => {
@@ -48,7 +48,7 @@ export const putCliente = async (params: any) => {
     console.log(params);
     delete params.update.data.articulos
     delete params.update.data.fecha
-    delete params.update.data.hora 
+    delete params.update.data.hora
     const { data } = await axios.put(`${API_URL}/clientes/${params.id}`, params.update)
     return data.data;
 }
@@ -56,13 +56,12 @@ export const putCliente = async (params: any) => {
 
 export const updateOrder = async (order: any) => {
 
-    console.log(order, order.id);
-    console.log(order.edit, order.id);
-    //console.log(order);
-    //delete params.update.data.articulos
-    //delete params.update.data.fecha
-    //delete params.update.data.hora 
-    const { data } = await axios.put(`${API_URL}/pedidos/${order.id}`, order.attributes)
+    var update = {
+        data: {
+            estatus: order.attributes?.estatus
+        }
+    }
+    const { data } = await axios.put(`${API_URL}/pedidos/${order.id}`, update)
     return data.data;
 }
 export const deleteOrder = async (id: number) => {
@@ -88,8 +87,8 @@ export const getOrdersPendingDespachador = async (id: number) => {
     return data.data
 }
 
-export const putCheckOrders = async (payload: { despachador_check?: boolean, librador_check?: boolean, id: number}) => {
-    const { data } = await axios.put(`${API_URL}/pedidos/${payload.id}`, { data: { ...payload }})
+export const putCheckOrders = async (payload: { despachador_check?: boolean, librador_check?: boolean, id: number }) => {
+    const { data } = await axios.put(`${API_URL}/pedidos/${payload.id}`, { data: { ...payload } })
 
     return data.data
 }
