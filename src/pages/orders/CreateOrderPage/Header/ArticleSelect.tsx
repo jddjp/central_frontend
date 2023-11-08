@@ -16,27 +16,30 @@ const Input = (props: any) => <components.Input {...props} isHidden={false} />;
 export interface ArticleSelectProps {
   article: ShoppingCartArticle | null;
   setArticle: (article: ShoppingCartArticle | null) => void;
+  type?: boolean;
 }
 
 const getArticleLabel = (article: ShoppingCartArticle) => article.attributes.nombre;
 
 const getArticleValue = (article: ShoppingCartArticle) => article.id.toString();
 
-const handleAutocomplete = async (search: string) => {
-  // if (search.length < 3) return [];
-  const result = await searchArticles(search);
-  // console.log("===========Productos============");
-  // console.log(result.data);
-  return result.data;
+const handleAutocomplete = async (search: string,type:boolean) => {
+
+  if(!type){
+ const result = await searchArticles(search);
+ return result.data;}
+ else{
+  return []
+ }
 };
 
 export const ArticleSelect = (props: ArticleSelectProps) => {
   // FIXED BUG: https://github.com/JedWatson/react-select/issues/4675
-  const { article, setArticle } = props;
+  const { article, setArticle,type } = props;
   const [inputValue, setInputValue] = useState('');
   const auth = useAuth()
   const sucursal = localStorage.getItem('sucursal')
-
+  console.log(type)
   useEffect(() => {
     article?.id === null && setInputValue('');
 
@@ -60,10 +63,11 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   };
 
   return (
+    
     <>
       <Select
         defaultOptions
-        loadOptions={ auth.user?.roleCons !== 'Supervisor' ? () => searchArticlesBySucursal(inputValue, Number(sucursal)) : handleAutocomplete}
+        loadOptions={ auth.user?.roleCons !== 'Supervisor' ? () => searchArticlesBySucursal(inputValue,type? Number(sucursal) : 0) : () => handleAutocomplete(inputValue,type ? true : false)}
         value={article}
         inputValue={inputValue}
         onInputChange={handleInputChange}

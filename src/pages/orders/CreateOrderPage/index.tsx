@@ -323,8 +323,6 @@ export const CreateOrderPage = () => {
     }
   }, [state]);
 
-  //console.log(cart);
-
   const submitDistribution = async () => {
     if (cart.items.length == 0) {
       toast({
@@ -425,7 +423,7 @@ export const CreateOrderPage = () => {
   return (
     <Formik
       initialValues={{ client: initialClient, payment: initialPayment }}
-      onSubmit={() => {}}
+      onSubmit={() => { }}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
         {auth.user?.roleCons === "Supervisor" && (
@@ -460,6 +458,7 @@ export const CreateOrderPage = () => {
         <Header
           selectedArticle={article}
           onSelectArticle={handleSelectArticle}
+          type={type}
         />
 
         <Cart

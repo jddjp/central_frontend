@@ -4,7 +4,7 @@ import Select, { SingleValue } from "react-select";
 import { client, getClients } from "services/api/cliente";
 import { useQuery } from "react-query";
 import { autocompleteByReceptores } from "services/api/users";
-import { getBodegas, getSubsidiaries, getSucursales } from "services/api/subsidiary";
+import { getBodegas, getSubsidiaries, } from "services/api/subsidiary";
 import { Sucursal } from "../../../types/Stock";
 
 export interface ClientInformationProps {
@@ -25,7 +25,7 @@ const ExistingClient = (props: ClientInformationProps) => {
     autocompleteByReceptores
   );
   const { data: bodegas } = useQuery(["list-bodega"], getBodegas);
-  const { data: subsidiaries } = useQuery(["list-subsidiary"], getSucursales);
+  const { data: subsidiaries } = useQuery(["list-subsidiary"], getSubsidiaries);
   const [textValue, setTextValue] = useState({
     name: "",
     firstName: "",
@@ -89,8 +89,7 @@ const ExistingClient = (props: ClientInformationProps) => {
    // selectInputRef.current?.select?.clearValue();
   };
 
-  
-  console.log(subsidiaries)
+  //console.log(props.type)
   return (
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt="3">
       <Text fontWeight="bold" fontSize={18}>

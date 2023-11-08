@@ -23,7 +23,9 @@ export const searchArticlesBySucursal = async (name: string, sucursalRef: number
   const result = data.data?.filter((product: any) => {
     const extract = product.attributes.stocks.data.map((stock : any) => stock.attributes.sucursal.data.id)
     product.attributes.stocks = extract
-    return product.attributes.stocks.includes(sucursalRef)
+    var productos = product.attributes.stocks.includes(sucursalRef)
+    console.log(productos)
+    return product
   })
 
   return result
