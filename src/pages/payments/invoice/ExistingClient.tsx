@@ -6,6 +6,8 @@ import { useQuery } from "react-query";
 import { autocompleteByReceptores } from "services/api/users";
 import { getBodegas, getSubsidiaries, } from "services/api/subsidiary";
 import { Sucursal } from "../../../types/Stock";
+import { searchArticlesBySucursal } from "services/api/articles";
+import async from "react-select/dist/declarations/src/async/index";
 
 export interface ClientInformationProps {
   setCliente?: Dispatch<SetStateAction<client | undefined>>;
@@ -76,11 +78,13 @@ const ExistingClient = (props: ClientInformationProps) => {
       : props.setDistribution?.({ ...props.distribution, [target]: option.id });
   };
 
-  const handleOrigenDistribucion = (
+  const handleOrigenDistribucion = async(
     option: SingleValue<any>,
     target: string
   ) => {
-    // console.log(option)
+    if(option){
+      //const result = await searchArticlesBySucursal(search);
+    }
     !option
       ? props.setOrigen?.({ ...props.origen, [target]: 0 })
       : props.setOrigen?.({ ...props.origen, [target]: option.id });

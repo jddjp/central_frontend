@@ -419,7 +419,7 @@ export const CreateOrderPage = () => {
       });
     });
   };
-
+ // console.log(origen)
   return (
     <Formik
       initialValues={{ client: initialClient, payment: initialPayment }}

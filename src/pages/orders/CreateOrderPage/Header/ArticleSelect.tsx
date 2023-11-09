@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
-import Select from 'react-select/async';
+import { useEffect, useState } from "react";
+import Select from "react-select/async";
 import {
   components,
   InputActionMeta,
   MultiValue,
   SingleValue,
-} from 'react-select';
-import { asyncSelectAppStyles } from 'theme';
-import { searchArticles, searchArticlesBySucursal } from 'services/api/articles';
-import { ShoppingCartArticle } from '../types';
-import { useAuth } from 'hooks/useAuth';
+} from "react-select";
+import { asyncSelectAppStyles } from "theme";
+import {
+  searchArticles,
+  searchArticlesBySucursal,
+} from "services/api/articles";
+import { ShoppingCartArticle } from "../types";
+import { useAuth } from "hooks/useAuth";
 
 const Input = (props: any) => <components.Input {...props} isHidden={false} />;
 
@@ -19,34 +22,32 @@ export interface ArticleSelectProps {
   type?: boolean;
 }
 
-const getArticleLabel = (article: ShoppingCartArticle) => article.attributes.nombre;
+const getArticleLabel = (article: ShoppingCartArticle) =>
+  article.attributes.nombre;
 
 const getArticleValue = (article: ShoppingCartArticle) => article.id.toString();
 
-const handleAutocomplete = async (search: string,type:boolean) => {
-
-  if(!type){
- const result = await searchArticles(search);
- return result.data;}
- else{
-  return []
- }
+const handleAutocomplete = async (search: string, type: boolean) => {
+  if (!type) {
+    const result = await searchArticles(search);
+    return result.data;
+  } else {
+    return [];
+  }
 };
 
 export const ArticleSelect = (props: ArticleSelectProps) => {
   // FIXED BUG: https://github.com/JedWatson/react-select/issues/4675
-  const { article, setArticle,type } = props;
-  const [inputValue, setInputValue] = useState('');
-  const auth = useAuth()
-  const sucursal = localStorage.getItem('sucursal')
-  console.log(type)
+  const { article, setArticle, type } = props;
+  const [inputValue, setInputValue] = useState("");
+  const auth = useAuth();
+  const sucursal = localStorage.getItem("sucursal");
   useEffect(() => {
-    article?.id === null && setInputValue('');
-
+    article?.id === null && setInputValue("");
   }, [article?.id]);
-  
+
   const handleInputChange = (newValue: string, { action }: InputActionMeta) => {
-    if (action === 'input-change') {
+    if (action === "input-change") {
       setInputValue(newValue);
       setArticle(null);
     }
@@ -54,20 +55,27 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
 
   const handleChange = (
     option: MultiValue<ShoppingCartArticle> | SingleValue<ShoppingCartArticle>
-    ) => {
+  ) => {
     setArticle(option as ShoppingCartArticle);
     setInputValue(
-      option ? (option as ShoppingCartArticle).attributes.nombre : ''
+      option ? (option as ShoppingCartArticle).attributes.nombre : ""
     );
-    setInputValue('')
+    setInputValue("");
   };
 
   return (
-    
     <>
       <Select
         defaultOptions
-        loadOptions={ auth.user?.roleCons !== 'Supervisor' ? () => searchArticlesBySucursal(inputValue,type? Number(sucursal) : 0) : () => handleAutocomplete(inputValue,type ? true : false)}
+        loadOptions={
+          auth.user?.roleCons !== "Supervisor"
+            ? () =>
+                searchArticlesBySucursal(
+                  inputValue,
+                  type ? Number(sucursal) : 0
+                )
+            : () => handleAutocomplete(inputValue, type ? true : false)
+        }
         value={article}
         inputValue={inputValue}
         onInputChange={handleInputChange}
@@ -80,7 +88,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
         hideSelectedOptions
         placeholder="Buscar artículo"
         loadingMessage={() => `Buscando...`}
-        noOptionsMessage={() => 'No hay opciones disponibles'}
+        noOptionsMessage={() => "No hay opciones disponibles"}
       />
     </>
   );
