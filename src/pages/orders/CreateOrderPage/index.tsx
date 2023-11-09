@@ -33,9 +33,10 @@ import { newCliente } from "../../../services/api/cliente";
 import { AxiosError } from "axios";
 
 import { SERVER_ERROR_MESSAGE } from "services/api/errors";
-import { extractUnidad, postStock } from "services/api/stocks";
+import { extractUnidad } from "services/api/stocks";
 import { useTicketDetail } from "../../../zustand/useTicketDetails";
 import { useAuth } from "hooks/useAuth";
+import { getStockByArticleAndSucursal } from "services/api/articles";
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -71,7 +72,7 @@ export const CreateOrderPage = () => {
       select: (data) => data.map((users: any) => users.id.toString()),
     }
   );
-  const [articles, setArticles] = useState([{descripcion :"dsadsadasdas"}]);
+  const [articles, setArticles] = useState([{ descripcion: "dsadsadasdas" }]);
 
   const [distribution, setDistribution] = useState({
     sucursal: 0,
@@ -310,10 +311,21 @@ export const CreateOrderPage = () => {
     onCloseConfirmationClear();
   };
 
-  const handleSelectArticle = (article: ShoppingCartArticle | null) => {
+  const handleSelectArticle = async (article: ShoppingCartArticle | null) => {
     if (article) {
       setArticle(article);
-      onOpenAddItemModal();
+      if (!type) {
+        onOpenAddItemModal();
+      }
+      else{
+        const result = await getStockByArticleAndSucursal(origen.sucursal,article.id);
+        article.attributes.cantidad_stock = result[0].attributes.cantidad
+
+        setArticle(article)
+        onOpenAddItemModal();
+        console.log(article.attributes.cantidad_stock)
+        console.log(result[0])
+      }
     } else {
       setArticle(article);
     }

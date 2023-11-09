@@ -23,7 +23,10 @@ export const searchArticlesByOrigen = async ( sucursal: string) => {
   return data;
 };
 
-
+export const getStockByArticleAndSucursal = async ( sucursal: number,articulo:number) => {
+  const { data } = await axios.get(`${API_URL}/stocks?filters[sucursal]=${sucursal}&filters[articulo]=${articulo}`)
+  return data.data;
+};
 export const searchArticlesBySucursal = async (name: string, sucursalRef: number) => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=ruptura_precio&populate=stocks.sucursal`)
 

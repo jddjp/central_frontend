@@ -24,7 +24,6 @@ export const Header = (props: HeaderProps) => {
         article={selectedArticle}
         setArticle={handleSelectArticle}
         origen={props.origen}
-       // articles={props.articles}
       />
     </HStack>
   );

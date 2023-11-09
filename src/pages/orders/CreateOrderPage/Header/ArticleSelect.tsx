@@ -66,16 +66,12 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   };
 
   const getArticles = async (search: string, type: boolean) => {
-    //console.log(type)
-    //console.log(props.articles)
     if (!type) {
       const result = await searchArticles(search);
       return result.data;
     } else {
       var articles :any []= []
-
       if(origen?.sucursal == 0){
-
         toast({
           title: "Upsss",
           description:
@@ -87,12 +83,10 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
         return
       }
       var sucursal = origen?.sucursal
-      console.log(origen?.sucursal)
       const result = await searchArticlesByOrigen(sucursal!.toString());
       result.data.forEach((stock:any) => {
         articles.push(stock.attributes.articulo.data)
       });
-      console.log(articles)
       return articles;
     }
 
@@ -110,8 +104,6 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   return (
     <>
       <Select
-        //defaultOptions
-        //loadOptions={list}
         loadOptions={auth.user?.roleCons !== 'Supervisor' ? () => searchArticlesBySucursal(inputValue, Number(sucursal)) : () => getArticles(inputValue, type ? true : false)}
         value={article}
         inputValue={inputValue}
