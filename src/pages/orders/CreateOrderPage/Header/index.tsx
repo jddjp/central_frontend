@@ -7,12 +7,12 @@ export interface HeaderProps extends StackProps {
   onSelectArticle: (article: ShoppingCartArticle | null) => void;
   selectedArticle: ShoppingCartArticle | null;
   type?: boolean | undefined;
+  origen?: { bodega: number; sucursal: number; receptor: number };
 }
 
 export const Header = (props: HeaderProps) => {
   //props.setType = false
-  const { selectedArticle, onSelectArticle, type, ...rest } = props;
-
+  const { selectedArticle, onSelectArticle, type, origen, ...rest } = props;
   const handleSelectArticle = (article: SearchArticle | null) => {
     onSelectArticle(article);
   };
@@ -23,6 +23,8 @@ export const Header = (props: HeaderProps) => {
         type={props.type}
         article={selectedArticle}
         setArticle={handleSelectArticle}
+        origen={props.origen}
+       // articles={props.articles}
       />
     </HStack>
   );

@@ -52,6 +52,7 @@ export interface LocationOrdenEdit {
 
 export const CreateOrderPage = () => {
   const [type, setType] = useState(false);
+
   const auth = useAuth();
   const { setOrderData } = useTicketDetail();
   const location = useLocation();
@@ -70,6 +71,7 @@ export const CreateOrderPage = () => {
       select: (data) => data.map((users: any) => users.id.toString()),
     }
   );
+  const [articles, setArticles] = useState([{descripcion :"dsadsadasdas"}]);
 
   const [distribution, setDistribution] = useState({
     sucursal: 0,
@@ -322,7 +324,6 @@ export const CreateOrderPage = () => {
       setCliente(state.client);
     }
   }, [state]);
-
   const submitDistribution = async () => {
     if (cart.items.length == 0) {
       toast({
@@ -419,7 +420,6 @@ export const CreateOrderPage = () => {
       });
     });
   };
- // console.log(origen)
   return (
     <Formik
       initialValues={{ client: initialClient, payment: initialPayment }}
@@ -454,11 +454,14 @@ export const CreateOrderPage = () => {
           distribution={distribution}
           setOrigen={setOrigen}
           origen={origen}
+          articles={articles}
+          setArticles={setArticles}
         />
         <Header
           selectedArticle={article}
           onSelectArticle={handleSelectArticle}
           type={type}
+          origen={origen}
         />
 
         <Cart

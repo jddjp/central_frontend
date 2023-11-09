@@ -6,6 +6,7 @@ import { WithRequired } from "types/utils";
 import { ListResponse, PaginationConfig } from "./types";
 import { defaultPaginationConfig } from "./utils";
 import { API_URL } from '../../config/env';
+import { Sucursal } from '../../types/Stock';
 
 export type SearchArticle = ContentType<
   WithRequired<ArticleAttributes, "foto" | "unidad_de_medida">
@@ -13,9 +14,15 @@ export type SearchArticle = ContentType<
 
 export const searchArticles = async ( name: string) => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=*`)
-  
   return data;
 };
+
+
+export const searchArticlesByOrigen = async ( sucursal: string) => {
+  const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucursal}`)
+  return data;
+};
+
 
 export const searchArticlesBySucursal = async (name: string, sucursalRef: number) => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=ruptura_precio&populate=stocks.sucursal`)
@@ -23,8 +30,8 @@ export const searchArticlesBySucursal = async (name: string, sucursalRef: number
   const result = data.data?.filter((product: any) => {
     const extract = product.attributes.stocks.data.map((stock : any) => stock.attributes.sucursal.data.id)
     product.attributes.stocks = extract
-    var productos = product.attributes.stocks.includes(sucursalRef)
-    console.log(productos)
+    var productos = []
+    //console.log(productos)
     return product
   })
 

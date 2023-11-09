@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import { autocompleteByReceptores } from "services/api/users";
 import { getBodegas, getSubsidiaries, } from "services/api/subsidiary";
 import { Sucursal } from "../../../types/Stock";
-import { searchArticlesBySucursal } from "services/api/articles";
+import { searchArticlesByOrigen, searchArticlesBySucursal } from "services/api/articles";
 import async from "react-select/dist/declarations/src/async/index";
 
 export interface ClientInformationProps {
@@ -16,6 +16,8 @@ export interface ClientInformationProps {
   distribution?: { bodega: number; sucursal: number; receptor: number };
   origen?: { bodega: number; sucursal: number; receptor: number };
   type?: boolean;
+  articles?: { descripcion: string }[];
+  setArticles?: Dispatch<SetStateAction<any>>;
 }
 
 const ExistingClient = (props: ClientInformationProps) => {
@@ -35,7 +37,7 @@ const ExistingClient = (props: ClientInformationProps) => {
   });
   const selectInputRef = useRef();
   const handleChange = (option: SingleValue<any>) => {
-    
+
     !option ? setUser("") : setUser(option.value);
     props.setCliente?.(option);
   };
@@ -78,19 +80,22 @@ const ExistingClient = (props: ClientInformationProps) => {
       : props.setDistribution?.({ ...props.distribution, [target]: option.id });
   };
 
-  const handleOrigenDistribucion = async(
+  const handleOrigenDistribucion = async (
     option: SingleValue<any>,
     target: string
   ) => {
-    if(option){
-      //const result = await searchArticlesBySucursal(search);
+    if (option) {
+      var data = await searchArticlesByOrigen(option.id)
+      var articles : any[]= []
+      data.data.forEach((stock: any) => {
+        articles.push(stock.attributes.articulo)
+      });
+      props.setArticles?.({ ...articles })
+
     }
     !option
       ? props.setOrigen?.({ ...props.origen, [target]: 0 })
       : props.setOrigen?.({ ...props.origen, [target]: option.id });
-  };
-  const onClear = () => {
-   // selectInputRef.current?.select?.clearValue();
   };
 
   //console.log(props.type)
@@ -139,7 +144,7 @@ const ExistingClient = (props: ClientInformationProps) => {
           />
           <Select
             onChange={(e) => handleOrderDistribucion(e, "sucursal")}
-            isClearable = {true}
+            isClearable={true}
             placeholder="Buscar sucursal"
             hideSelectedOptions
             key="distribution-sucursal"
