@@ -14,7 +14,7 @@ export interface ClientInformationProps {
   setDistribution?: Dispatch<SetStateAction<any>>;
   setOrigen?: Dispatch<SetStateAction<any>>;
   distribution?: { bodega: number; sucursal: number; receptor: number };
-  origen?: { bodega: number; sucursal: number; receptor: number };
+  origen?: { bodega: number; sucursal: number; receptor: number,desc : string };
   type?: boolean;
   articles?: { descripcion: string }[];
   setArticles?: Dispatch<SetStateAction<any>>;
@@ -91,14 +91,11 @@ const ExistingClient = (props: ClientInformationProps) => {
         articles.push(stock.attributes.articulo)
       });
       props.setArticles?.({ ...articles })
-
     }
     !option
       ? props.setOrigen?.({ ...props.origen, [target]: 0 })
-      : props.setOrigen?.({ ...props.origen, [target]: option.id });
+      : props.setOrigen?.({ ...props.origen,  [target]:option.id ,["desc"] : option.label});
   };
-
-  //console.log(props.type)
   return (
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt="3">
       <Text fontWeight="bold" fontSize={18}>

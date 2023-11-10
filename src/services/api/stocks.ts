@@ -4,7 +4,7 @@ import { API_URL } from '../../config/env';
 
 export const extractStock = async (id: number) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
-  console.log(data);
+  //console.log(data);
   
   if (data) {
     return {
@@ -57,15 +57,12 @@ export const postStock = async (stockData: any) => {
 
 export const putStock = async (id: number, stockData: any) => {
   const extract = await axios.get(`${API_URL}/stocks/${id}`)
-  console.log("putStock");
-  console.log(extract);
   const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data.id}`, stockData)
   return { data }
 }
 
 export const updateStock = async (id: number, stockData: any) => {
   const extract = await axios.get(`${API_URL}/stocks?populate=*&filters[articulo][id]=${id}`)
-  console.log(extract.data.data[0].id, stockData);
   const { data } = await axios.put(`${API_URL}/stocks/${extract.data.data[0].id}`, stockData)
   return { data }
 }

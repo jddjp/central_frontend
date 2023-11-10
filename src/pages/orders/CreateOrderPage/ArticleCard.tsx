@@ -16,7 +16,9 @@ interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;
   amount: number,
   setAmount: Dispatch<number>,
-  stock: any
+  stock: any,
+  type : boolean,
+  origen?: { bodega: number; sucursal: number; receptor: number,desc:string };
 }
 
 const MotionStack = motion(Stack);
@@ -24,9 +26,8 @@ const MotionStack = motion(Stack);
 export const ArticleCard = (props: ArticleCardProps) => {
 
   const toast = useToast()
-  const { article, children, amount, setAmount,stock, ...rest } = props;
+  const { article, children, amount, setAmount,stock,type,origen, ...rest } = props;
   const { nombre, descripcion ,cantidad_stock} = article.attributes;
-
   useEffect(() => {
     if (amount > stock?.attributes.cantidad) {
       setAmount(1)
@@ -96,7 +97,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
               </Stack>
 
               <Stack>
-                <Text fontWeight="semibold">Cantidad</Text>
+                <Text fontWeight="semibold">{type?"Cantidad en la sucursal " + origen?.desc:"Cantidad"}</Text>
                 <Text>
                   {cantidad_stock ?? 0}
                 </Text>

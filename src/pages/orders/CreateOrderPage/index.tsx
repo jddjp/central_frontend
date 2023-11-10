@@ -84,6 +84,7 @@ export const CreateOrderPage = () => {
     sucursal: 0,
     bodega: 0,
     receptor: 0,
+    desc:""
   });
 
   const state = location.state as LocationOrdenEdit;
@@ -320,11 +321,8 @@ export const CreateOrderPage = () => {
       else{
         const result = await getStockByArticleAndSucursal(origen.sucursal,article.id);
         article.attributes.cantidad_stock = result[0].attributes.cantidad
-
         setArticle(article)
         onOpenAddItemModal();
-        console.log(article.attributes.cantidad_stock)
-        console.log(result[0])
       }
     } else {
       setArticle(article);
@@ -368,6 +366,17 @@ export const CreateOrderPage = () => {
       });
       return;
     }
+
+    if (origen.sucursal == 0) {
+      toast({
+        title: "Datos incompletos",
+        description: "Selecciona un origen para continuar",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
     var date = new Date();
     let orderdistribution: any = {
       id: 0,
@@ -386,7 +395,7 @@ export const CreateOrderPage = () => {
         estatus: "pendiente",
         receptor: distribution.receptor,
         sucursal: distribution.sucursal,
-        //bodega: distribution.bodega,
+        origen: origen.sucursal,
         distribution: true,
         comentario: cart.items
           .map((article: any) => {
@@ -530,6 +539,8 @@ export const CreateOrderPage = () => {
             onClose={onCloseAddItemModal}
             article={article}
             onAddItemModal={addItem}
+            type={type}
+            origen={origen}
           />
 
           <AlertConfirmation

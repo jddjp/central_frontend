@@ -11,7 +11,7 @@ import {
   Text,
   Spacer,
   Badge,
-  Center
+  Center,
 } from "@chakra-ui/react";
 import { ArticleCard } from "pages/orders/CreateOrderPage/ArticleCard";
 import { Formik } from "formik";
@@ -35,64 +35,105 @@ export interface AddItemModalProps {
   onClose: VoidFunction;
   article: ShoppingCartArticle | null;
   onAddItemModal: (item: ShoppingCartItem) => void;
+  type: boolean;
+  origen?: { bodega: number; sucursal: number; receptor: number; desc: string };
 }
 
 export const AddItemModal = (props: AddItemModalProps) => {
-  const { isOpen, onClose, article, onAddItemModal } = props;
+  const { isOpen, onClose, article, onAddItemModal, type, origen } = props;
   const toast = useToast();
-  const tagRef = useRef(0)
+  const tagRef = useRef(0);
   const [customPrice, setCustomPrice] = useState<number | undefined>(0);
   const [discountPrices, setDiscountPrices] = useState<string>("");
   const [amount, setAmount] = useState<number>(1);
-  const [priceBreakage, setPriceBreakage] = useState<PriceBreakage[] | null>(null);
-  const { data: stock } = useQuery(['stock', article?.id], () => getStockBySucursal(article!.id))
-
-
+  const [priceBreakage, setPriceBreakage] = useState<PriceBreakage[] | null>(
+    null
+  );
+  const { data: stock } = useQuery(["stock", article?.id], () =>
+    getStockBySucursal(article!.id)
+  );
   useEffect(() => {
-    // if (amount) {
-      try {
-        const { price, tag } = pricingCalculator(article?.attributes.ruptura_precio.data.attributes.rangos, amount!);
-        setCustomPrice(price)
-        tagRef.current = tag
-      } catch (error) {
-        toast({
-          status: 'error',
-          description: 'Articulo podria no tener ruptura disponible'
-        })
-      }
-    // }
+    try {
+      const { price, tag } = pricingCalculator(
+        article?.attributes.ruptura_precio.data.attributes.rangos,
+        amount!
+      );
+      setCustomPrice(price);
+      tagRef.current = tag;
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Articulo podria no tener ruptura disponible",
+      });
+    }
   }, [amount, article, toast]);
 
   useEffect(() => {
-    if(priceBreakage !== null){
-      if (priceBreakage?.length >0 && typeof amount !== 'undefined') {
-        const prices = priceBreakage.filter((element)=>{
-          if (amount >= element.attributes.peso_inferior && amount <= element.attributes.peso_superior) {
+    if (priceBreakage !== null) {
+      if (priceBreakage?.length > 0 && typeof amount !== "undefined") {
+        const prices = priceBreakage.filter((element) => {
+          if (
+            amount >= element.attributes.peso_inferior &&
+            amount <= element.attributes.peso_superior
+          ) {
             return element;
           }
         });
         if (prices.length > 0) {
           setDiscountPrices(prices[0].attributes.descripcion_descuento);
           setCustomPrice(prices[0].attributes.precio);
-        }else{  
+        } else {
           setDiscountPrices("");
           setCustomPrice(undefined);
         }
       }
     }
-  },[amount, priceBreakage]);
+  }, [amount, priceBreakage]);
 
   const handleChangeAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     if (value.trim().length === 0) {
       setAmount(1);
     } else {
+      if (type) {
+        if (article?.attributes.cantidad_stock! < Number(event.target.value)) {
+          toast({
+            title: "Uppps!!!",
+            description: "No hay suficiente Stock en la sucursal",
+            status: "warning",
+            duration: 5000,
+            isClosable: true,
+          });
+          return;
+        }
+      }
+      console.log(event.target.value);
       setAmount(Number(event.target.value));
     }
   };
 
   const handleStepAmount = (step: number) => {
-    return () => setAmount((prev) => (prev || 0) + step);
+    if (type) {
+      
+      if (article?.attributes.cantidad_stock! < (amount)) {
+        console.log(amount)
+        toast({
+          title: "Uppps!!!",
+          description: "No hay suficiente estock en la sucursal",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+        
+        return () => setAmount(article?.attributes.cantidad_stock!);
+      }
+      else{
+        return () => setAmount((prev) => (prev || 0) + step);
+      }
+    
+    } else {
+      return () => setAmount((prev) => (prev || 0) + step);
+    }
   };
 
   const closeAndReset = () => {
@@ -101,14 +142,13 @@ export const AddItemModal = (props: AddItemModalProps) => {
   };
 
   const handleAdd = () => {
-    // console.log({ article });
     try {
       onAddItemModal({
         article: article!,
         amount: amount!,
         customPrice: customPrice,
         priceBroken: tagRef.current,
-        unidad: stock?.attributes.unidad_de_medida.data.attributes.nombre
+        unidad: stock?.attributes.unidad_de_medida.data.attributes.nombre,
       });
       toast({
         title: "Artículo agregado.",
@@ -117,7 +157,6 @@ export const AddItemModal = (props: AddItemModalProps) => {
         isClosable: true,
       });
     } catch (e: any) {
-      console.log(e);
       toast({
         title: "Artículo existente.",
         description: e.message,
@@ -132,7 +171,6 @@ export const AddItemModal = (props: AddItemModalProps) => {
   return (
     <>
       {article?.attributes.ruptura_precio.data !== null ? (
-
         <Modal
           isCentered
           size="2xl"
@@ -147,7 +185,15 @@ export const AddItemModal = (props: AddItemModalProps) => {
             <ModalCloseButton />
             <ModalBody>
               <Formik initialValues={{}} onSubmit={(e) => {}}>
-                <ArticleCard maxW="100%" article={article!} amount={amount} setAmount={setAmount} stock={stock}>
+                <ArticleCard
+                  maxW="100%"
+                  article={article!}
+                  amount={amount}
+                  setAmount={setAmount}
+                  stock={stock}
+                  type={type}
+                  origen={origen}
+                >
                   <>
                     <HStack>
                       <Text fontWeight="semibold" mb="-1">
@@ -155,13 +201,15 @@ export const AddItemModal = (props: AddItemModalProps) => {
                       </Text>
                       <Spacer />
                       {discountPrices ? (
-                      <>
-                        <Center>
-                          <Badge p={2} colorScheme='green'>% {discountPrices} </Badge>
-                        </Center>
-                        <Text fontWeight="semibold"> $ {customPrice} </Text>
-                      </>
-                      ):(
+                        <>
+                          <Center>
+                            <Badge p={2} colorScheme="green">
+                              % {discountPrices}{" "}
+                            </Badge>
+                          </Center>
+                          <Text fontWeight="semibold"> $ {customPrice} </Text>
+                        </>
+                      ) : (
                         <EditablePrice
                           originalPrice={customPrice!}
                           onSetCustomPrice={setCustomPrice}
@@ -198,4 +246,3 @@ export const AddItemModal = (props: AddItemModalProps) => {
     </>
   );
 };
-

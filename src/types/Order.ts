@@ -9,6 +9,7 @@ export type IOrderAttributes =  {
         sucursal: number,
         receptor: number,
         bodega: number,
+        origen:number,
         comentario: string,
         articulos: number[]
     }
