@@ -250,7 +250,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const columnsTablePedidos: ColumnMeta[] = [
     { field: 'attributes.cantidad', header: 'Cantidad' },
     { field: 'attributes.createdAt', header: 'Fecha' },
-    { field: 'attributes.created__by.data.attributes.nombre', header: 'Solicitante' },
+    { field: 'attributes.created__by.data.attributes.nombre', header: 'Supervisor' },
   ];
 
   useEffect(() => {
@@ -273,7 +273,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   }
 
   return (
-    <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
+    <Dialog style={{ width: '60%' }} header="DETALLE DEL ARTICULO" modal className="p-fluid"
       visible={props.isVisible}
       footer={productDialogFooter}
       onHide={onHandleHide}>
@@ -294,8 +294,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
             </div>
             <div className="field">
+       
               <label htmlFor="name">Inventario fisico</label>
-              <InputNumber value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
+              <InputNumber disabled={true}  value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
+              
             </div>
             <div className="field">
               <label htmlFor="name">Descripción</label>
@@ -373,7 +375,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             </DataTable>
           </TabPanel>
 
-          <TabPanel header="Pedidos" leftIcon="pi pi-fw pi-list">
+          <TabPanel header="Historial Refill" leftIcon="pi pi-fw pi-list">
             {/*<Button icon="pi pi-plus" style={{ marginLeft: 'auto', display: 'block', marginBottom: '9px' }} className="p-button-rounded p-button-secondary" onClick={() => handleCreateOrder()} />
             <OrdenRefill referenceId={props.referenceId} ref={(ordenRefillRef)} onHandleHide={hideDialogOrder}></OrdenRefill>*/}
             <DataTable value={pedidos?.map((element: any) => element)} tableStyle={{ minWidth: '50rem' }}>

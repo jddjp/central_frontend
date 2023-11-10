@@ -170,7 +170,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   }
 
   return (
-    <Dialog style={{ width: '60%' }} header="Product Details" modal className="p-fluid"
+    <Dialog style={{ width: '60%' }} header="NUEVO PRODUCTO" modal className="p-fluid"
       visible={props.isVisible}
       footer={productDialogFooter}
       onHide={onHandleHide}>
