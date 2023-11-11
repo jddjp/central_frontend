@@ -29,7 +29,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
   const { article, children, amount, setAmount,stock,type,origen, ...rest } = props;
   const { nombre, descripcion ,cantidad_stock} = article.attributes;
   useEffect(() => {
-    if (amount > stock?.attributes.cantidad) {
+    if (amount > stock?.attributes.cantidad && !type) {
       setAmount(1)
       toast({
         title: 'Stock excedido',

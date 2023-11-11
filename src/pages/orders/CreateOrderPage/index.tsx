@@ -272,7 +272,6 @@ export const CreateOrderPage = () => {
     }
   };
 
-  var ariculosSeleccionados : any[]= []
   const {
     total,
     addItem,
@@ -321,11 +320,12 @@ export const CreateOrderPage = () => {
       }
       else{
         const result = await getStockByArticleAndSucursal(origen.sucursal,article.id);
+        console.log(result)
         article.attributes.cantidad_stock = result[0].attributes.cantidad
         setstockId (result[0].id)
         setArticle(article)
         onOpenAddItemModal();
-        //console.log(stockId)
+        console.log(article)
       }
     } else {
       setArticle(article);

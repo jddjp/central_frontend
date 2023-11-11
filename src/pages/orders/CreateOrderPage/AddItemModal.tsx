@@ -60,11 +60,12 @@ export const AddItemModal = (props: AddItemModalProps) => {
       );
       setCustomPrice(price);
       tagRef.current = tag;
-    } catch (error) {
-      toast({
+    } catch (erro) {
+      if(!type)
+      {toast({
         status: "error",
         description: "Articulo podria no tener ruptura disponible",
-      });
+      });}
     }
   }, [amount, article, toast]);
 
@@ -97,6 +98,7 @@ export const AddItemModal = (props: AddItemModalProps) => {
     } else {
       if (type) {
         if (article?.attributes.cantidad_stock! < Number(event.target.value)) {
+          console.log(article?.attributes.cantidad_stock!)
           toast({
             title: "Uppps!!!",
             description: "No hay suficiente Stock en la sucursal",
