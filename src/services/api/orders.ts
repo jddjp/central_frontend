@@ -89,6 +89,5 @@ export const getOrdersPendingDespachador = async (id: number) => {
 
 export const putCheckOrders = async (payload: { despachador_check?: boolean, librador_check?: boolean, id: number }) => {
     const { data } = await axios.put(`${API_URL}/pedidos/${payload.id}`, { data: { ...payload } })
-
     return data.data
 }

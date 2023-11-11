@@ -54,10 +54,6 @@ export const deleteProduct = async (id: number) => {
 }
 
 export const editProduct = async (param: any) => {
-
-  console.log(param.edit, param.id);
-  console.log(param.edit, param.id);
-
   if (param.edit.data.foto !== "") {
     delete param.edit.data.foto;
 

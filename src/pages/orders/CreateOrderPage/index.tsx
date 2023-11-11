@@ -36,7 +36,7 @@ import { SERVER_ERROR_MESSAGE } from "services/api/errors";
 import { extractUnidad } from "services/api/stocks";
 import { useTicketDetail } from "../../../zustand/useTicketDetails";
 import { useAuth } from "hooks/useAuth";
-import { getStockByArticleAndSucursal } from "services/api/articles";
+import { getStockByArticleAndSucursal, updateStockSucursal } from "services/api/articles";
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -53,7 +53,7 @@ export interface LocationOrdenEdit {
 
 export const CreateOrderPage = () => {
   const [type, setType] = useState(false);
-
+  var [orden, setOrder] = useState<any>();
   const auth = useAuth();
   const { setOrderData } = useTicketDetail();
   const location = useLocation();
@@ -73,7 +73,6 @@ export const CreateOrderPage = () => {
     }
   );
   const [articles, setArticles] = useState([{ descripcion: "dsadsadasdas" }]);
-
   const [distribution, setDistribution] = useState({
     sucursal: 0,
     bodega: 0,
@@ -87,6 +86,7 @@ export const CreateOrderPage = () => {
     desc:""
   });
 
+  const [stockId,setstockId] = useState(0);
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client: any) => () => {
     if (paymentsDetails !== "finished") {
@@ -272,6 +272,7 @@ export const CreateOrderPage = () => {
     }
   };
 
+  var ariculosSeleccionados : any[]= []
   const {
     total,
     addItem,
@@ -321,8 +322,10 @@ export const CreateOrderPage = () => {
       else{
         const result = await getStockByArticleAndSucursal(origen.sucursal,article.id);
         article.attributes.cantidad_stock = result[0].attributes.cantidad
+        setstockId (result[0].id)
         setArticle(article)
         onOpenAddItemModal();
+        //console.log(stockId)
       }
     } else {
       setArticle(article);
@@ -409,7 +412,14 @@ export const CreateOrderPage = () => {
     };
     let responseNewOrder = newOrder(orderdistribution.attributes);
     responseNewOrder.then((response) => {
-      cart.items.forEach((item: any) => {
+      clear();
+      cart.items.forEach(async (item: any)  =>{
+        const resultStock =  getStockByArticleAndSucursal(origen.sucursal,item.article.id);
+
+        resultStock.then((response) => {
+          console.log(response)
+          const update = updateStockSucursal((response[0].attributes.cantidad-item.amount),response[0].id)
+        })
         extractUnidad(item.article.id).then((extract: number) => {
           var itemNew: Item = {
             id: 0,
@@ -427,7 +437,6 @@ export const CreateOrderPage = () => {
           itemMutation.mutate(itemNew, {
             onSuccess: () => {
               setDistribution({ sucursal: 0, bodega: 0, receptor: 0 });
-              ///clear();
             },
           });
         });

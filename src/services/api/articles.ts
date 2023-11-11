@@ -23,6 +23,16 @@ export const searchArticlesByOrigen = async ( sucursal: string) => {
   return data;
 };
 
+export const updateStockSucursal = async (cantidad:number,id : number) => {
+  var update = {
+      data: {
+          cantidad: cantidad
+      }
+  }
+  const { data } = await axios.put(`${API_URL}/stocks/${id}`, update)
+  return data.data;
+}
+
 export const getStockByArticleAndSucursal = async ( sucursal: number,articulo:number) => {
   const { data } = await axios.get(`${API_URL}/stocks?filters[sucursal]=${sucursal}&filters[articulo]=${articulo}`)
   return data.data;
