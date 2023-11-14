@@ -19,6 +19,7 @@ const Freshed = (props: FreshedProps) => {
 
   const [selectedProduct, setSelectedProduct] = useState<Article>();
   const [visible, setVisible] = useState<boolean>(false)
+  const [pedido, setPedido] = useState<any>(0)
   const [visibleListOrder, setvisibleListOrder] = useState<boolean>(false)
   const dispatchUpdate = useMutation(() => updateFreshProduct(selectedProduct?.id, false), {
     onSuccess: () => {
@@ -50,24 +51,24 @@ const Freshed = (props: FreshedProps) => {
     return (
       <Box display='flex'>
         <Box display='flex' w='100%' gap='3'>
-          <Image borderRadius='20px' minWidth='160px' objectFit='cover' height='100px' 
-          src={`${BASE_URL}${product.attributes?.foto?.data?.attributes?.url}`}  fallbackSrc='https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg'/>
-            <Box display='flex' justifyContent='space-between' w='100%'>
-              <Box>
-                <Text fontWeight='bold'>{product.attributes.nombre}</Text>
-                <Box display='flex' alignItems='center' gap='2'>
-                  <TiTag/>
-                  <Text>{product.attributes.categoria}</Text>
-                </Box>
-                {product.attributes.fresh && (
-                  <Badge colorScheme='red'>Nuevo</Badge>
-                )}
+          <Image borderRadius='20px' minWidth='160px' objectFit='cover' height='100px'
+            src={`${BASE_URL}${product.attributes?.foto?.data?.attributes?.url}`} fallbackSrc='https://as2.ftcdn.net/v2/jpg/01/07/57/91/1000_F_107579124_mIWzq85htygJBSKdAURrW5zcDNTSFTAr.jpg' />
+          <Box display='flex' justifyContent='space-between' w='100%'>
+            <Box>
+              <Text fontWeight='bold'>{product.attributes.nombre}</Text>
+              <Box display='flex' alignItems='center' gap='2'>
+                <TiTag />
+                <Text>{product.attributes.categoria}</Text>
               </Box>
-              <Box display='flex' alignItems='center' marginRight='5'>
-                <IconButton aria-label='show dialog' icon={<MdEdit/>} borderRadius='full' colorScheme='red' 
-                onClick={() => OpenDialog(product)} fontSize='20px' size='lg'/>
-              </Box>
+              {product.attributes.fresh && (
+                <Badge colorScheme='red'>Nuevo</Badge>
+              )}
             </Box>
+            <Box display='flex' alignItems='center' marginRight='5'>
+              <IconButton aria-label='show dialog' icon={<MdEdit />} borderRadius='full' colorScheme='red'
+                onClick={() => OpenDialog(product)} fontSize='20px' size='lg' />
+            </Box>
+          </Box>
         </Box>
       </Box>
     );
@@ -76,22 +77,30 @@ const Freshed = (props: FreshedProps) => {
   return (
     <>
       <Box w='70%' m='auto' mt='3'>
-        <ListBox filter value={selectedProduct} options={props.items} optionLabel='attributes.nombre' itemTemplate={itemTemplate}/>
+        <ListBox filter value={selectedProduct} options={props.items} optionLabel='attributes.nombre' itemTemplate={itemTemplate} />
       </Box>
 
 
-      <RecieveArticle isVisible={visible} onHandleHide={closeDialog} headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
+      <RecieveArticle isVisible={visible} 
+      
+      onHandleHide={closeDialog} 
+      pedido={pedido}
+      headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
         <Button colorScheme='red' onClick={onOpen}>
           Mover a inventario
         </Button>
       </RecieveArticle >
 
-      <OrderPending isVisible={visibleListOrder} onHandleHide={closeDialogOrder} headerTitle="Selecciona una orden" idProduct={selectedProduct?.id}>
+      <OrderPending isVisible={visibleListOrder}
+        setVisible={setvisibleListOrder} 
+        setVisibleArticle={setVisible} 
+        setPedido={setPedido}
+        onHandleHide={closeDialogOrder} headerTitle="Selecciona una orden" idProduct={selectedProduct?.id}>
         <Button colorScheme='red' onClick={onOpen}>
-            AYUDA
-          </Button>
+          AYUDA
+        </Button>
       </OrderPending>
-        <AlertDialog
+      <AlertDialog
         motionPreset='slideInBottom'
         leastDestructiveRef={cancelRef}
         onClose={onClose}
@@ -113,7 +122,7 @@ const Freshed = (props: FreshedProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </> 
+    </>
   );
 }
 

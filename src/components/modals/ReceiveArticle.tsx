@@ -15,7 +15,7 @@ interface PropsReceiveArticle {
   idProduct: number | undefined,
   children?: JSX.Element,
   toogle?: string
-
+  pedido?: any
   onHandleHide: () => void,
   onHandleAgree?: () => void
 }
@@ -44,7 +44,6 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
 
   
   const [currentStore, setCurrentStore] = useState('');
-  
   const { data: historialApi, refetch } = useQuery(['product', props.idProduct], () => getSimpleHistorial(props.idProduct))
   useQuery(["productEdit", props.idProduct], () => {
     if (props.idProduct !== undefined) {
@@ -133,9 +132,9 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
       </Button>
     </Box>
   );
-
+//<Dialog style={{ width: '600px' }} header={`${props.headerTitle} - ${renderBigTotal.totalBts}Bts, ${renderBigTotal.totalKg}Kg/L`} modal
   return (
-    <Dialog style={{ width: '600px' }} header={`${props.headerTitle} - ${renderBigTotal.totalBts}Bts, ${renderBigTotal.totalKg}Kg/L`} modal
+    <Dialog style={{ width: '600px' }} header={`Recibira ${props.pedido.attributes.comentario}`} modal
       footer={!props.toogle ? deleteProductDialogFooter : null}
       onHide={closeDialog}
       visible={props.isVisible}>
