@@ -8,6 +8,7 @@ import { updateFreshProduct } from "services/api/products";
 import { useMutation } from "react-query";
 import { MdEdit } from "react-icons/md";
 import { BASE_URL } from "../../config/env";
+import OrderPending from "./orderPendig";
 
 interface FreshedProps {
   items: Article[],
@@ -18,6 +19,7 @@ const Freshed = (props: FreshedProps) => {
 
   const [selectedProduct, setSelectedProduct] = useState<Article>();
   const [visible, setVisible] = useState<boolean>(false)
+  const [visibleListOrder, setvisibleListOrder] = useState<boolean>(false)
   const dispatchUpdate = useMutation(() => updateFreshProduct(selectedProduct?.id, false), {
     onSuccess: () => {
       props.onHandleRefresh()
@@ -30,12 +32,16 @@ const Freshed = (props: FreshedProps) => {
 
   const OpenDialog = (data: Article) => {
     setSelectedProduct(data)
-    setVisible(true)
+    setvisibleListOrder(true)
+    //setVisible(true)
   }
   const closeDialog = () => {
     setVisible(false)
   }
 
+  const closeDialogOrder = () => {
+    setvisibleListOrder(false)
+  }
   const onRefreshSection = () => {
     dispatchUpdate.mutate()
   }
@@ -72,12 +78,19 @@ const Freshed = (props: FreshedProps) => {
       <Box w='70%' m='auto' mt='3'>
         <ListBox filter value={selectedProduct} options={props.items} optionLabel='attributes.nombre' itemTemplate={itemTemplate}/>
       </Box>
+
+
       <RecieveArticle isVisible={visible} onHandleHide={closeDialog} headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
         <Button colorScheme='red' onClick={onOpen}>
           Mover a inventario
         </Button>
-      </RecieveArticle>
+      </RecieveArticle >
 
+      <OrderPending isVisible={visibleListOrder} onHandleHide={closeDialogOrder} headerTitle="Selecciona una orden" idProduct={selectedProduct?.id}>
+        <Button colorScheme='red' onClick={onOpen}>
+            AYUDA
+          </Button>
+      </OrderPending>
         <AlertDialog
         motionPreset='slideInBottom'
         leastDestructiveRef={cancelRef}
