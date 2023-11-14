@@ -9,6 +9,7 @@ import { useMutation } from "react-query";
 import { MdEdit } from "react-icons/md";
 import { BASE_URL } from "../../config/env";
 import OrderPending from "./orderPendig";
+import RecieveOrder from "components/modals/ReceiveOrder";
 
 interface FreshedProps {
   items: Article[],
@@ -81,7 +82,7 @@ const Freshed = (props: FreshedProps) => {
       </Box>
 
 
-      <RecieveArticle isVisible={visible} 
+      <RecieveOrder isVisible={visible} 
       
       onHandleHide={closeDialog} 
       pedido={pedido}
@@ -89,7 +90,7 @@ const Freshed = (props: FreshedProps) => {
         <Button colorScheme='red' onClick={onOpen}>
           Mover a inventario
         </Button>
-      </RecieveArticle >
+      </RecieveOrder >
 
       <OrderPending isVisible={visibleListOrder}
         setVisible={setvisibleListOrder} 

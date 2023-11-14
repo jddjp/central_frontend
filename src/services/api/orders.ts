@@ -35,7 +35,7 @@ export const getOrderEntregado = async () => {
 }
 
 export const getOrderPendiente = async () => {
-    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos`)
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=cliente&filters[estatus]=pendiente&populate=articulos&populate=items`)
     return data.data
 }
 
