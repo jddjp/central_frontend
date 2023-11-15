@@ -245,7 +245,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     setProduct({ ...product, [e.target.name]: e.target.files })
   }
 
-  
   const changeFacturable = (e: any) => {
     setProduct({ ...product, isFacturable: e.value });
     setFacturable(e.value);
