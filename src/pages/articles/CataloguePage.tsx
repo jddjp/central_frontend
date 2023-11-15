@@ -12,7 +12,7 @@ import { useAuth } from 'hooks/useAuth';
 import Confirmation from 'components/modals/Confirmation';
 import ArticlePostDetail from 'components/modals/ArticlePostDetail';
 import ArticlePutDetail from 'components/modals/ArticlePutDetail';
-import OrdenRefill, {CanShowAlert} from 'components/modals/OrdenRefill'
+import OrdenRefill, {AlertOrdenRefill} from 'components/modals/OrdenRefill'
 import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";
@@ -32,7 +32,7 @@ const CataloguePage = () => {
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
   const [currentStore, setCurrentStore] = useState('');
 
-  const ordenRefillRef = useRef<CanShowAlert>(null);
+  const ordenRefillRef = useRef<AlertOrdenRefill>(null);
 
 
   const { data: products,refetch } = useQuery(["products"], auth.user?.roleCons !== 'Supervisor' ? () => getProductBySucursal(Number(sucursalRef)) : getProducts, {

@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { ContentType } from 'types/core';
 import { API_URL } from '../../config/env';
+import {Cliente} from 'types/Cliente'
 
 export interface client {
   attributes: {
@@ -19,7 +19,6 @@ export interface client {
   }
 }
 
-export type Cliente = ContentType<client>;
 
 export const newCliente = async (payload: any) => {
   const response = await axios.post(`${API_URL}/clientes`, {data: payload});
@@ -36,4 +35,10 @@ export const autocompleteByCliente = async (config: {search: string}) => {
 export const getClients = async () => {
   const { data: response } = await axios.get(`${API_URL}/clientes`)
   return response.data
+}
+
+
+export const getClient = async (id: number) : Promise<Cliente> => {
+  const { data: response } = await axios.get(`${API_URL}/clientes/${id}`)
+  return Promise.resolve(response.data)
 }

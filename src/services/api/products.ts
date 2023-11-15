@@ -1,10 +1,15 @@
 import axios from 'axios'
 import { sumStr } from 'helpers/sumStringNumbers'
 // import { postStock, updateStock } from './stocks'
-import { API_URL } from '../../config/env';
+import { API_URL, BASE_URL } from '../../config/env';
 import { Stock } from '../../types/Stock'
 import { OrderRefill } from 'types/OrderRefil';
 import { Article } from 'types/Article';
+import Strapi from 'strapi-sdk-js';
+import { url } from 'inspector';
+import { baseUrl } from 'config/api';
+
+const strapi = new Strapi({ url: baseUrl });
 
 export const getProducts = async () => {
   const { data } = await axios.get(`${API_URL}/articulos?populate=stocks&populate=stocks.sucursal&populate=foto`)
@@ -78,35 +83,12 @@ export const editProduct = async (param: any) => {
 
 }
 
-export const updateInventarioFisico = async (id: number, cantidad: number)=> {
-  //const { data } = await axios.get(`${API_URL}/articulos?filters[id]=${id}`)
-  //if (data.data.length === 0) {
-  //  return {}
- // }  
-  //console.log(data.data[0].attributes);
-  //console.log(cantidad);
-  const d = await getProductoById(id);
-  console.log("--------");
-  console.log(d);
-  
-  cantidad += d.attributes.inventario_fisico;
+export const updateInventarioFisico = async (id: number, cantidad: number) => {
+    const producto = (await strapi.findOne<Article>('articulos', id)).data
+    cantidad += producto.attributes.inventario_fisico;
 
-  const { data: dataUpdate}  = await axios.put(`${API_URL}/articulos/${id}`, { data: { inventario_fisico: cantidad } })
-  console.log(dataUpdate);
-  console.log(cantidad);
-
-  await updateFreshProduct(id, true)
-}
-
-export const getProductoById = async (id: number) : Promise<Article> => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[id]=${id}`)
-  console.log(data);
-
-  if (data.data.length === 0) {
-    return Promise.reject("Error")
-  } 
-
-  return data.data[0]
+    await strapi.update<Article>('articulos', id, { inventario_fisico: cantidad })
+    await updateFreshProduct(id, true)
 }
 
 export const getProductById = async (id: number) => {

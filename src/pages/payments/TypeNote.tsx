@@ -6,7 +6,8 @@ import { FacturaModal } from 'pages/orders/CreateOrderPage/FacturaModal';
 
 export default function TypeNote() {
   const location = useLocation();
-  //console.log(location);
+  console.log("location:");
+  console.log(location);
   
   return (
     <>

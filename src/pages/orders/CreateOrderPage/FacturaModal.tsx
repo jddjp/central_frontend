@@ -126,6 +126,7 @@ export const FacturaModal = (cart:any) => {
   };
   console.log(detail);
   console.log("FacturaModal:");
+  console.log(cart);
   console.log(cart.cart.cart.items);
   console.log(cartTemp.cart.client);
   
@@ -310,7 +311,7 @@ export const TypeInvoice = () => {
         <Menu w="80%">
           {flagCheck ? (
             <>
-              <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
+              <Option onClick={redirectTo("/orders/typeInvoice/FacturaElectronica")}>
                 Cliente existente
               </Option>
               <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>
@@ -322,7 +323,7 @@ export const TypeInvoice = () => {
       </>):(
       <>
         <Menu w="80%">
-          <Option onClick={redirectTo("/orders/typeInvoice/ExistingClient")}>
+          <Option onClick={redirectTo("/orders/typeInvoice/FacturaElectronica")}>
             Cliente existente
           </Option>
           <Option onClick={redirectTo("/orders/typeInvoice/newCliente")}>

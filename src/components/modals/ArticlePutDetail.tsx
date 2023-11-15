@@ -18,12 +18,13 @@ import { getProductsMini } from 'services/api/productservice'
 import { Column, ColumnEvent, ColumnEditorOptions } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Stock } from '../../types/Stock'
-import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil'
+import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil';
+import { Checkbox } from 'primereact/checkbox';
+        
 
 
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
-import OrdenRefill, { CanShowAlert } from './OrdenRefill';
-import { Checkbox } from 'primereact/checkbox';
+import OrdenRefill, { AlertOrdenRefill } from './OrdenRefill';
 
 
 interface PropArticleDetail {
@@ -266,7 +267,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fisico]);
 
-  const ordenRefillRef = useRef<CanShowAlert>(null);
+  const ordenRefillRef = useRef<AlertOrdenRefill>(null);
 
   const handleCreateOrder = () => {
     ordenRefillRef.current?.open(props.referenceId);

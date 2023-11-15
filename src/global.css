@@ -22,3 +22,8 @@
   src: url('./fonts/Ticketing.ttf');
   font-display: swap;
 }
+
+
+.dropdown-small > .p-dropdown-label {
+  padding: 4px;
+}

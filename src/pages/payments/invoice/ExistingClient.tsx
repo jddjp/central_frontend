@@ -1,13 +1,17 @@
 import { useState, SetStateAction, Dispatch, useRef } from "react";
 import { Input, Stack, Text, useToast } from "@chakra-ui/react";
 import Select, { SingleValue } from "react-select";
-import { client, getClients } from "services/api/cliente";
 import { useQuery } from "react-query";
 import { autocompleteByReceptores } from "services/api/users";
 import { getBodegas, getSubsidiaries, } from "services/api/subsidiary";
 import { Sucursal } from "../../../types/Stock";
 import { searchArticlesByOrigen, searchArticlesBySucursal } from "services/api/articles";
 import async from "react-select/dist/declarations/src/async/index";
+
+import { client, getClient, getClients } from 'services/api/cliente';
+import { Button } from 'primereact/button';
+import { createInvoiceSAT } from 'services/api/facturacion';
+import { C_TIPOFACTOR, IInvoice, TASA_O_CUOTA, TIPO_IMPUESTO } from 'types/facturacion.sifei';
 
 export interface ClientInformationProps {
   setCliente?: Dispatch<SetStateAction<client | undefined>>;
@@ -22,7 +26,6 @@ export interface ClientInformationProps {
 
 const ExistingClient = (props: ClientInformationProps) => {
   const toast = useToast();
-  const [user, setUser] = useState("");
   const { data: clients } = useQuery(["list-client"], getClients);
   const { data: receptors } = useQuery(
     ["list-receptor"],
@@ -30,6 +33,8 @@ const ExistingClient = (props: ClientInformationProps) => {
   );
   const { data: bodegas } = useQuery(["list-bodega"], getBodegas);
   const { data: subsidiaries } = useQuery(["list-subsidiary"], getSubsidiaries);
+
+  const [user, setUser] = useState<any>();
   const [textValue, setTextValue] = useState({
     name: "",
     firstName: "",

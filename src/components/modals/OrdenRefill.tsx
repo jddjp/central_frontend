@@ -1,27 +1,22 @@
 
 import { Dialog } from "primereact/dialog";
-import React, { ChangeEvent, RefObject, forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { useState } from "react";
 import { Stack, useToast } from "@chakra-ui/react";
-import { InputText } from "primereact/inputtext";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { postOrden } from "services/api/orden_refill"
-import { OrderRefillAttributes, OrderRefill } from "types/OrderRefil";
 import useLocalStorage from "hooks/useLocalStorage";
 import { UserData } from "services/api/Auth";
 import { updateInventarioFisico } from "services/api/products";
-import { useFormik } from "formik";
+import { OrderRefill } from "types/OrderRefil";
 
 interface PropOrdenRefill {
-    //referenceId: number,
     referenceId: number
-    //open: () => void,
     onHandleHide: () => void
 }
 
-export interface CanShowAlert {
+export interface AlertOrdenRefill {
     open(articulo_id: number): void;
 }
 export const authDataKey = 'authData';
@@ -31,26 +26,7 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
 
     const [userData, setUserData] = useLocalStorage<UserData | null>(authDataKey, null);
 
-    const onHandleHide = () => {
-        setIsVisible(false);
-        props.onHandleHide();
-    }
-
-    const onSave = async ()  => {
-        if(product.attributes.cantidad < 1){
-        toast({
-            status: 'warning',
-            title: 'Debe ingresar un numero mayor a 0',
-          });
-            return;
-        }
-
-        await updateInventarioFisico(product.attributes.articulo, product.attributes.cantidad);
-        await postOrden(product);
-        onHandleHide()
-    }
-
-    const [product, setProduct] = useState<OrderRefill>({
+    const [ordenRefill, setProduct] = useState<OrderRefill>({
         id: 0,
         attributes: {
             cantidad: 0,
@@ -58,39 +34,70 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
         }
     });
 
+    const onHandleHide = () => {
+        setIsVisible(false);
+        props.onHandleHide();
+    }
+    
+    const validForm = () : boolean =>{
+        if (ordenRefill.attributes.cantidad < 1) {
+            toast({
+                status: 'warning',
+                title: 'Debe ingresar un numero mayor a 0',
+            });
+            return false;
+        }
+        return true;
+    }
+
+    const onSave = async () => {
+        if(!validForm()){
+            return
+        }
+
+        try {
+            await updateInventarioFisico(ordenRefill.attributes.articulo, ordenRefill.attributes.cantidad);
+            await postOrden(ordenRefill);
+            onHandleHide()
+        } catch (error: any) {
+            console.log(error);
+            toast({
+                status: 'error',
+                title: "Error al crear la orden"
+            });
+        }
+    }
+
 
     useImperativeHandle(
         ref,
         () => ({
             open(articulo_id: number) {
-                // Get the JSON from storage.
-                const json = localStorage.getItem('authData');
-                if (json !== null) {
-                    const userDataObj = JSON.parse(json);
-
-                    // Create a new instance of the UserData interface.
-                    const userData: UserData = {
-                        jwt: userDataObj.jwt,
-                        user: userDataObj.user,
-                    };
-                    setUserData(userData)
-                    console.log(userData);
-                    
-                }
-                // Parse the JSON to a JavaScript object.
-
-
-                product.attributes.articulo = articulo_id;
-                product.attributes.created__by = userData?.user.id;
-                setProduct({ ...product });
+                getUser();
+                ordenRefill.attributes.articulo = articulo_id;
+                ordenRefill.attributes.created__by = userData?.user.id;
+                setProduct({ ...ordenRefill });
                 setIsVisible(true);
             }
         }),
     )
 
+    const getUser = () =>{
+        const json = localStorage.getItem('authData');
+        if (json !== null) {
+            const userDataObj = JSON.parse(json);
+
+            const userData: UserData = {
+                jwt: userDataObj.jwt,
+                user: userDataObj.user,
+            };
+            setUserData(userData)
+        }
+    }
+
     const onInputNumberChange = (e: InputNumberChangeEvent, tag: string) => {
-        product.attributes.cantidad = e.value || 0;
-        setProduct({ ...product });
+        ordenRefill.attributes.cantidad = e.value || 0;
+        setProduct({ ...ordenRefill });
     }
 
     const productDialogFooter = (
@@ -108,7 +115,7 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
             <Stack spacing='2'>
                 <div className="field">
                     <label htmlFor="name">Cantidad</label>
-                    <InputNumber min={1} max={100} value={product.attributes.cantidad} onChange={(e) => onInputNumberChange(e, 'attributes.cantidad')} required />
+                    <InputNumber min={1} max={100} value={ordenRefill.attributes.cantidad} onChange={(e) => onInputNumberChange(e, 'attributes.cantidad')} required />
                 </div>
             </Stack>
         </Dialog>

@@ -21,6 +21,7 @@ import TypeNote from 'pages/payments/TypeNote';
 import TypeInvoices from 'pages/payments/invoice/TypeInvoices';
 import NewClient from 'pages/payments/invoice/NewClient';
 import ExistingClient from 'pages/payments/invoice/ExistingClient';
+import FacturaElectronica from 'pages/payments/invoice/FacturaElectronica';
 import PromotionsPage from 'pages/articles/PromotionsPage';
 import AccountsPage from 'pages/accounts';
 import TaskBox from 'pages/taskbox';
@@ -108,10 +109,10 @@ export const App = () => {
                 <NewClient/>
               </RequiredAuthentication>
             }/>
-          <Route path="/orders/typeInvoice/ExistingClient"
+          <Route path="/orders/typeInvoice/FacturaElectronica"
             element={
               <RequiredAuthentication>
-                <ExistingClient/>
+                <FacturaElectronica/>
               </RequiredAuthentication>
             }/>
           <Route path="/sales"
