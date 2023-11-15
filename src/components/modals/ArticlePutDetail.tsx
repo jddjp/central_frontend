@@ -25,6 +25,7 @@ import { Checkbox } from 'primereact/checkbox';
 
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
 import OrdenRefill, { AlertOrdenRefill } from './OrdenRefill';
+import { InputSwitch } from 'primereact/inputswitch';
 
 
 interface PropArticleDetail {
@@ -75,7 +76,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     isFisical: false,
     iva:0,
     // cantidad_stock: 0,
-    unidad_de_medida: 0
+    unidad_de_medida: 0,
+    isFacturable: false
   })
   const [stock, setStock] = useState({
     cantidad: 0,
@@ -105,7 +107,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
         isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
         foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : '',
-        iva:0,
+        iva: data.articulo ? data.articulo.data.attributes.iva : 0,
+        isFacturable: data.articulo ? data.articulo.data.attributes.isFacturable: false,
         // cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
         unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : ''
       })
@@ -114,8 +117,11 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         unidad_de_medida: data.cantidad ? data.unidad_de_medida.data.id : '',
         sucursal: data.sucursal ? data.sucursal.data.id : '',
       })
+      setFacturable(data.articulo ? data.articulo.data.attributes.isFacturable: false)
+      if(data.articulo != undefined){
       setPedidos(
         [...data.articulo.data.attributes.orden_refills.data])
+      }
     },
   })
   const [pedidos, setPedidos] = useState<Array<OrderRefill>>([{
@@ -239,6 +245,12 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     setProduct({ ...product, [e.target.name]: e.target.files })
   }
 
+  
+  const changeFacturable = (e: any) => {
+    setProduct({ ...product, isFacturable: e.value });
+    setFacturable(e.value);
+  };
+
   useEffect(() => {
     setProduct({ ...product, isFiscal: product.inventario_fiscal ? true : false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,10 +305,20 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               <label htmlFor="name">Marca</label>
               <InputText value={product.marca} onChange={onInputTextChange} name='marca' />
             </div>
+            <br></br>
             <div className="field">
+              <h5>Facturable</h5>
+              <InputSwitch
+                onChange={(e) => changeFacturable(e)}
+                checked={facturable}
+              />
+            </div>
+            <br></br>
+            { facturable && <div className="field">
               <label htmlFor="name">Inventario fiscal</label>
               <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
-            </div>
+            </div>}
+           
             <div className="field">
        
               <label htmlFor="name">Inventario fisico</label>
@@ -347,15 +369,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             <div className="field">
               <label htmlFor="name">IVA</label>
               <InputNumber value={product.iva} onChange={(e) => onInputNumberChange(e, 'iva')} required />
-            </div>
-            <br></br>
-            
-            <div className="facturable">
-              <Checkbox
-                checked={facturable}
-                onChange={(e:any) => setFacturable(e.checked)}
-              />
-                <label htmlFor="facturable" className="ml-2">  Facturable</label>
             </div>
             <br></br>
             {/* <FileUpload mode="basic" name="foto" accept="image/*" maxFileSize={1000000} onUpload={onUpload} /> */}

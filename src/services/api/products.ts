@@ -110,7 +110,7 @@ export const getProductByIdAndStore = async (id: number, sucursal: string) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&populate[4]=articulo.unidad_de_medida&populate[5]=articulo.orden_refills&populate[7]=articulo.orden_refills.created__by&filters[articulo][id]=${id}`)
   //const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&filters[articulo][id]=${id}&filters[sucursal][id]=${sucursal}`)
 
-  console.log(data);
+  //console.log(data);
 
   if (data.data.length === 0) {
     return {}
@@ -123,9 +123,6 @@ export const getStocksProductId = async (id: number) => {
   //populate=sucursal&populate=unidad_de_medida&populate=articulo&populate[1]=articulo.ruptura_precio&filters[articulo][id]=${id}
   const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&populate[4]=articulo.unidad_de_medida&filters[articulo][id]=${id}`)
   //const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&filters[articulo][id]=${id}&filters[sucursal][id]=${sucursal}`)
-
-  console.log(data);
-
   if (data.data.length === 0) {
     return []
   } else {
@@ -139,9 +136,6 @@ export const getStocksByProductId = async (id: number) => {
   //populate=sucursal&populate=unidad_de_medida&populate=articulo&populate[1]=articulo.ruptura_precio&filters[articulo][id]=${id}
   const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&filters[articulo][id]=${id}`)
   //const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&filters[articulo][id]=${id}&filters[sucursal][id]=${sucursal}`)
-
-  console.log(data);
-
   if (data.data.length === 0) {
     return []
   } else {

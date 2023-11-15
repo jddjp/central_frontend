@@ -11,6 +11,8 @@ import { postProduct } from "services/api/products";
 import { categoria, estado, initProduct, initStock } from "helpers/constants";
 import { getUnidades } from "services/api/articles";
 import { TabView, TabPanel } from "primereact/tabview";
+import { InputSwitch } from "primereact/inputswitch";
+
 import {
   cellEditor,
   onCellEditComplete,
@@ -72,6 +74,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     isFisical: false,
     fresh: true,
     unidad_de_medida: 0,
+    isFacturable: false,
     // cantidad_stock: 0,
   });
 
@@ -87,6 +90,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     setStockProduct([]);
     setStockProductTemp([]);
     setStoresSelected([]);
+    setFacturable(false);
   };
 
   const handleSaveProduct = () => {
@@ -147,7 +151,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   const onDropdownChange = (e: DropdownChangeEvent, tag: string) => {
     setProduct({ ...product, [tag]: e.target.value });
   };
-  const onInputNumberChangeStock = (e: InputNumberChangeEvent, tag: string) => {
+  const onInputNumber = (e: InputNumberChangeEvent, tag: string) => {
     setProduct({ ...product, [tag]: e.value });
   };
   const onDropdownChangeStock = (e: DropdownChangeEvent, tag: string) => {
@@ -157,6 +161,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     setProduct({ ...product, [e.target.name]: e.target.files[0] });
   };
 
+  const changeFacturable = (e: any) => {
+    setProduct({ ...product, isFacturable: e.value });
+    setFacturable(e.value);
+  };
   const [facturable, setFacturable] = useState(false);
 
   useEffect(() => {
@@ -241,14 +249,25 @@ const ArticleDetail = (props: PropsArticleDetail) => {
                 name="marca"
               />
             </div>
+            <br></br>
             <div className="field">
-              <label htmlFor="name">Inventario fiscal</label>
-              <InputNumber
-                value={product.inventario_fiscal}
-                onChange={(e) => onInputNumberChange(e, "inventario_fiscal")}
-                required
+              <h5>Facturable</h5>
+              <InputSwitch
+                onChange={(e) => changeFacturable(e)}
+                checked={facturable}
               />
             </div>
+
+            <br></br>
+            {facturable && (
+              <div className="field">
+                <label htmlFor="name">Inventario fiscal</label>
+                <InputNumber
+                  value={product.inventario_fiscal}
+                  onChange={(e) => onInputNumberChange(e, "inventario_fiscal")}
+                />
+              </div>
+            )}
             <div className="field">
               <label htmlFor="name">Inventario fisico</label>
               <InputNumber
@@ -337,19 +356,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               <label htmlFor="name">IVA</label>
               <InputNumber
                 value={product.iva}
-                onChange={(e) => onInputNumberChange(e, "iva")}
+                onChange={(e) => onInputNumber(e, "iva")}
                 required
               />
             </div>
-            <br></br>
-            <div className="facturable">
-              <Checkbox
-                checked={facturable}
-                onChange={(e:any) => setFacturable(e.checked)}
-              />
-                <label htmlFor="facturable" className="ml-2">  Facturable</label>
-            </div>
-
             <br></br>
             <div>
               <form action="">
