@@ -11,6 +11,7 @@ const initProduct = {
   estado: "",
   peso: "",
   foto: "",
+  iva :0,
   isFiscal: false,
   isFisical: false,
   fresh: true,

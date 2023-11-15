@@ -23,6 +23,7 @@ import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil'
 
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
 import OrdenRefill, { CanShowAlert } from './OrdenRefill';
+import { Checkbox } from 'primereact/checkbox';
 
 
 interface PropArticleDetail {
@@ -71,6 +72,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     foto: "",
     isFiscal: false,
     isFisical: false,
+    iva:0,
     // cantidad_stock: 0,
     unidad_de_medida: 0
   })
@@ -81,7 +83,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   })
 
   const toast = useToast()
-
+  const [facturable, setFacturable] = useState(false);
   const [storesSelected, setStoresSelected] = useState([]);
   const [selectedStoresForDeletion, setSelectedStoresForDeletion] = useState(Array<number>); // Estado para los elementos seleccionados para eliminar
 
@@ -102,6 +104,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         isFiscal: data.articulo ? data.articulo.data.attributes.isFiscal : false,
         isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
         foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : '',
+        iva:0,
         // cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
         unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : ''
       })
@@ -340,6 +343,20 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
                 onChange={(e: any) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
               />
             </div>*/}
+            <div className="field">
+              <label htmlFor="name">IVA</label>
+              <InputNumber value={product.iva} onChange={(e) => onInputNumberChange(e, 'iva')} required />
+            </div>
+            <br></br>
+            
+            <div className="facturable">
+              <Checkbox
+                checked={facturable}
+                onChange={(e:any) => setFacturable(e.checked)}
+              />
+                <label htmlFor="facturable" className="ml-2">  Facturable</label>
+            </div>
+            <br></br>
             {/* <FileUpload mode="basic" name="foto" accept="image/*" maxFileSize={1000000} onUpload={onUpload} /> */}
             <input type="file" accept="image/*" onChange={onUpload} name='foto' />
 
