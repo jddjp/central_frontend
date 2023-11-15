@@ -56,11 +56,20 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
         }
 
         try {
-            await updateInventarioFisico(ordenRefill.attributes.articulo, ordenRefill.attributes.cantidad);
-            await postOrden(ordenRefill);
-            onHandleHide()
+            let update = updateInventarioFisico(ordenRefill.attributes.articulo, ordenRefill.attributes.cantidad);
+            update.then((response) => {
+                let orden = postOrden(ordenRefill);
+                orden.then((response) => {
+                    toast({
+                        status: 'success',
+                        title: "Orden registrada correctamente"
+                    });
+                    onHandleHide()
+                    //window.location.reload();
+                })
+            })
+           
         } catch (error: any) {
-            console.log(error);
             toast({
                 status: 'error',
                 title: "Error al crear la orden"
