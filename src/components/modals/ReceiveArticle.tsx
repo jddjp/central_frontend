@@ -134,7 +134,7 @@ const RecieveArticle = (props: PropsReceiveArticle) => {
   );
 //<Dialog style={{ width: '600px' }} header={`${props.headerTitle} - ${renderBigTotal.totalBts}Bts, ${renderBigTotal.totalKg}Kg/L`} modal
   return (
-    <Dialog style={{ width: '600px' }} header={`Recibira ${props.pedido.attributes.comentario}`} modal
+    <Dialog style={{ width: '600px' }} header={`Recibira ${props.pedido ? props.pedido.attributes.comentario : "" }`} modal
       footer={!props.toogle ? deleteProductDialogFooter : null}
       onHide={closeDialog}
       visible={props.isVisible}>

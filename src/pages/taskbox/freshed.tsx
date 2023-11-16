@@ -80,18 +80,22 @@ const Freshed = (props: FreshedProps) => {
       <Box w='70%' m='auto' mt='3'>
         <ListBox filter value={selectedProduct} options={props.items} optionLabel='attributes.nombre' itemTemplate={itemTemplate} />
       </Box>
-
-
-      <RecieveOrder isVisible={visible} 
-      
+     { <RecieveOrder isVisible={visible} 
       onHandleHide={closeDialog} 
       pedido={pedido}
       headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
         <Button colorScheme='red' onClick={onOpen}>
           Mover a inventario
         </Button>
-      </RecieveOrder >
-
+  </RecieveOrder >}
+      {/*<RecieveArticle isVisible={visible} 
+      onHandleHide={closeDialog} 
+      pedido={pedido}
+      headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
+        <Button colorScheme='red' onClick={onOpen}>
+          Mover a inventario
+        </Button>
+</RecieveArticle >*/}
       <OrderPending isVisible={visibleListOrder}
         setVisible={setvisibleListOrder} 
         setVisibleArticle={setVisible} 

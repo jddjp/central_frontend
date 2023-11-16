@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { Dialog } from "primereact/dialog";
-import { RiCheckLine, RiBookmark2Fill } from "react-icons/ri";
+import { RiCheckLine, RiBookmark2Fill, RiCheckboxFill } from "react-icons/ri";
 import { useMutation, useQuery } from "react-query";
 import {
   getSimpleHistorial,
@@ -33,10 +33,12 @@ interface PropsReceiveOrder {
 }
 
 const RecieveOrder = (props: PropsReceiveOrder) => {
-  var cantidad = 0
+  var cantidad = 0;
   const [cantidadReceiver, setCantidadReceiver] = React.useState(0);
   const [cantidadDownload, setCantidadDownload] = React.useState(0);
   const [cantidadFaltante, setCantidadFaltante] = React.useState(0);
+  const [listaR, setListaR] = React.useState<any>([]);
+
   const toast = useToast();
   const [product, setProduct] = useState<any>({
     nombre: "",
@@ -62,7 +64,11 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
   const [currentStore, setCurrentStore] = useState("");
   const { data: historialApi, refetch } = useQuery(
     ["product", props.idProduct],
-    () => getSimpleHistorial(props.idProduct)
+    () => {
+      var h = getSimpleHistorial(props.idProduct)
+      h.then((result)=>{setListaR(result)})
+      return h
+    }
   );
   useQuery(
     ["productEdit", props.idProduct],
@@ -73,45 +79,49 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
     },
     {
       onSuccess(data: any) {
-        setProduct({
-          ...product,
-          nombre: data.articulo ? data.articulo.data.attributes.nombre : "",
-          precio_lista: data.articulo
-            ? data.articulo.data.attributes.precio_lista
-            : 0,
-          marca: data.articulo ? data.articulo.data.attributes.marca : "",
-          inventario_fiscal: data.articulo
-            ? data.articulo.data.attributes.inventario_fiscal
-            : 0,
-          inventario_fisico: data.articulo
-            ? data.articulo.data.attributes.inventario_fisico
-            : 0,
-          descripcion: data.articulo
-            ? data.articulo.data.attributes.descripcion
-            : "",
-          categoria: data.articulo
-            ? data.articulo.data.attributes.categoria
-            : "",
-          codigo_barras: data.articulo
-            ? data.articulo.data.attributes.codigo_barras
-            : "",
-          codigo_qr: data.articulo
-            ? data.articulo.data.attributes.codigo_qr
-            : "",
-          estado: data.articulo ? data.articulo.data.attributes.estado : "",
-          isFiscal: data.articulo
-            ? data.articulo.data.attributes.isFiscal
-            : false,
-          unidad_de_medida: data.articulo
-            ? data.articulo.data.attributes.unidad_de_medida
-            : "",
-        });
-        setStock({
-          ...stock,
-          cantidad: data.cantidad ? data.cantidad : 0,
-          unidad_de_medida: data.cantidad ? data.unidad_de_medida.data.id : "",
-          sucursal: data.sucursal ? data.sucursal.data.id : "",
-        });
+        if (data != undefined) {
+          setProduct({
+            ...product,
+            nombre: data.articulo ? data.articulo.data.attributes.nombre : "",
+            precio_lista: data.articulo
+              ? data.articulo.data.attributes.precio_lista
+              : 0,
+            marca: data.articulo ? data.articulo.data.attributes.marca : "",
+            inventario_fiscal: data.articulo
+              ? data.articulo.data.attributes.inventario_fiscal
+              : 0,
+            inventario_fisico: data.articulo
+              ? data.articulo.data.attributes.inventario_fisico
+              : 0,
+            descripcion: data.articulo
+              ? data.articulo.data.attributes.descripcion
+              : "",
+            categoria: data.articulo
+              ? data.articulo.data.attributes.categoria
+              : "",
+            codigo_barras: data.articulo
+              ? data.articulo.data.attributes.codigo_barras
+              : "",
+            codigo_qr: data.articulo
+              ? data.articulo.data.attributes.codigo_qr
+              : "",
+            estado: data.articulo ? data.articulo.data.attributes.estado : "",
+            isFiscal: data.articulo
+              ? data.articulo.data.attributes.isFiscal
+              : false,
+            unidad_de_medida: data.articulo
+              ? data.articulo.data.attributes.unidad_de_medida
+              : "",
+          });
+          setStock({
+            ...stock,
+            cantidad: data.cantidad ? data.cantidad : 0,
+            unidad_de_medida: data.cantidad
+              ? data.unidad_de_medida.data.id
+              : "",
+            sucursal: data.sucursal ? data.sucursal.data.id : "",
+          });
+        }
       },
     }
   );
@@ -147,9 +157,9 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
 
   const closeDialog = () => {
     setHistorial("");
-    setCantidadDownload(0)
-    setCantidadReceiver(0)
-    setCantidadFaltante(0)
+    setCantidadDownload(0);
+    setCantidadReceiver(0);
+    setCantidadFaltante(0);
     props.onHandleHide();
   };
 
@@ -171,7 +181,16 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
       {/*<Button colorScheme='gray' variant='ghost' onClick={() => refetch()}>
         Refrescar
       </Button>*/}
-      {props.children}
+      {/*props.children*/}
+
+      <Button
+        leftIcon={<RiCheckboxFill />}
+        colorScheme="green"
+        variant="solid"
+        onClick={() => movInvetory()}
+      >
+        Mover inventario
+      </Button>
       <Button
         leftIcon={<RiCheckLine />}
         colorScheme="blue"
@@ -195,12 +214,10 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
       let o = { value: articulo.id, label: articulo.attributes.nombre };
       options.push(o);
     });
-
-    console.log(cantidad)
   }
   useEffect(() => {
-    setCantidadReceiver(cantidad)
-  }, [])
+    setCantidadReceiver(cantidad);
+  }, []);
 
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
@@ -212,13 +229,25 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
             status: "error",
           });
         } else {
-          var c = cantidadReceiver -v
-          var descargada = cantidadDownload +v
-          if(c < 0){
-            c = 0
+          var c = cantidadReceiver - v;
+          var descargada = cantidadDownload + v;
+          if (c < 0) {
+            c = 0;
           }
-          setCantidadDownload(descargada)
-          setCantidadReceiver(c)
+         const numeroPost = postHistorialPayload(historial, v.toString(), Number(selectedArticle))
+          numeroPost.then((response) => {
+              //var refresh = historialApi
+            var newList :any[]= listaR
+            newList.push(response.data)
+            setListaR(newList)
+            toast({
+              title: "Cantidad descargada",
+              status: "success",
+            });
+          })
+         
+          setCantidadDownload(descargada);
+          setCantidadReceiver(c);
           setValue("");
         }
       } else {
@@ -230,7 +259,7 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
     }
   };
 
-  const ingresarArticle = ()=>{
+  const ingresarArticle = () => {
     let v = Number(value);
     if (!Number.isNaN(v)) {
       if (selectedArticle.value == "0") {
@@ -247,11 +276,23 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
         status: "error",
       });
     }
-  }
+  };
+
+  const movInvetory = () => {
+    toast({
+      title: "Orden recibida correctamente",
+      status: "success",
+    });
+    props.onHandleHide();
+  };
   const [value, setValue] = React.useState("");
   const handleChange = (event: any) => setValue(event.target.value);
-  const [selectedArticle , setSelectedArticle] = useState({value: "0", label: ""});
+  const [selectedArticle, setSelectedArticle] = useState({
+    value: "0",
+    label: "",
+  });
   return (
+    
     <Dialog
       style={{ width: "600px" }}
       header={`Recibira ${
@@ -316,13 +357,15 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
         py="3"
         height={!props.toogle ? "11rem" : "20rem"}
         overflowY="scroll"
+        
       >
-        {historialApi?.map((item: any) => (
+        {listaR?.map((item: any) => (
           <ListItem
             display="flex"
             alignItems="center"
             fontWeight="bold"
             key={item.id}
+            
           >
             <ListIcon as={RiBookmark2Fill} fontSize="25" />
             <Box>
