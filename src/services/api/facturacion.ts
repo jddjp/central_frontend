@@ -7,17 +7,23 @@ export const createInvoiceSAT = async (requ: IInvoice) => {
     console.log(requ);
 
     const sendInvoiceResponse = await sendInvoice(requ.requestGeneraXML);
-    console.log(sendInvoiceResponse);
     return sendInvoiceResponse
 }
 
 export const sendInvoice = async (request: any): Promise<IResponseGetXML> => {
-    let response: IResponseGetXML;
+    let response: IResponseGetXML = {
+        status: "",
+        codigo: "",
+        data: "",
+        info: ""
+    };
     try {
         const { data } = await axios.post(`${API_URL}/facturacion-sifei`, request)
-        response = data;
-        console.log(data);
-        response.status = "Success";
+        if(data.status == "OK"){
+            response.status = "Success";
+        }else{
+            response = data;
+        }
     } catch (error) {
         console.error(error);
         return Promise.reject("");
