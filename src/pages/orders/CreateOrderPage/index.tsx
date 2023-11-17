@@ -83,10 +83,10 @@ export const CreateOrderPage = () => {
     sucursal: 0,
     bodega: 0,
     receptor: 0,
-    desc:""
+    desc: ""
   });
 
-  const [stockId,setstockId] = useState(0);
+  const [stockId, setstockId] = useState(0);
   const state = location.state as LocationOrdenEdit;
   const redirectTo = (route: string, cart: any, client: any) => () => {
     if (paymentsDetails !== "finished") {
@@ -318,14 +318,12 @@ export const CreateOrderPage = () => {
       if (!type) {
         onOpenAddItemModal();
       }
-      else{
-        const result = await getStockByArticleAndSucursal(origen.sucursal,article.id);
-        console.log(result)
+      else {
+        const result = await getStockByArticleAndSucursal(origen.sucursal, article.id);
         article.attributes.cantidad_stock = result[0].attributes.cantidad
-        setstockId (result[0].id)
+        setstockId(result[0].id)
         setArticle(article)
         onOpenAddItemModal();
-        console.log(article)
       }
     } else {
       setArticle(article);
@@ -413,12 +411,10 @@ export const CreateOrderPage = () => {
     let responseNewOrder = newOrder(orderdistribution.attributes);
     responseNewOrder.then((response) => {
       clear();
-      cart.items.forEach(async (item: any)  =>{
-        const resultStock =  getStockByArticleAndSucursal(origen.sucursal,item.article.id);
-
+      cart.items.forEach(async (item: any) => {
+        const resultStock = getStockByArticleAndSucursal(origen.sucursal, item.article.id);
         resultStock.then((response) => {
-          console.log(response)
-          const update = updateStockSucursal((response[0].attributes.cantidad-item.amount),response[0].id)
+          const update = updateStockSucursal((response[0].attributes.cantidad - item.amount), response[0].id)
         })
         extractUnidad(item.article.id).then((extract: number) => {
           var itemNew: Item = {
@@ -471,6 +467,7 @@ export const CreateOrderPage = () => {
           </Checkbox>
         )}
 
+        {!type &&<Header selectedArticle={article} onSelectArticle={handleSelectArticle} />}
         <OrderMenu
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
@@ -487,12 +484,12 @@ export const CreateOrderPage = () => {
           articles={articles}
           setArticles={setArticles}
         />
-        <Header
+        {type  && <Header
           selectedArticle={article}
           onSelectArticle={handleSelectArticle}
           type={type}
           origen={origen}
-        />
+          />}
 
         <Cart
           minH="85vh"

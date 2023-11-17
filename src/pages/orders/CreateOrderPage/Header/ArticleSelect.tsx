@@ -100,10 +100,36 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
       console.log("refresh")
   }
 
+  const handleAutocomplete = async (search: string) => {
+    // if (search.length < 3) return [];
+    const result = await searchArticles(search);
+    // console.log("===========Productos============");
+    // console.log(result.data);
+    return result.data;
+  };
+
   const getArticleValue = (article: ShoppingCartArticle) => { return article.id.toString(); }
   return (
     <>
+      { !type &&
       <Select
+      defaultOptions
+      loadOptions={handleAutocomplete}
+      value={article}
+      inputValue={inputValue}
+      onInputChange={handleInputChange}
+      onChange={handleChange}
+      controlShouldRenderValue={false}
+      components={{ Input: Input }}
+      getOptionLabel={getArticleLabel}
+      getOptionValue={getArticleValue}
+      styles={asyncSelectAppStyles}
+      hideSelectedOptions
+      placeholder="Buscar artículo"
+      loadingMessage={() => `Buscando...`}
+      noOptionsMessage={() => 'No hay opciones disponibles'}
+    />}
+      { type && <Select
         loadOptions={auth.user?.roleCons !== 'Supervisor' ? () => searchArticlesBySucursal(inputValue, Number(sucursal)) : () => getArticles(inputValue, type ? true : false)}
         value={article}
         inputValue={inputValue}
@@ -118,7 +144,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
         placeholder="Buscar artículo"
         loadingMessage={() => `Buscando...`}
         noOptionsMessage={() => "No hay opciones disponibles"}
-      />
+  />}
     </>
   );
 };
