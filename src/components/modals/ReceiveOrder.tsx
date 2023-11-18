@@ -205,7 +205,7 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
 
   var options: any[] = [];
   if (props.pedido != 0) {
-    var articulos = props.pedido.attributes.items.data;
+    /*var articulos = props.pedido.attributes.items.data;
     articulos.forEach((articulo: any) => {
       cantidad += articulo.attributes.cantidad;
     });
@@ -214,7 +214,7 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
     a.forEach((articulo: any) => {
       let o = { value: articulo.id, label: articulo.attributes.nombre };
       options.push(o);
-    });
+    });*/
   }
   useEffect(() => {
     setCantidadReceiver(cantidad);

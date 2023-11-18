@@ -10,6 +10,7 @@ import { MdEdit, MdOutlineFontDownload, MdSwipeDown } from "react-icons/md";
 import { BASE_URL } from "../../config/env";
 import OrderPending from "./orderPendig";
 import RecieveOrder from "components/modals/ReceiveOrder";
+import { getPedidoByArticulos } from "services/api/orders";
 
 interface FreshedProps {
   items: Article[],
@@ -19,6 +20,7 @@ interface FreshedProps {
 const Freshed = (props: FreshedProps) => {
 
   const [selectedProduct, setSelectedProduct] = useState<Article>();
+  const [listPedidos, setLisPedidos] = useState();
   const [visible, setVisible] = useState<boolean>(false)
   const [pedido, setPedido] = useState<any>(0)
   const [visibleListOrder, setvisibleListOrder] = useState<boolean>(false)
@@ -34,8 +36,12 @@ const Freshed = (props: FreshedProps) => {
 
   const OpenDialog = (data: Article) => {
     setSelectedProduct(data)
-    setvisibleListOrder(true)
-    //setVisible(true)
+    var lista  = getPedidoByArticulos(data.id)
+    lista.then((result)=>{
+      
+      setLisPedidos(result)
+      setvisibleListOrder(true)
+    })
   }
   const closeDialog = () => {
     setVisible(false)
@@ -100,6 +106,7 @@ const Freshed = (props: FreshedProps) => {
         setVisible={setvisibleListOrder} 
         setVisibleArticle={setVisible} 
         setPedido={setPedido}
+        listOrder={listPedidos}
         onHandleHide={closeDialogOrder} headerTitle="Selecciona una orden" idProduct={selectedProduct?.id}>
         <Button colorScheme='red' onClick={onOpen}>
           AYUDA

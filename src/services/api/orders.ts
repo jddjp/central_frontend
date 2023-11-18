@@ -39,6 +39,18 @@ export const getOrderPendiente = async () => {
     return data.data
 }
 
+export const getPedidoByArticulos = async (articulo:Number) => {
+    const suc : Number = Number(localStorage.getItem('sucursal'));
+    const { data } = 
+    await axios.get(`${API_URL}/pedidos?filters[estatus]=pendiente&populate=articulos&filters[articulos][id]=${articulo}&filters[sucursal][id]=${suc}`)
+    return data.data
+}
+
+export const getOrderBySucursal = async () => {
+    const suc : Number = Number(localStorage.getItem('sucursal'));
+    const { data } = await axios.get(`${API_URL}/pedidos?filters[sucursal][id]=${suc}`)
+    return data.data
+}
 export const getOrderDistribution = async () => {
     const { data } = await axios.get(`${API_URL}/pedidos?populate=*&filters[distribution]=true`)
     return data.data

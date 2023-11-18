@@ -5,14 +5,15 @@ import { ListBox } from "primereact/listbox";
 // import RecieveArticle from "../../components/modals/ReceiveArticle";
 import { IoMdCalendar } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
-import { getOrderDistribution, updateOrder } from "services/api/orders";
+import { getOrderBySucursal, getOrderDistribution, updateOrder } from "services/api/orders";
 import moment from "moment";
 import { MdDone, MdOutlineHomeWork, MdTrolley } from "react-icons/md";
 import { useState } from "react";
 
 const Distribution = () => {
   const toast = useToast();
-  const { data: orders } = useQuery(["ordersRecientes"], getOrderDistribution);
+  //const sucursal : Number = Number(localStorage.getItem('sucursal'));
+  const { data: orders } = useQuery(["ordersRecientes"], getOrderBySucursal);
   const updateOrderCall = useMutation(updateOrder);
   var [orden, setOrder] = useState<any>();
   const receiveOrder = (ordenVal: any) => {
