@@ -12,6 +12,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { Cliente } from 'types/Cliente';
 
 import { Dropdown } from 'primereact/dropdown';
+import { useFormik } from 'formik';
 
 export interface ClientInformationProps {
 }
@@ -19,6 +20,8 @@ export interface ClientInformationProps {
 const ExistingClient = (props: ClientInformationProps) => {
 
   const location = useLocation();
+  console.log(location);
+  
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -40,6 +43,7 @@ const ExistingClient = (props: ClientInformationProps) => {
 
   const handleChange = (option: SingleValue<any>) => {
     console.log(option);
+    //formik.setFieldValue('city', option.value);
 
     !option ? setUser('') : setUser(option);
     if (option) {
@@ -47,8 +51,44 @@ const ExistingClient = (props: ClientInformationProps) => {
     }
   };
 
+  const validEnvio = () => {
+    let valid = true;
+    let message = "";
+    if (!user) {
+      valid = false;
+      message = 'Debe seleccionar un cliente a quien se le facturara.'
+    }
+
+    if (!selectedUsoCfdi) {
+      valid = false;
+      message = 'Debe seleccionar un uso de cfdi.'
+    }
+
+    if (!selectedRegimen) {
+      valid = false;
+      message = 'Debe seleccionar un regimen fiscal.'
+    }
+
+    if (!selectedFormaPago) {
+      valid = false;
+      message = 'Debe seleccionar una forma de pago.'
+    }
+
+    if (!valid) {
+      toast({ status: 'error', title: 'Informacion invalida', description: message });
+      return valid;
+    }
+
+    valid = true;
+    return valid
+  }
+
 
   const onSave = async () => {
+    //formik.handleSubmit()
+    if (!validEnvio()) {
+      return;
+    }
     setLoading(true)
     //Se obtiene el detalle del pedido
     const cart = location.state.cart.cart;
@@ -69,7 +109,7 @@ const ExistingClient = (props: ClientInformationProps) => {
         "clave_prod_serv": item.article.attributes.clave_prod_serv,
         "no_identificacion": item.article.id,
         "cantidad": item.amount,
-        "clave_unidad":  item.article.attributes.unidad_de_medida.data.attributes.clave_unidad_sa,
+        "clave_unidad": item.article.attributes.unidad_de_medida.data.attributes.clave_unidad_sat,
         "unidad": item.article.attributes.unidad_de_medida.data.attributes.nombre,
         "descripcion": item.article.attributes.nombre,
         "valor_unitario": round(item.customPrice),
@@ -114,7 +154,7 @@ const ExistingClient = (props: ClientInformationProps) => {
     };
     // setLoading(false)
     //return;
-    let factura = new IInvoice(getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+    let factura = new IInvoice(client?.attributes.correo,getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
       receptor, conceptos);
 
     sendInvoice(factura)
@@ -140,12 +180,14 @@ const ExistingClient = (props: ClientInformationProps) => {
     try {
       const response = await createInvoiceSAT(factura);
       setLoading(false)
+      console.log(response);
+      
 
       if (response.status != "Success") {
         toast({
           status: 'error',
           title: 'Error al crear factura',
-          description: 'Ocurrio un error al crear la factura',
+          description: JSON.stringify(response.status),
         });
         return
       }
@@ -182,7 +224,7 @@ const ExistingClient = (props: ClientInformationProps) => {
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt='3' ml='3' mr='3'>
       <Text fontWeight='bold' fontSize={18}> Cliente</Text>
       <>
-        <Select onChange={handleChange} isClearable placeholder='Buscar cliente'
+        <Select onChange={handleChange} isClearable placeholder='Busca y selecciona un cliente para facturar'
           isDisabled={textValue.name || textValue.firstName || textValue.lastName ? true : false}
           key='normal'
           hideSelectedOptions
@@ -192,6 +234,8 @@ const ExistingClient = (props: ClientInformationProps) => {
               label: `${client.attributes?.nombre} ${client.attributes?.apellido_paterno} ${client.attributes?.apellido_materno}`
             }
           })} />
+        {//getFormErrorMessage('city')
+        }
         <Card title="Datos del cliente" >
           <Grid templateColumns='repeat(2, 1fr)' gap={8} mb={10}>
             <GridItem w='100%' h='2' ><div><span style={{ fontWeight: 'bold', opacity: '0.8' }}>RFC:</span> {client?.attributes.RFC}</div></GridItem>

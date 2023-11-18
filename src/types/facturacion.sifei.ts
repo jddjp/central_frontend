@@ -20,24 +20,26 @@ export interface ISFDI {
     requestGeneraXML: IRequestGetXML
 }
 export interface IRequestGetXML {
+    email?: string ,
     comprobante: IComprobante,
     configuracion?: IConfiguracion
 }
 export interface IResponseGetXML {
-    status: "Success",
-    codigo: "200",
-    data: "",
-    info: null
+    status: string,
+    codigo: string,
+    data: string,
+    info: string
 }
 
 export class IInvoice implements ISFDI {
     requestGeneraXML: IRequestGetXML
 
-    constructor(fecha: string, forma_pago: string, subtotal: any, total: any,
+    constructor(email: string | undefined,fecha: string, forma_pago: string, subtotal: any, total: any,
         receptor: Receptor, conceptos: Concepto[]
         //, impuestos: Impuestos2
     ) {
         this.requestGeneraXML = {
+            email: email,
             comprobante: {
                 version: "4.0",
                 serie: "A",
