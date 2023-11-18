@@ -10,10 +10,13 @@ import moment from "moment";
 import { MdDone, MdOutlineHomeWork, MdTrolley } from "react-icons/md";
 import { useState } from "react";
 
-const Distribution = () => {
+interface distibution {
+  listOrder: any
+}
+
+const Distribution = (props : distibution) => {
   const toast = useToast();
-  //const sucursal : Number = Number(localStorage.getItem('sucursal'));
-  const { data: orders } = useQuery(["ordersRecientes"], getOrderBySucursal);
+  var orders: any[] = []
   const updateOrderCall = useMutation(updateOrder);
   var [orden, setOrder] = useState<any>();
   const receiveOrder = (ordenVal: any) => {
@@ -94,7 +97,11 @@ const Distribution = () => {
       </Box>
     );
   };
-
+  if (props.listOrder != undefined) {
+    props.listOrder.forEach((orden: any) => {
+      orders.push(orden)
+    });
+  }
   return (
     <>
       <Box w="70%" m="auto" mt="3">

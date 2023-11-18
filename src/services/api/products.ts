@@ -159,8 +159,6 @@ export const postHistorialPayload = async (array: string, weight: string, articu
 
 export const getSimpleHistorial = async (id: number | undefined) => {
   const { data } = await axios.get(`${API_URL}/articulos?populate=historial_numeros&filters[id]=${id}`)
-
-  console.log(data)
   if(data.data.length != 0){
   return data.data[0].attributes?.historial_numeros?.data}
   else{

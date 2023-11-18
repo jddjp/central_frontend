@@ -7,15 +7,27 @@ import Inventory from "./inventory";
 import Distribution from "./distribution";
 import { Article } from "types/Article";
 import OrderLibrador from "./ordersLibrador";
+import { getOrderBySucursal } from "services/api/orders";
+import {useState } from "react";
 
 const TaskBox = () => {
   const auth = useAuth();
   const { data: products, refetch } = useQuery(["products"], getProducts)
-
+  const [listPedidos, setLisPedidos] = useState();
+  
+  const changeTabs = async (index:Number) => {
+    if(index == 1){
+      var callOrder = getOrderBySucursal();
+      callOrder.then((ordenes : any) => {
+        setLisPedidos(ordenes)
+      })
+    }
+  };
+  
   return ( 
     <Box mt='1rem' w='100%' mx='10'>
       <Text fontWeight='bold' textAlign='end'>{auth?.user?.roleCons}: {auth?.user?.username} {auth?.user?.apellido_paterno}</Text>
-      <Tabs variant='enclosed'>
+      <Tabs variant='enclosed' onChange={index => changeTabs(index)}>
         <TabList>
           <Tab>Recientes</Tab>
           {auth?.user?.roleCons === 'Supervisor' && (
@@ -47,7 +59,7 @@ const TaskBox = () => {
           )}
           {(auth?.user?.roleCons === 'Supervisor' || auth?.user?.roleCons === 'Receptor') && (
             <TabPanel>
-              <Distribution/>
+              <Distribution listOrder={listPedidos} />
             </TabPanel>
           )}
           {auth?.user?.roleCons === 'Librador' && (
