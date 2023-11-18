@@ -12,7 +12,7 @@ import { useState } from "react";
 
 const Distribution = () => {
   const toast = useToast();
-  const { data: orders } = useQuery(["orders"], getOrderDistribution);
+  const { data: orders } = useQuery(["ordersRecientes"], getOrderDistribution);
   const updateOrderCall = useMutation(updateOrder);
   var [orden, setOrder] = useState<any>();
   const receiveOrder = (ordenVal: any) => {

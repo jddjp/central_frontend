@@ -20,6 +20,7 @@ import {
 import { bigTotal } from "helpers/bigTotal";
 import { getProductById } from "services/api/products";
 import moment from "moment";
+import { updateOrder } from "services/api/orders";
 
 interface PropsReceiveOrder {
   headerTitle: String | undefined;
@@ -38,7 +39,7 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
   const [cantidadDownload, setCantidadDownload] = React.useState(0);
   const [cantidadFaltante, setCantidadFaltante] = React.useState(0);
   const [listaR, setListaR] = React.useState<any>([]);
-
+  const updateOrderCall = useMutation(updateOrder);
   const toast = useToast();
   const [product, setProduct] = useState<any>({
     nombre: "",
@@ -189,7 +190,7 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
         variant="solid"
         onClick={() => movInvetory()}
       >
-        Mover inventario
+        Finalizar Orden
       </Button>
       <Button
         leftIcon={<RiCheckLine />}
@@ -236,7 +237,6 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
           }
          const numeroPost = postHistorialPayload(historial, v.toString(), Number(selectedArticle))
           numeroPost.then((response) => {
-              //var refresh = historialApi
             var newList :any[]= listaR
             newList.push(response.data)
             setListaR(newList)
@@ -279,11 +279,14 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
   };
 
   const movInvetory = () => {
-    toast({
+    
+    
+    HandleUpdateProduct()
+    /*toast({
       title: "Orden recibida correctamente",
       status: "success",
-    });
-    props.onHandleHide();
+    });*/
+   // props.onHandleHide();
   };
   const [value, setValue] = React.useState("");
   const handleChange = (event: any) => setValue(event.target.value);
@@ -291,6 +294,21 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
     value: "0",
     label: "",
   });
+
+
+  const HandleUpdateProduct = async () => {
+    props.pedido.attributes.estatus = "entregado"
+    console.log(props.pedido)
+    updateOrderCall.mutate(props.pedido, {
+      onSuccess: async () => {
+        props.onHandleHide();
+        toast({
+          title: "El Pedido ha sido recido exitosamente!!",
+          status: "success",
+        });
+      },
+    });
+  };
   return (
     
     <Dialog

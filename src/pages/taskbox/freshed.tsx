@@ -6,7 +6,7 @@ import { TiTag } from 'react-icons/ti'
 import RecieveArticle from "../../components/modals/ReceiveArticle";
 import { updateFreshProduct } from "services/api/products";
 import { useMutation } from "react-query";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdOutlineFontDownload, MdSwipeDown } from "react-icons/md";
 import { BASE_URL } from "../../config/env";
 import OrderPending from "./orderPendig";
 import RecieveOrder from "components/modals/ReceiveOrder";
@@ -66,7 +66,7 @@ const Freshed = (props: FreshedProps) => {
               )}
             </Box>
             <Box display='flex' alignItems='center' marginRight='5'>
-              <IconButton aria-label='show dialog' icon={<MdEdit />} borderRadius='full' colorScheme='red'
+              <IconButton aria-label='show dialog' icon={<MdSwipeDown />} borderRadius='full' colorScheme='red'
                 onClick={() => OpenDialog(product)} fontSize='20px' size='lg' />
             </Box>
           </Box>
