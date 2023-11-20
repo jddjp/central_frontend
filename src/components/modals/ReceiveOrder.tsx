@@ -21,6 +21,9 @@ import { bigTotal } from "helpers/bigTotal";
 import { getProductById } from "services/api/products";
 import moment from "moment";
 import { updateOrder } from "services/api/orders";
+import { get } from "http";
+import { getStock } from "services/api/stocks";
+import { updateStockSucursal } from "services/api/articles";
 
 interface PropsReceiveOrder {
   headerTitle: String | undefined;
@@ -34,6 +37,7 @@ interface PropsReceiveOrder {
 }
 
 const RecieveOrder = (props: PropsReceiveOrder) => {
+  const suc : Number = Number(localStorage.getItem('sucursal'));
   var cantidad = 0;
   const [cantidadReceiver, setCantidadReceiver] = React.useState(0);
   const [cantidadDownload, setCantidadDownload] = React.useState(0);
@@ -279,14 +283,25 @@ const RecieveOrder = (props: PropsReceiveOrder) => {
   };
 
   const movInvetory = () => {
-    
-    
-    HandleUpdateProduct()
-    /*toast({
-      title: "Orden recibida correctamente",
-      status: "success",
-    });*/
-   // props.onHandleHide();
+    props.pedido.attributes.estatus = "entregado"
+    var articulos = props.pedido.attributes.articulos.data
+    var items = props.pedido.attributes.items.data
+    articulos.forEach((articulo :any,index : number) => {
+      var newInventario = {"articulo":articulos[index].id,"cantidad" : items[index].attributes.cantidad}
+      var stock = getStock(articulos[index].id,Number(suc))
+      stock.then((stock) => {
+        var cantidad = newInventario.cantidad + stock.data[0].attributes.cantidad
+        const updateCall = updateStockSucursal(cantidad,stock.data[0].id)
+        updateCall.then((result)=>{ 
+          props.onHandleHide();
+          toast({
+            title: "El Pedido ha sido recido exitosamente!!",
+            status: "success",
+          });
+        })
+      })
+    });
+
   };
   const [value, setValue] = React.useState("");
   const handleChange = (event: any) => setValue(event.target.value);

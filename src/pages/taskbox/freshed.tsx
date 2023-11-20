@@ -4,13 +4,14 @@ import { Article } from "../../types/Article";
 import { ListBox } from 'primereact/listbox'
 import { TiTag } from 'react-icons/ti'
 import RecieveArticle from "../../components/modals/ReceiveArticle";
-import { updateFreshProduct } from "services/api/products";
+import { getSimpleHistorial, updateFreshProduct } from "services/api/products";
 import { useMutation } from "react-query";
-import { MdEdit, MdOutlineFontDownload, MdSwipeDown } from "react-icons/md";
+import { MdEdit, MdFilterListAlt, MdList, MdOutlineFontDownload, MdSwipeDown } from "react-icons/md";
 import { BASE_URL } from "../../config/env";
 import OrderPending from "./orderPendig";
 import RecieveOrder from "components/modals/ReceiveOrder";
 import { getPedidoByArticulos } from "services/api/orders";
+import Historial from "./historial";
 
 interface FreshedProps {
   items: Article[],
@@ -21,7 +22,11 @@ const Freshed = (props: FreshedProps) => {
 
   const [selectedProduct, setSelectedProduct] = useState<Article>();
   const [listPedidos, setLisPedidos] = useState();
+  const [historial, setHistorial] = useState();
+
   const [visible, setVisible] = useState<boolean>(false)
+  const [visibleHistorial, setVisibleHistorial] = useState<boolean>(false)
+
   const [pedido, setPedido] = useState<any>(0)
   const [visibleListOrder, setvisibleListOrder] = useState<boolean>(false)
   const dispatchUpdate = useMutation(() => updateFreshProduct(selectedProduct?.id, false), {
@@ -38,13 +43,26 @@ const Freshed = (props: FreshedProps) => {
     setSelectedProduct(data)
     var lista  = getPedidoByArticulos(data.id)
     lista.then((result)=>{
-      
       setLisPedidos(result)
       setvisibleListOrder(true)
     })
   }
+
+  const openHistorial = (data: Article)=>{
+
+    var callHistorial = getSimpleHistorial(data.id)
+    callHistorial.then((result) => {
+      setHistorial(result)
+      setVisibleHistorial(true) 
+    })
+    
+  }
   const closeDialog = () => {
     setVisible(false)
+  }
+
+  const closeDialogHistorial = () => {
+    setVisibleHistorial(false)
   }
 
   const closeDialogOrder = () => {
@@ -74,6 +92,8 @@ const Freshed = (props: FreshedProps) => {
             <Box display='flex' alignItems='center' marginRight='5'>
               <IconButton aria-label='show dialog' icon={<MdSwipeDown />} borderRadius='full' colorScheme='red'
                 onClick={() => OpenDialog(product)} fontSize='20px' size='lg' />
+                <IconButton aria-label='show dialog' icon={<MdList />} borderRadius='full' colorScheme='green'
+                onClick={() => openHistorial(product)} fontSize='20px' size='lg' />
             </Box>
           </Box>
         </Box>
@@ -86,22 +106,24 @@ const Freshed = (props: FreshedProps) => {
       <Box w='70%' m='auto' mt='3'>
         <ListBox filter value={selectedProduct} options={props.items} optionLabel='attributes.nombre' itemTemplate={itemTemplate} />
       </Box>
-     { <RecieveOrder isVisible={visible} 
+     { <Historial 
+      historial={historial}
+      isVisible={visibleHistorial} 
+      onHandleHide={closeDialogHistorial} 
+      pedido={pedido}
+      headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
+        <Button colorScheme='red' onClick={onOpen}>
+          Mover a inventario
+        </Button>
+    </Historial >}
+      {<RecieveOrder isVisible={visible} 
       onHandleHide={closeDialog} 
       pedido={pedido}
       headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
         <Button colorScheme='red' onClick={onOpen}>
           Mover a inventario
         </Button>
-  </RecieveOrder >}
-      {/*<RecieveArticle isVisible={visible} 
-      onHandleHide={closeDialog} 
-      pedido={pedido}
-      headerTitle={selectedProduct?.attributes.nombre} idProduct={selectedProduct?.id}>
-        <Button colorScheme='red' onClick={onOpen}>
-          Mover a inventario
-        </Button>
-</RecieveArticle >*/}
+</RecieveOrder >}
       <OrderPending isVisible={visibleListOrder}
         setVisible={setvisibleListOrder} 
         setVisibleArticle={setVisible} 
