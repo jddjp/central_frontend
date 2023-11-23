@@ -28,6 +28,7 @@ const validateSchema = yup.object({
 
 const initialValues = {
   RFC: '',
+  razon_social: '',
   nombre: '',
   apellido_paterno: '',
   apellido_materno: '',
