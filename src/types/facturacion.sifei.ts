@@ -36,7 +36,7 @@ export class IInvoice implements ISFDI {
 
     constructor(email: string | undefined,fecha: string, forma_pago: string, subtotal: any, total: any,
         receptor: Receptor, conceptos: Concepto[]
-        //, impuestos: Impuestos2
+        , impuestos?: Impuestos2
     ) {
         this.requestGeneraXML = {
             email: email,
@@ -59,7 +59,7 @@ export class IInvoice implements ISFDI {
                 // cfdi_relacionados: cfdi_relacionados,
                 receptor: receptor,
                 conceptos: conceptos,
-                //impuestos: impuestos,
+                impuestos: impuestos,
             },
         }
 

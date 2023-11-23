@@ -1,5 +1,5 @@
-import { useState, SetStateAction, Dispatch } from 'react';
-import { Box, Input, Stack, Text, useToast } from '@chakra-ui/react';
+import { useState, SetStateAction, Dispatch, useRef } from 'react';
+import { Badge, Box, Input, Stack, Text, useToast } from '@chakra-ui/react';
 import Select, { SingleValue } from 'react-select';
 import { client, getClient, getClients } from 'services/api/cliente';
 import { useQuery } from 'react-query';
@@ -13,6 +13,10 @@ import { Cliente } from 'types/Cliente';
 
 import { Dropdown } from 'primereact/dropdown';
 import { useFormik } from 'formik';
+import { Dialog } from 'primereact/dialog';
+import NotaPrint from 'pages/orders/CreateOrderPage/NotaSimple/NotaPrint';
+import { useReactToPrint } from 'react-to-print';
+import { useTicketDetail } from "../../../zustand/useTicketDetails";
 
 export interface ClientInformationProps {
 }
@@ -20,8 +24,12 @@ export interface ClientInformationProps {
 const ExistingClient = (props: ClientInformationProps) => {
 
   const location = useLocation();
+  const [displaySimpleNote, setDisplaySimpleNote] = useState(false);
+  const { detail } = useTicketDetail();
+  console.log("------------INIT ExistingClient");
+  console.log(detail);
   console.log(location);
-  
+
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -32,7 +40,7 @@ const ExistingClient = (props: ClientInformationProps) => {
   const usosCFDI = UsosCFDI;
   const formaPago = FormaPago;
 
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<any>(null);
   const [client, setClient] = useState<Cliente>();
   const { data: clients } = useQuery(["list-client"], getClients)
   const [textValue, setTextValue] = useState({
@@ -40,6 +48,8 @@ const ExistingClient = (props: ClientInformationProps) => {
     firstName: "",
     lastName: ""
   });
+
+  const componentRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (option: SingleValue<any>) => {
     console.log(option);
@@ -54,30 +64,36 @@ const ExistingClient = (props: ClientInformationProps) => {
   const validEnvio = () => {
     let valid = true;
     let message = "";
-    if (!user) {
+    console.log(user);
+
+    if (user == null) {
       valid = false;
       message = 'Debe seleccionar un cliente a quien se le facturara.'
+      toast({ status: 'error', title: 'Informacion invalida', description: message });
+      return valid;
     }
 
     if (!selectedUsoCfdi) {
       valid = false;
       message = 'Debe seleccionar un uso de cfdi.'
+      toast({ status: 'error', title: 'Informacion invalida', description: message });
+      return valid;
     }
 
     if (!selectedRegimen) {
       valid = false;
       message = 'Debe seleccionar un regimen fiscal.'
+      toast({ status: 'error', title: 'Informacion invalida', description: message });
+      return valid;
     }
 
     if (!selectedFormaPago) {
       valid = false;
       message = 'Debe seleccionar una forma de pago.'
-    }
-
-    if (!valid) {
       toast({ status: 'error', title: 'Informacion invalida', description: message });
       return valid;
     }
+
 
     valid = true;
     return valid
@@ -85,6 +101,8 @@ const ExistingClient = (props: ClientInformationProps) => {
 
 
   const onSave = async () => {
+    console.log(location.state.cart.cart);
+
     //formik.handleSubmit()
     if (!validEnvio()) {
       return;
@@ -99,13 +117,19 @@ const ExistingClient = (props: ClientInformationProps) => {
     let total: number = 0;
     let subtotal: number = 0;
     let total_iva: number = 0;
+    let containTaxClasification = false;
+
 
     cart.items.map((item: any) => {
+      let detalleConceptos;
+      if (item.article.attributes.iva == 16) {
+        containTaxClasification = true;
+      }
       const importeProducto = (item.amount * item.customPrice);
       //const importeProductoIVA = (importeProducto * .16);
       ///const importeProductoIVA = (importeProducto);
 
-      const detalleConceptos = {
+      detalleConceptos = {
         "clave_prod_serv": item.article.attributes.clave_prod_serv,
         "no_identificacion": item.article.id,
         "cantidad": item.amount,
@@ -118,45 +142,66 @@ const ExistingClient = (props: ClientInformationProps) => {
         "objeto_impuesto": "01"
       }
 
-      conceptos.push({
-        ...detalleConceptos//,
-        //Se llena el detalle del total de impuestos por producto
-        //"impuestos": {
-        //  "traslados":
-        //    [{
-        //      "base": round(importeProducto),
-        //      "impuesto": TIPO_IMPUESTO.IVA,
-        //      "tipo_factor": C_TIPOFACTOR.TASA,
-        //      "tasa_o_cuota": TASA_O_CUOTA._16,
-        //      "importe": round(importeProductoIVA)
-        //    }
-        //    ]
-        //},
-      })
-      //total += importeProducto + importeProductoIVA;
       total += importeProducto;
       subtotal += importeProducto;
-      //total_iva += importeProducto * .16;
-      total_iva += importeProducto;
-    });
-    //Se llena el detalle del total de impuestos
-    const impuesto_total: any = {
-      "total_impuestos_trasladados": total_iva,
-      "traslados": [
-        {
-          "base": subtotal,
-          "impuesto": TIPO_IMPUESTO.IVA,
-          "tipo_factor": C_TIPOFACTOR.TASA,
-          "tasa_o_cuota": TASA_O_CUOTA._16,
-          "importe": total_iva
-        }
-      ]
-    };
-    // setLoading(false)
-    //return;
-    let factura = new IInvoice(client?.attributes.correo,getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
-      receptor, conceptos);
 
+      //Se agrega el objeto del detalle del impuesto por producto
+      if (containTaxClasification) {
+        const importeProductoIVA = (importeProducto * (item.article.attributes.iva / 100));
+        total_iva += importeProductoIVA;
+        total += importeProductoIVA;
+
+        detalleConceptos.objeto_impuesto = "02";
+        detalleConceptos = {
+          ...detalleConceptos,
+          //Detalle del total de impuestos
+          "impuestos": {
+            "traslados":
+              [{
+                "base": round(importeProducto),
+                "impuesto": TIPO_IMPUESTO.IVA,
+                "tipo_factor": C_TIPOFACTOR.TASA,
+                "tasa_o_cuota": TASA_O_CUOTA._16,
+                "importe": round(importeProductoIVA)
+              }
+              ]
+          },
+        }
+      }
+
+      conceptos.push({ ...detalleConceptos })
+      //total += importeProducto + importeProductoIVA;
+      //total_iva += importeProducto * .16;
+      //total_iva += importeProducto;
+    });
+
+
+    let factura;
+    if (!containTaxClasification) {
+      factura = new IInvoice(client?.attributes.correo, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+        receptor, conceptos);
+    }
+    if (containTaxClasification) {
+
+      //Se llena el detalle del total de impuestos
+      const impuesto_total: any = {
+        "total_impuestos_trasladados": total_iva,
+        "traslados": [
+          {
+            "base": subtotal,
+            "impuesto": TIPO_IMPUESTO.IVA,
+            "tipo_factor": C_TIPOFACTOR.TASA,
+            "tasa_o_cuota": TASA_O_CUOTA._16,
+            "importe": total_iva
+          }
+        ]
+      };
+
+      factura = new IInvoice(client?.attributes.correo, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+        receptor, conceptos, impuesto_total);
+    }
+
+    console.log(factura);
     sendInvoice(factura)
   }
 
@@ -181,7 +226,7 @@ const ExistingClient = (props: ClientInformationProps) => {
       const response = await createInvoiceSAT(factura);
       setLoading(false)
       console.log(response);
-      
+
 
       if (response.status != "Success") {
         toast({
@@ -207,6 +252,14 @@ const ExistingClient = (props: ClientInformationProps) => {
     return (number).toFixed(2)
   }
 
+  const opentSimpleNote = (name: any) => {
+    setDisplaySimpleNote(true);
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current
+  });
+
   const getCurrentDate = () => {
     const fecha = new Date();
     const año = fecha.getFullYear();
@@ -219,6 +272,20 @@ const ExistingClient = (props: ClientInformationProps) => {
     const fechaFormateada = `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
     return fechaFormateada;
   }
+
+  const renderFooter = (name: any) => {
+    return (
+      <div>
+
+        <Button outlined  severity="secondary"
+          onClick={() => setDisplaySimpleNote(false)}
+        >Cancelar</Button>
+        <Button icon="pi pi-print" severity="success" label='Imprimir'
+          onClick={handlePrint}
+        ></Button>
+      </div>
+    );
+  };
 
   return (
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt='3' ml='3' mr='3'>
@@ -280,8 +347,36 @@ const ExistingClient = (props: ClientInformationProps) => {
         </Card>
 
         <Box h='40px'>
-          <Button label="Confirmar" loading={loading} icon="pi pi-check" className="p-button p-button-success" style={{ marginLeft: 'auto', display: 'block' }} onClick={onSave} />
+          <Box display='flex' alignItems='baseline'>
+            <Badge borderRadius='full' px='2' colorScheme='teal'>
+              <Button label="Confirmar" loading={loading} icon="pi pi-check" className="p-button p-button-success" style={{ marginLeft: 'auto', display: 'block' }} onClick={onSave} />
+            </Badge>
+            <Box
+              color='gray.500'
+              fontWeight='semibold'
+              letterSpacing='wide'
+              fontSize='xs'
+              textTransform='uppercase'
+              ml='2'
+            >
+
+              <Button label="Nota simple" loading={loading} icon="pi pi-book" className="p-button p-button-info" style={{ marginLeft: 'auto', display: 'block' }} onClick={opentSimpleNote} />
+            </Box>
+          </Box>
         </Box>
+
+        <Dialog
+          visible={displaySimpleNote}
+          style={{ width: "50vw" }}
+          footer={renderFooter("displayBasic")}
+          onHide={() => setDisplaySimpleNote(false)}
+        // 
+        >
+          <Box display='flex' justifyContent='center' alignItems='center' height='100vh' ref={componentRef}>
+            <NotaPrint client={location.state.cart.cart.client} items={location.state.cart.cart.items} folio={detail.data.id} />
+          </Box>
+          {/* <Nota client={cart.cart.client}  items={cart.cart.cart.items}/> */}
+        </Dialog>
       </>
 
     </Stack>

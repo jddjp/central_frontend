@@ -53,6 +53,14 @@ export const RegisterOfElectrictFactura = () => {
         }}
       />
       <InputField
+        name="razon_social"
+        placeholder="Ingresa la razón social"
+        formControlProps={{
+          label: "Razón Social",
+          isRequired: true,
+        }}
+      />
+      <InputField
         name="nombre"
         placeholder="Ingresa Nombre"
         formControlProps={{ label: "Nombre", isRequired: true }}
