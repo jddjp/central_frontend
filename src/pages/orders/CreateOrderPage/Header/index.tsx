@@ -11,7 +11,6 @@ export interface HeaderProps extends StackProps {
 }
 
 export const Header = (props: HeaderProps) => {
-  //props.setType = false
   const { selectedArticle, onSelectArticle, type, origen, ...rest } = props;
   const handleSelectArticle = (article: SearchArticle | null) => {
     onSelectArticle(article);

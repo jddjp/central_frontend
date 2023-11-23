@@ -18,7 +18,7 @@ export const useCart = (config: usePurchaseOrderConfig = {}) => {
   const changePriceItem = (data: {item: ShoppingCartItem, newprice: number}) => dispatch({type: 'changePriceItem', payload: data})
   const total  = cart.items.reduce((a, i) => a + (i.customPrice ? i.priceBroken!  * i.amount : i.priceBroken! * i.amount), 0);
 
-  console.log(cart);
+  //console.log(cart);
 
   return {
     cart,

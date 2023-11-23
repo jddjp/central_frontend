@@ -95,11 +95,6 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   const getArticleLabel = (article: ShoppingCartArticle) => {
     return article.attributes.nombre;
   }
-
-  if(!type){
-      console.log("refresh")
-  }
-
   const handleAutocomplete = async (search: string) => {
     // if (search.length < 3) return [];
     const result = await searchArticles(search);
