@@ -35,80 +35,27 @@ interface PropsPromotionDetail {
   onHandleHide: () => void;
 }
 
-interface ColumnMeta {
-  field: string;
-  header: string;
-}
-
 const Promotion = (props: PropsPromotionDetail) => {
   const queryClient = useQueryClient();
-  const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries);
-  const { data: unidadMedida } = useQuery(["unidades"], getUnidades);
   const cPromotion = useMutation(createPromotion);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [selectedStoresForDeletion, setSelectedStoresForDeletion] = useState(
-    Array<number>
-  );
-  const [stockProductTemp, setStockProductTemp] = useState<Stock[]>([]);
-  const [storesSelected, setStoresSelected] = useState([]);
-  const [stockProduct, setStockProduct] = useState([]);
-
-  const toast = useToast();
-  const columnsTableInventario: ColumnMeta[] = [
-    { field: "attributes.sucursal.data.attributes.nombre", header: "Sucursal" },
-    { field: "attributes.cantidad", header: "Cantidad" },
-  ];
-
   const [promotion, setPromotion] = useState({
     descripcion: "",
-    fecha_inicio: "2023-11-22T19:47:00.307Z",
-    fecha_fin: "2023-11-22T19:47:00.307Z",
+    fecha_inicio: "",
+    fecha_fin: "",
     estado: "pendiente",
     procedimiento_aplicar: "N",
   });
 
-  const [date, setDate] = useState(new Date())
-  const [open, setOpen] = useState(false)
-
-  /*const [stock, setStock] = useState({
-    cantidad: 0,
-    sucursal: 0,
-    unidad_de_medida: 0,
-  });*/
-
   const onHandleHide = () => {
     props.onHandleHide();
-    setSelectedStoresForDeletion([]);
-    setStockProduct([]);
-    setStockProductTemp([]);
-    setStoresSelected([]);
-    //setFacturable(false);
   };
 
-  const handleSaveProduct = () => {
-    //Valida que no se ingrese una cantidad de stock mayor a la general
-    /* if (product.inventario_fisico < validLimitStock(stockProduct)) {
-      toast({
-        title: "El stock por sucursal es mayor al stock general",
-        status: "warning",
-      });
-      return;
-    }*/
-    //product.unidad_de_medida = stock.unidad_de_medida;
+  const handleSavePromotion = () => {
     cPromotion.mutate(
       { promotion },
-      /*{ product: { data: product }, stock: { data: stock } }*/ {
+      {
         onSuccess: async (data) => {
-          //queryClient.invalidateQueries(["products"]);
-          /*setProduct(initProduct);
-          //Guarda el stock de las unidades
-          await saveStockProd(
-            data.data.id,
-            stockProduct,
-            product,
-            selectedStoresForDeletion
-          );*/
-
+          queryClient.invalidateQueries(["promotions"]);
           onHandleHide();
         },
       }
@@ -127,7 +74,7 @@ const Promotion = (props: PropsPromotionDetail) => {
         label="Save"
         icon="pi pi-check"
         className="p-button-text"
-        onClick={handleSaveProduct}
+        onClick={handleSavePromotion}
       />
     </>
   );
@@ -136,88 +83,22 @@ const Promotion = (props: PropsPromotionDetail) => {
     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     setPromotion({ ...promotion, [e.target.name]: e.target.value });
-    // setPromotion{{ ...promotion, [e.target.name]: e.target.value }}
-    //setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
   const onChangeCalendar = (
     e: any
   ) => {
-    console.log(e.value)
-    //setPromotion({ ...promotion, [e.target.name]: e.target.value });
-    
-  };
-  /* const onInputNumberChange = (e: InputNumberChangeEvent, tag: string) => {
-    setStock({ ...stock, [tag]: e.value });
-  };
-  const onDropdownChange = (e: DropdownChangeEvent, tag: string) => {
-    setProduct({ ...product, [tag]: e.target.value });
-  };
-  const onInputNumber = (e: InputNumberChangeEvent, tag: string) => {
-    setProduct({ ...product, [tag]: e.value });
-  };
-  const onDropdownChangeStock = (e: DropdownChangeEvent, tag: string) => {
-    setProduct({ ...product, [tag]: e.target.value });
-  };
-  const onUpload = (e: any) => {
-    setProduct({ ...product, [e.target.name]: e.target.files[0] });
+    setPromotion({ ...promotion, ['fecha_inicio']: e.value });
   };
 
-  const changeFacturable = (e: any) => {
-    setProduct({ ...product, isFacturable: e.value });
-    setFacturable(e.value);
-  };*/
-  //const [facturable, setFacturable] = useState(false);
+  const onChangeCalendarFin = (
+    e: any
+  ) => {
+    setPromotion({ ...promotion, ['fecha_fin']: e.value });
+  }
   const onUpload = (e: any) => {
     //setProduct({ ...product, [e.target.name]: e.target.files[0] });
-  };
-  /* useEffect(() => {
-    setProduct({
-      ...product,
-      isFiscal: product.inventario_fiscal ? true : false,
-    });
-  }, [product.inventario_fiscal]);
-
-  useEffect(() => {
-    setProduct({
-      ...product,
-      isFisical: product.inventario_fisico ? true : false,
-    });
-  }, [product.inventario_fisico]);*/
-
-  const handleSelectStore = (data: any) => {
-    const id = data.selectedOption.value;
-    if (selectedStoresForDeletion.includes(id)) {
-      setSelectedStoresForDeletion(
-        selectedStoresForDeletion.filter((item) => item !== id)
-      );
-    } else {
-      let dat: Stock = {
-        attributes: {
-          cantidad: 0,
-          sucursal: {
-            data: {
-              id: id,
-              attributes: {
-                nombre: data.selectedOption.name,
-              },
-            },
-          },
-        },
-      };
-
-      if (!validarExistenciaUnidadEnStock(stockProductTemp, id)) {
-        stockProductTemp.push(dat);
-      }
-      setSelectedStoresForDeletion((prevSelectedStores) => [
-        ...prevSelectedStores,
-        id,
-      ]);
-    }
-    setStoresSelected(data.value);
-    const restoreStore: any = recuperarCantidad(stockProductTemp, data.value);
-    setStockProduct(restoreStore);
-  };
+  }
 
   return (
     <Dialog
@@ -230,7 +111,7 @@ const Promotion = (props: PropsPromotionDetail) => {
       onHide={onHandleHide}
     >
       <Stack spacing="2">
-        <TabView activeIndex={activeIndex}>
+        <TabView>
           <TabPanel header="NUEVA PROMOCIÓN" leftIcon="pi pi-fw pi-plus">
             <div className="field">
               <label htmlFor="name">Descripción</label>
@@ -247,17 +128,18 @@ const Promotion = (props: PropsPromotionDetail) => {
               <label htmlFor="name">Fecha inicio</label>
               <Calendar
                 value={promotion.fecha_inicio}
-                onChange={(e) => onChangeCalendar(e)}
-                //onChange={onInputTextChange}
+                dateFormat="dd/mm/yy"
+                onChange={(e) => onChangeCalendar(e) }
                 name="fecha_inicio"
               />
             </div>
 
             <div className="field">
               <label htmlFor="name">Fecha Final</label>
-              <InputText
+              <Calendar
                 value={promotion.fecha_fin}
-                onChange={onInputTextChange}
+                dateFormat="dd/mm/yy"
+                onChange={(e) => onChangeCalendarFin(e) }
                 name="fecha_fin"
               />
             </div>
