@@ -12,6 +12,13 @@ export type SearchArticle = ContentType<
   WithRequired<ArticleAttributes, "foto" | "unidad_de_medida">
 >;
 
+
+export const getSucursal = async (suc : Number) =>{
+ // const suc : Number = Number(localStorage.getItem('sucursal'));
+  const { data } = await axios.get(`${API_URL}/sucursales/${suc}`)
+  return data.data;
+}
+
 export const searchArticles = async ( name: string) => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=*`)
   return data;
