@@ -82,11 +82,8 @@ const CataloguePage = () => {
     })
   }
 
-  const handleCreateOrder =(id: number)=>{
-    console.log(id);
-    
+  const handleCreateOrder =(id: number)=>{ 
     idRef.current = id
-    
     ordenRefillRef.current?.open(id);
   }
 
