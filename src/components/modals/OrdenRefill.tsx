@@ -27,10 +27,10 @@ export interface AlertOrdenRefill {
   open(articulo_id: number): void;
 }
 export const authDataKey = "authData";
-
 const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
   const queryClient = useQueryClient();
   const [isVisible, setIsVisible] = useState(false);
+  const [cargando, setCargando] = useState(false);
   const toast = useToast();
   const [sucursal, setSurcursal] = useState(0);
   const [userData, setUserData] = useLocalStorage<UserData | null>(
@@ -48,6 +48,9 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
 
   const onHandleHide = () => {
     setIsVisible(false);
+    setSurcursal(0);
+    ordenRefill.attributes.cantidad = 0
+    setProduct({ ...ordenRefill });
     props.onHandleHide();
   };
 
@@ -72,10 +75,10 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
   };
 
   const onSave = async () => {
+    setCargando(true)
     if (!validForm()) {
       return;
     }
-    console.log(ordenRefill)
     try {
       const resultStock = getStockByArticleAndSucursal(
         sucursal,
@@ -92,7 +95,6 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
               articulo: ordenRefill.attributes.articulo,
             },
           });
-          console.log("crear un stock");
         } else {
           const update = updateStockSucursal(
             response[0].attributes.cantidad + ordenRefill.attributes.cantidad,
@@ -112,6 +114,7 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
               status: "success",
               title: "Orden registrada correctamente",
             });
+            setCargando(false)
             onHandleHide();
           });
         });
@@ -174,6 +177,7 @@ const OrdenRefill = forwardRef((props: PropOrdenRefill, ref) => {
       <Button
         label="Save"
         icon="pi pi-check"
+        disabled = {cargando}
         className="p-button-text"
         onClick={onSave}
       />
