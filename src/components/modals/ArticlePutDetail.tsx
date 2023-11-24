@@ -58,7 +58,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const queryClient = useQueryClient()
   const updateProduct = useMutation(editProduct)
-  const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
+  var { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [product, setProduct] = useState({
@@ -159,6 +159,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     setStockProduct([]);
     setStockProductTemp([]);
     setStoresSelected([])
+    setActiveIndex(0);
   }
   const HandleUpdateProduct = async () => {
     //Valida que no se ingrese una cantidad de stock mayor a la general
@@ -286,7 +287,16 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const hideDialogOrder = () => {
   }
-
+  const changeTabs = async (index:any) => {
+    setActiveIndex(index)
+    if(index == 1){
+      queryClient.invalidateQueries(["getStocksByProductId"]);
+    }
+    if(index == 2){
+      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries(["productEdit"]);
+    }
+  };
   return (
     <Dialog style={{ width: '60%' }} header="DETALLE DEL ARTICULO" modal className="p-fluid"
       visible={props.isVisible}
@@ -294,7 +304,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
       onHide={onHandleHide}>
       <Stack spacing='1rem'>
 
-        <TabView activeIndex={activeIndex}>
+        <TabView  activeIndex={activeIndex} onTabChange={(e) =>{ changeTabs(e.index)}}>
           <TabPanel header="Datos" leftIcon="pi pi-fw pi-home">
             <div className="field">
               <label htmlFor="name">Nombre</label>
