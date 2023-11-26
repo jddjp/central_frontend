@@ -20,7 +20,7 @@ export const getSucursal = async (suc : Number) =>{
 }
 
 export const searchArticles = async ( name: string) => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=*`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=articulos_sustitutos&populate=contador&&populate=foto&populate=historial_numeros&populate=orden_refills&populate=proveedor&populate=stocks&populate=unidad_de_medida&populate=ruptura_precio.rango_ruptura_precios`)
   return data;
 };
 
@@ -45,7 +45,7 @@ export const getStockByArticleAndSucursal = async ( sucursal: number,articulo:nu
   return data.data;
 };
 export const searchArticlesBySucursal = async (name: string, sucursalRef: number) => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=ruptura_precio&populate=stocks.sucursal`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=ruptura_precio&populate=ruptura_precio.rango_ruptura_precios&populate=stocks.sucursal`)
 
   const result = data.data?.filter((product: any) => {
     const extract = product.attributes.stocks.data.map((stock : any) => stock.attributes.sucursal.data.id)

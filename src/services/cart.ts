@@ -27,6 +27,7 @@ export const loadCart = (idCart: string) => {
 
 export const emptyCart: ShoppingCart = {
     items: [],
+    id_pedido: 0
 }
 
 export const loadOrCreateNewCart = (id: string | undefined) => {

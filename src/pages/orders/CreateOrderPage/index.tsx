@@ -160,6 +160,7 @@ export const CreateOrderPage = () => {
           let responseNewOrder = newOrder(order.attributes);
           responseNewOrder.then((response) => {
             setOrderData(response);
+            cart.id_pedido = response.data.id;
             cart.items.forEach((item: any) => {
               extractUnidad(item.article.id).then((extract: number) => {
                 let itemNew: Item = {
@@ -245,6 +246,8 @@ export const CreateOrderPage = () => {
       let responseNewOrder = newOrder(order.attributes);
       responseNewOrder.then((response) => {
         setOrderData(response);
+        
+      cart.id_pedido = response.data.id;
         cart.items.forEach((item: any) => {
           extractUnidad(item.article.id).then((extract: number) => {
             var itemNew: Item = {
@@ -411,6 +414,7 @@ export const CreateOrderPage = () => {
     let responseNewOrder = newOrder(orderdistribution.attributes);
     responseNewOrder.then((response) => {
       clear();
+      cart.id_pedido = response.data.id;
       cart.items.forEach(async (item: any) => {
         const resultStock = getStockByArticleAndSucursal(origen.sucursal, item.article.id);
         resultStock.then((response) => {

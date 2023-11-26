@@ -29,6 +29,7 @@ import { ShoppingCartArticle, ShoppingCartItem } from "./types";
 import { pricingCalculator } from "helpers/pricingCalculator";
 import { useQuery } from "react-query";
 import { getStockBySucursal } from "services/api/subsidiary";
+import { error } from "console";
 
 export interface AddItemModalProps {
   isOpen: boolean;
@@ -55,12 +56,23 @@ export const AddItemModal = (props: AddItemModalProps) => {
   useEffect(() => {
     try {
       const { price, tag } = pricingCalculator(
+        //article?.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
         article?.attributes.ruptura_precio.data.attributes.rangos,
         amount!
       );
+      console.log("RUPTURa-----");
+      console.log(price);
+      console.log(tag);
+      console.log(amount);
+      console.log(article);
+      console.log(article?.attributes.ruptura_precio.data.attributes.rangos);
+      console.log(article?.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data);
+      
       setCustomPrice(price);
       tagRef.current = tag;
     } catch (erro) {
+      console.log(erro);
+      
       if(!type)
       {toast({
         status: "error",

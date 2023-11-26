@@ -178,7 +178,8 @@ const ExistingClient = (props: ClientInformationProps) => {
 
     let factura;
     if (!containTaxClasification) {
-      factura = new IInvoice(client?.attributes.correo, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+      factura = new IInvoice(client?.attributes.correo,location.state.cart.cart.id_pedido,
+        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
         receptor, conceptos);
     }
     if (containTaxClasification) {
@@ -197,11 +198,13 @@ const ExistingClient = (props: ClientInformationProps) => {
         ]
       };
 
-      factura = new IInvoice(client?.attributes.correo, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+      factura = new IInvoice(client?.attributes.correo, location.state.cart.cart.id_pedido,
+        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
         receptor, conceptos, impuesto_total);
     }
 
-    console.log(factura);
+    console.log("location----------------------------");
+    console.log(location);
     sendInvoice(factura)
   }
 
@@ -373,7 +376,7 @@ const ExistingClient = (props: ClientInformationProps) => {
         // 
         >
           <Box display='flex' justifyContent='center' alignItems='center' height='100vh' ref={componentRef}>
-            <NotaPrint client={location.state.cart.cart.client} items={location.state.cart.cart.items} folio={detail.data.id} />
+            <NotaPrint client={location.state.cart.client} items={location.state.cart.cart.items} folio={detail.data.id} />
           </Box>
           {/* <Nota client={cart.cart.client}  items={cart.cart.cart.items}/> */}
         </Dialog>

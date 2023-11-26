@@ -77,7 +77,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     iva:0,
     // cantidad_stock: 0,
     unidad_de_medida: 0,
-    isFacturable: false
+    isFacturable: false,
+    clave_prod_serv: ""
   })
   const [stock, setStock] = useState({
     cantidad: 0,
@@ -110,7 +111,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         iva: data.articulo ? data.articulo.data.attributes.iva : 0,
         isFacturable: data.articulo ? data.articulo.data.attributes.isFacturable: false,
         // cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
-        unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : ''
+        unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : '',
+        clave_prod_serv: data.articulo ? data?.articulo?.data?.attributes?.clave_prod_serv : ''
       })
       setStock({
         cantidad: data.cantidad ? data.cantidad : 0,
@@ -171,11 +173,20 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
       return
     }
 
+    //Valida que ingrese el clave_prod_serv solicitado para facturar
+    if (facturable && product.clave_prod_serv == "") {
+      toast({
+        title: "Asegurese de ingresar el codigo del producto facturable",
+        status: "warning",
+      });
+      return;
+    }
+
     updateProduct.mutate({ id: props.referenceId, edit: { data: product }, stock: { data: stock } }, {
       onSuccess: async () => {
         queryClient.invalidateQueries(['products'])
         setProduct(initProduct)
-        //setStock(initStock)
+        //setStock(initStinitProductinitProductock)
         //Actualiza el stock de las unidades
         await saveStockProd(props.referenceId, stockProduct, product, selectedStoresForDeletion);
         onHandleHide()
@@ -323,6 +334,14 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
               />
             </div>
             <br></br>
+            {
+              facturable ? (
+                <div className="field">
+              <h5>Clave de producto facturable</h5>
+              <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
+            </div>
+              ) : ""
+            }
             { facturable && <div className="field">
               <label htmlFor="name">Inventario fiscal</label>
               <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />

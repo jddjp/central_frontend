@@ -13,5 +13,6 @@ declare interface ShoppingCartItem {
 
 declare interface ShoppingCart {
   items: ShoppingCartItem[],
+  id_pedido: number
 }
 

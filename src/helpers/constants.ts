@@ -16,7 +16,8 @@ const initProduct = {
   isFisical: false,
   fresh: true,
   unidad_de_medida: 0,
-  isFacturable: false
+  isFacturable: false,
+  clave_prod_serv: ""
   // cantidad_stock:0,
 }
 

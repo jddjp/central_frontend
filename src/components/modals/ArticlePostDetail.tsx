@@ -75,6 +75,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     fresh: true,
     unidad_de_medida: 0,
     isFacturable: false,
+    clave_prod_serv: ""
     // cantidad_stock: 0,
   });
 
@@ -98,6 +99,14 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     if (product.inventario_fisico < validLimitStock(stockProduct)) {
       toast({
         title: "El stock por sucursal es mayor al stock general",
+        status: "warning",
+      });
+      return;
+    }
+    //Valida que ingrese el clave_prod_serv solicitado para facturar
+    if (facturable && product.clave_prod_serv == "") {
+      toast({
+        title: "Asegurese de ingresar el codigo del producto facturable",
         status: "warning",
       });
       return;
@@ -258,6 +267,14 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               />
             </div>
 
+            {
+              facturable ? (
+                <div className="field">
+              <h5>Clave de producto facturable</h5>
+              <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
+            </div>
+              ) : ""
+            }
             <br></br>
             {facturable && (
               <div className="field">
