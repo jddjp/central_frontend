@@ -17,6 +17,12 @@ export const deletePromotion = async (id: number) => {
 }
 
 export const createPromotion = async (param: any) => {
+
+  const file = new FormData();
+  file.append("files", param.promotion.foto);
+  const fileSave = await axios.post(`${API_URL}/upload`, file);
+  param.promotion.foto = fileSave.data[0].id
+
   let data = {data : param.promotion}
     data = (await axios.post(`${API_URL}/promociones`, data)).data;
   return data;

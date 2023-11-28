@@ -43,14 +43,23 @@ const Promotion = (props: PropsPromotionDetail) => {
     fecha_inicio: "",
     fecha_fin: "",
     estado: "pendiente",
+    foto:"",
     procedimiento_aplicar: "N",
   });
-
+  const toast = useToast();
   const onHandleHide = () => {
     props.onHandleHide();
   };
 
   const handleSavePromotion = () => {
+
+    if(promotion.foto == ""){
+      toast({
+        title: "Para crear una nueva promoción se debe subir una imagen",
+        status: "error",
+      });
+      return
+    }
     cPromotion.mutate(
       { promotion },
       {
@@ -97,7 +106,7 @@ const Promotion = (props: PropsPromotionDetail) => {
     setPromotion({ ...promotion, ['fecha_fin']: e.value });
   }
   const onUpload = (e: any) => {
-    //setProduct({ ...product, [e.target.name]: e.target.files[0] });
+    setPromotion({ ...promotion, [e.target.name]: e.target.files[0] });
   }
 
   return (
