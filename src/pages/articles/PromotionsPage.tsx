@@ -71,11 +71,12 @@ const PromotionsPage = () => {
 
   if (promotions != undefined) {
     promotions.forEach((promocion: any) => {
+      var url : string = `${BASE_URL}` + promocion.attributes.foto.data.attributes.url
       payments.push(
         <Card maxW="sm">
           <CardBody>
             <Image
-              src="https://img.freepik.com/psd-premium/plantilla-supermercado-redes-sociales-grandes-ofertas-brasil_220664-1178.jpg?w=826"
+              src={url}
               alt="Green double couch with wooden legs"
               borderRadius="lg"
             />
