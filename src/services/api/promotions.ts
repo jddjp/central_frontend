@@ -2,7 +2,7 @@ import axios from 'axios'
 import { API_URL } from '../../config/env';
 
 export const getPromotions = async () => {
-  const { data } = await axios.get(`${API_URL}/promociones?populate=articulo`)
+  const { data } = await axios.get(`${API_URL}/promociones?populate=articulo&populate=foto`)
   return data.data
 }
 
