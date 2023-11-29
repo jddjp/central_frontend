@@ -6,6 +6,8 @@ import {
   Button,
   useToast,
   Checkbox,
+  Text,
+  Badge,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "./Header";
@@ -36,7 +38,11 @@ import { SERVER_ERROR_MESSAGE } from "services/api/errors";
 import { extractUnidad } from "services/api/stocks";
 import { useTicketDetail } from "../../../zustand/useTicketDetails";
 import { useAuth } from "hooks/useAuth";
-import { getStockByArticleAndSucursal, updateStockSucursal } from "services/api/articles";
+import {
+  getStockByArticleAndSucursal,
+  getSucursal,
+  updateStockSucursal,
+} from "services/api/articles";
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -83,7 +89,7 @@ export const CreateOrderPage = () => {
     sucursal: 0,
     bodega: 0,
     receptor: 0,
-    desc: ""
+    desc: "",
   });
 
   const [stockId, setstockId] = useState(0);
@@ -246,8 +252,8 @@ export const CreateOrderPage = () => {
       let responseNewOrder = newOrder(order.attributes);
       responseNewOrder.then((response) => {
         setOrderData(response);
-        
-      cart.id_pedido = response.data.id;
+
+        cart.id_pedido = response.data.id;
         cart.items.forEach((item: any) => {
           extractUnidad(item.article.id).then((extract: number) => {
             var itemNew: Item = {
@@ -320,12 +326,14 @@ export const CreateOrderPage = () => {
       setArticle(article);
       if (!type) {
         onOpenAddItemModal();
-      }
-      else {
-        const result = await getStockByArticleAndSucursal(origen.sucursal, article.id);
-        article.attributes.cantidad_stock = result[0].attributes.cantidad
-        setstockId(result[0].id)
-        setArticle(article)
+      } else {
+        const result = await getStockByArticleAndSucursal(
+          origen.sucursal,
+          article.id
+        );
+        article.attributes.cantidad_stock = result[0].attributes.cantidad;
+        setstockId(result[0].id);
+        setArticle(article);
         onOpenAddItemModal();
       }
     } else {
@@ -416,10 +424,16 @@ export const CreateOrderPage = () => {
       clear();
       cart.id_pedido = response.data.id;
       cart.items.forEach(async (item: any) => {
-        const resultStock = getStockByArticleAndSucursal(origen.sucursal, item.article.id);
+        const resultStock = getStockByArticleAndSucursal(
+          origen.sucursal,
+          item.article.id
+        );
         resultStock.then((response) => {
-          const update = updateStockSucursal((response[0].attributes.cantidad - item.amount), response[0].id)
-        })
+          const update = updateStockSucursal(
+            response[0].attributes.cantidad - item.amount,
+            response[0].id
+          );
+        });
         extractUnidad(item.article.id).then((extract: number) => {
           var itemNew: Item = {
             id: 0,
@@ -450,12 +464,31 @@ export const CreateOrderPage = () => {
       });
     });
   };
+  const [nameSuc, setNameSuc] = useState("");
+  const getSucursalName = () => {
+    const sucurs: Number = Number(localStorage.getItem("sucursal"));
+    var s = getSucursal(sucurs);
+    s.then((response) => {
+      setNameSuc(response.attributes.nombre);
+    });
+    return nameSuc;
+  };
+
   return (
     <Formik
       initialValues={{ client: initialClient, payment: initialPayment }}
-      onSubmit={() => { }}
+      onSubmit={() => {}}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
+        <Text fontWeight="bold" textAlign="end">
+          {" "}
+          SUCURSAL:{" "}
+          <Badge ml="1" fontSize="1.2em" colorScheme="red">
+            {getSucursalName()}
+          </Badge>
+        </Text>
+        <Stack direction="row" textAlign="end"></Stack>
+
         {auth.user?.roleCons === "Supervisor" && (
           <Checkbox
             colorScheme="red"
@@ -471,7 +504,12 @@ export const CreateOrderPage = () => {
           </Checkbox>
         )}
 
-        {!type &&<Header selectedArticle={article} onSelectArticle={handleSelectArticle} />}
+        {!type && (
+          <Header
+            selectedArticle={article}
+            onSelectArticle={handleSelectArticle}
+          />
+        )}
         <OrderMenu
           onOpenCatalogueModal={onOpenCatalogueModal}
           onOpenConfirmationClear={onOpenConfirmationClear}
@@ -488,12 +526,14 @@ export const CreateOrderPage = () => {
           articles={articles}
           setArticles={setArticles}
         />
-        {type  && <Header
-          selectedArticle={article}
-          onSelectArticle={handleSelectArticle}
-          type={type}
-          origen={origen}
-          />}
+        {type && (
+          <Header
+            selectedArticle={article}
+            onSelectArticle={handleSelectArticle}
+            type={type}
+            origen={origen}
+          />
+        )}
 
         <Cart
           minH="85vh"
