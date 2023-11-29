@@ -1,4 +1,14 @@
-import { AspectRatio, Box, Button, Image, Skeleton, Stack, StackProps, Tab, TabList, TabPanel,
+import {
+  AspectRatio,
+  Box,
+  Button,
+  Image,
+  Skeleton,
+  Stack,
+  StackProps,
+  Tab,
+  TabList,
+  TabPanel,
   TabPanels,
   Tabs,
   Text,
@@ -14,22 +24,22 @@ import { Dispatch, useEffect } from "react";
 
 interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;
-  amount: number,
-  setAmount: Dispatch<number>,
-  stock: any,
-  type : boolean,
-  origen?: { bodega: number; sucursal: number; receptor: number,desc:string };
+  amount: number;
+  setAmount: Dispatch<number>;
+  stock: any;
+  type: boolean;
+  origen?: { bodega: number; sucursal: number; receptor: number; desc: string };
 }
 
 const MotionStack = motion(Stack);
 
 export const ArticleCard = (props: ArticleCardProps) => {
-
-  const toast = useToast()
-  const { article, children, amount, setAmount,stock,type,origen, ...rest } = props;
-  const { nombre, descripcion ,cantidad_stock} = article.attributes;
+  const toast = useToast();
+  const { article, children, amount, setAmount, stock, type, origen, ...rest } =
+    props;
+  const { nombre, descripcion, cantidad_stock } = article.attributes;
   useEffect(() => {
-    if (amount > stock?.attributes.cantidad && !type) {
+    if (amount > 10 && !type) {
       setAmount(1)
       toast({
         title: 'Stock excedido',
@@ -37,7 +47,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
         status: 'error'
       })
     }
-  }, [amount, setAmount, stock?.attributes.cantidad, toast])
+  }, [amount, setAmount, 10, toast]);
 
   return (
     <Tabs isLazy={true}>
@@ -64,11 +74,13 @@ export const ArticleCard = (props: ArticleCardProps) => {
             </Stack>
 
             <Stack dir="column" w="full">
-            {stock?.attributes.cantidad === 0 ? 
-                <Button colorScheme="brand" disabled marginTop='4rem'>
+              {false? (
+                <Button colorScheme="brand" disabled marginTop="4rem">
                   Sin Stock
-                </Button> : children
-              }
+                </Button>
+              ) : (
+                children
+              )}
             </Stack>
           </Stack>
         </TabPanel>
@@ -91,16 +103,21 @@ export const ArticleCard = (props: ArticleCardProps) => {
               <Stack>
                 <Text fontWeight="semibold">Unidad</Text>
                 <Text>
-                  {article?.attributes.unidad_de_medida.data.attributes.nombre !== '' ? article?.attributes.unidad_de_medida.data.attributes.nombre :
-                    "No hay una unidad de medida asignada."}
+                  {article?.attributes.unidad_de_medida.data.attributes
+                    .nombre !== ""
+                    ? article?.attributes.unidad_de_medida.data.attributes
+                        .nombre
+                    : "No hay una unidad de medida asignada."}
                 </Text>
               </Stack>
 
               <Stack>
-                <Text fontWeight="semibold">{type?"Cantidad en la sucursal " + origen?.desc:"Cantidad"}</Text>
-                <Text>
-                  {cantidad_stock ?? 0}
+                <Text fontWeight="semibold">
+                  {type
+                    ? "Cantidad en la sucursal " + origen?.desc
+                    : "Cantidad"}
                 </Text>
+                <Text>{cantidad_stock ?? 0}</Text>
               </Stack>
             </Stack>
           </MotionStack>

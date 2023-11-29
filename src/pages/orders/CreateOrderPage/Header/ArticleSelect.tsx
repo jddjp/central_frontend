@@ -8,6 +8,7 @@ import {
 } from "react-select";
 import { asyncSelectAppStyles } from "theme";
 import {
+  searchAriclesByStock,
   searchArticles,
   searchArticlesByOrigen,
   searchArticlesBySucursal,
@@ -20,7 +21,7 @@ const Input = (props: any) => <components.Input {...props} isHidden={false} />;
 
 export interface ArticleSelectProps {
   article: ShoppingCartArticle | null;
-  setArticle: (article: ShoppingCartArticle | null) => void;
+  setArticle: (article: ShoppingCartArticle | null | any) => void;
   type?: boolean;
   origen?: { bodega: number; sucursal: number; receptor: number };
 }
@@ -56,12 +57,14 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   };
 
   const handleChange = (
-    option: MultiValue<ShoppingCartArticle> | SingleValue<ShoppingCartArticle>
+    option: MultiValue<ShoppingCartArticle> | SingleValue<ShoppingCartArticle> | any
   ) => {
-    setArticle(option as ShoppingCartArticle);
+    console.log(option.attributes.articulo.data)
+    setArticle(option.attributes.articulo.data as ShoppingCartArticle);
     setInputValue(
-      option ? (option as ShoppingCartArticle).attributes.nombre : ""
+      option ? (option.attributes.articulo.data as ShoppingCartArticle).attributes.nombre : ""
     );
+    console.log(article)
     setInputValue("");
   };
 
@@ -92,18 +95,28 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
 
   };
 
-  const getArticleLabel = (article: ShoppingCartArticle) => {
-    return article.attributes.nombre;
+  const getArticleLabel = (article: any) => {
+    //console.log(article.attributes.articulo.data.attributes)
+    //return article.attributes.nombre;
+    
+    return article.attributes.articulo.data.attributes.nombre
   }
   const handleAutocomplete = async (search: string) => {
     // if (search.length < 3) return [];
-    const result = await searchArticles(search);
-    // console.log("===========Productos============");
-    // console.log(result.data);
-    return result.data;
+    const sucurs: Number = Number(localStorage.getItem("sucursal"));
+
+    const resultA = await searchAriclesByStock(sucurs.toString())
+    ///var s = getSucursal(sucurs);
+    //const result = await searchArticles(search);
+
+    return resultA.data;
   };
 
-  const getArticleValue = (article: ShoppingCartArticle) => { return article.id.toString(); }
+  const getArticleValue = (article: any) => { 
+    return article.attributes.articulo.data.id.toString()
+    //return article.id.toString()
+  }
+    //return article.id.toString(); }
   return (
     <>
       { !type &&

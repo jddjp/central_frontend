@@ -24,6 +24,10 @@ export const searchArticles = async ( name: string) => {
   return data;
 };
 
+export const searchAriclesByStock = async (sucusal : string) =>{
+  const { data } = await axios.get(`https://api-dev.comercializadorasanjose.mx/api/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusal}`)
+  return data
+}
 
 export const searchArticlesByOrigen = async ( sucursal: string) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucursal}`)
