@@ -24,12 +24,10 @@ import {
 } from "components/Counter";
 import { useEffect, useRef, useState } from "react";
 import { EditablePrice } from "components/EditablePrice";
-// import { getArticlePrices } from "services/api/articles";
 import { ShoppingCartArticle, ShoppingCartItem } from "./types";
 import { pricingCalculator } from "helpers/pricingCalculator";
 import { useQuery } from "react-query";
 import { getStockBySucursal } from "services/api/subsidiary";
-import { error } from "console";
 
 export interface AddItemModalProps {
   isOpen: boolean;
@@ -50,34 +48,30 @@ export const AddItemModal = (props: AddItemModalProps) => {
   const [priceBreakage, setPriceBreakage] = useState<PriceBreakage[] | null>(
     null
   );
-  const { data: stock } = useQuery(["stock", article?.id], () =>
-    getStockBySucursal(article!.id)
-  );
+  const { data: stock } = useQuery(["stock", article?.id], () => {
+    if (article != null) {
+      return getStockBySucursal(article!.id);
+    } else {
+      return [];
+    }
+  });
   useEffect(() => {
     try {
       const { price, tag } = pricingCalculator(
-        //article?.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
         article?.attributes.ruptura_precio.data.attributes.rangos,
         amount!
       );
-      console.log("RUPTURa-----");
-      console.log(price);
-      console.log(tag);
-      console.log(amount);
-      console.log(article);
-      console.log(article?.attributes.ruptura_precio.data.attributes.rangos);
-      console.log(article?.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data);
-      
+  
       setCustomPrice(price);
       tagRef.current = tag;
     } catch (erro) {
-      console.log(erro);
-      
-      if(!type)
-      {toast({
-        status: "error",
-        description: "Articulo podria no tener ruptura disponible",
-      });}
+
+      if (!type) {
+        toast({
+          status: "error",
+          description: "Articulo podria no tener ruptura disponible",
+        });
+      }
     }
   }, [amount, article, toast]);
 
@@ -110,7 +104,6 @@ export const AddItemModal = (props: AddItemModalProps) => {
     } else {
       if (type) {
         if (article?.attributes.cantidad_stock! < Number(event.target.value)) {
-          console.log(article?.attributes.cantidad_stock!)
           toast({
             title: "Uppps!!!",
             description: "No hay suficiente Stock en la sucursal",
@@ -121,16 +114,13 @@ export const AddItemModal = (props: AddItemModalProps) => {
           return;
         }
       }
-      console.log(event.target.value);
       setAmount(Number(event.target.value));
     }
   };
 
   const handleStepAmount = (step: number) => {
     if (type) {
-      
-      if (article?.attributes.cantidad_stock! < (amount)) {
-        console.log(amount)
+      if (article?.attributes.cantidad_stock! < amount) {
         toast({
           title: "Uppps!!!",
           description: "No hay suficiente estock en la sucursal",
@@ -138,13 +128,11 @@ export const AddItemModal = (props: AddItemModalProps) => {
           duration: 5000,
           isClosable: true,
         });
-        
+
         return () => setAmount(article?.attributes.cantidad_stock!);
-      }
-      else{
+      } else {
         return () => setAmount((prev) => (prev || 0) + step);
       }
-    
     } else {
       return () => setAmount((prev) => (prev || 0) + step);
     }
@@ -230,11 +218,6 @@ export const AddItemModal = (props: AddItemModalProps) => {
                         />
                       )}
                     </HStack>
-                    {/* {customPrice && (
-                      <Text color="gray.400" fontSize="sm">
-                        El precio original es de ${article?.attributes.precio_lista}
-                      </Text>
-                    )} */}
                     <Counter>
                       <DecrementButton onClick={handleStepAmount(-1)} />
                       <InputCounter
