@@ -51,17 +51,17 @@ export const CatalogueModal = (props: CatalogueModalProps) => {
                 <p>Loading...</p>
               ) : (
                 <CatalogueGrid>
-                  {value!.data.map((a) => (
+                  {value.map((a : any) => (
                     <HoverOverlay
                       key={a.id}
                       wrapperProps={{
                         rounded: "sm",
                         cursor: "pointer",
-                        onClick: handleSetSelectArible(a),
+                        onClick: handleSetSelectArible(a.attributes.articulo.data),
                       }}
                     >
                       <CatalogueArticle
-                        article={a}
+                        article={a.attributes.articulo.data}
                       />
                     </HoverOverlay>
                   ))}

@@ -25,7 +25,7 @@ export const searchArticles = async ( name: string) => {
 };
 
 export const searchAriclesByStock = async (sucusal : string) =>{
-  const { data } = await axios.get(`https://api-dev.comercializadorasanjose.mx/api/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusal}`)
+  const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusal}`)
   return data
 }
 
@@ -97,7 +97,7 @@ export const deleteArticulosSustituto = async (payload: number) => {
 
 export const listArticles = async (
   options: PaginationConfig = defaultPaginationConfig
-): Promise<ListResponse<SearchArticle>> => {
+): Promise<any> => {
   let queryParams: Record<string, any> = {
     populate: "foto,unidad_de_medida",
     "pagination[page]": options.page,
@@ -106,9 +106,12 @@ export const listArticles = async (
   const response: ListResponse<SearchArticle> = (
     await axios.get(`${API_URL}/articulos`, { params: queryParams })
   ).data;
-  // response.data = response.data.map(fixArticleMediaUrls);
 
-  return response;
+  const { data }  = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${4}`)
+ // console.log(data.data)
+
+  //console.log(response.data)
+  return data.data;
 };
 
 export const getArticlePrices = async (
