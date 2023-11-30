@@ -107,19 +107,17 @@ export const CreateOrderPage = () => {
       });
       return;
     }
+   
+    if (cliente === undefined || cliente == null) {
 
-    if (cliente === undefined) {
-      toast({
-        title: "Indicar cliente",
-        description:
-          "Se requiere el nombre del cliente para poder identificar el pedido",
-        status: "warning",
-        duration: 9000,
-        isClosable: true,
-      });
-      return;
+      // Todo poner un id existente
+      setCliente(
+        {
+          "id": 13,
+          "label": "Jose Daniel Daniel"
+        })
     }
-
+   
     if (client.id === undefined) {
       try {
         //Registrar cliente nuevo con datos dumi sin registro
@@ -491,6 +489,9 @@ export const CreateOrderPage = () => {
       onSubmit={() => {}}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
+      <Text fontWeight="bold" textAlign="center" fontSize="1.2em">
+         Nueva Orden
+        </Text>
         <Text fontWeight="bold" textAlign="end">
           {" "}
           SUCURSAL:{" "}
