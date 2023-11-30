@@ -30,7 +30,7 @@ import ExistingClient from "pages/payments/invoice/ExistingClient";
 import { newItem, newOrder } from "services/api/orders";
 import { sendRandomId, sendRandomIdString } from "helpers/randomIdUser";
 import { getDispatchers, getLibradores } from "services/api/users";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { newCliente } from "../../../services/api/cliente";
 import { AxiosError } from "axios";
 
@@ -41,8 +41,10 @@ import { useAuth } from "hooks/useAuth";
 import {
   getStockByArticleAndSucursal,
   getSucursal,
+  listArticlesBySucursal,
   updateStockSucursal,
 } from "services/api/articles";
+import async from "react-select/dist/declarations/src/async/index";
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -59,7 +61,6 @@ export interface LocationOrdenEdit {
 
 export const CreateOrderPage = () => {
   const [type, setType] = useState(false);
-  var [orden, setOrder] = useState<any>();
   const auth = useAuth();
   const { setOrderData } = useTicketDetail();
   const location = useLocation();
@@ -465,14 +466,24 @@ export const CreateOrderPage = () => {
     });
   };
   const [nameSuc, setNameSuc] = useState("");
-  const getSucursalName = () => {
-    const sucurs: Number = Number(localStorage.getItem("sucursal"));
-    var s = getSucursal(sucurs);
+  const queryClient = useQueryClient();
+  var suc: Number = Number(localStorage.getItem("sucursal"));
+  const GetSucursalName = () => {
+    var s = getSucursal(suc);
     s.then((response) => {
       setNameSuc(response.attributes.nombre);
     });
+
+    //
     return nameSuc;
   };
+  var { data: value, refetch } = useQuery(["listaProductos"], () =>
+    listArticlesBySucursal(suc)
+  );
+
+  useEffect(() => {
+    refetch()
+  }, []);
 
   return (
     <Formik
@@ -484,7 +495,7 @@ export const CreateOrderPage = () => {
           {" "}
           SUCURSAL:{" "}
           <Badge ml="1" fontSize="1.2em" colorScheme="red">
-            {getSucursalName()}
+            {GetSucursalName()}
           </Badge>
         </Text>
         <Stack direction="row" textAlign="end"></Stack>
@@ -579,6 +590,7 @@ export const CreateOrderPage = () => {
 
         <Portal>
           <CatalogueModal
+            valores={value}
             isOpen={isOpenCatalogueModal}
             onClose={onCloseCatalogueModal}
             onSelectArticle={handleSelectArticleOnCatalogueModal}

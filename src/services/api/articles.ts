@@ -96,8 +96,8 @@ export const deleteArticulosSustituto = async (payload: number) => {
 };
 
 export const listArticles = async (
-  options: PaginationConfig = defaultPaginationConfig
-): Promise<any> => {
+  options: PaginationConfig = defaultPaginationConfig,
+) => {
   let queryParams: Record<string, any> = {
     populate: "foto,unidad_de_medida",
     "pagination[page]": options.page,
@@ -107,12 +107,22 @@ export const listArticles = async (
     await axios.get(`${API_URL}/articulos`, { params: queryParams })
   ).data;
 
-  const { data }  = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${4}`)
+  //const { data }  = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${4}`)
  // console.log(data.data)
 
   //console.log(response.data)
+  return response;
+};
+
+
+export const listArticlesBySucursal = async (
+  sucusar:Number
+) => {
+  const { data }  = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusar}`)
   return data.data;
 };
+
+
 
 export const getArticlePrices = async (
   article: Article
