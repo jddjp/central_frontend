@@ -270,9 +270,9 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             {
               facturable ? (
                 <div className="field">
-              <h5>Clave de producto facturable</h5>
-              <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
-            </div>
+                  <h5>Clave de producto facturable</h5>
+                  <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
+                </div>
               ) : ""
             }
             <br></br>
@@ -388,6 +388,9 @@ const ArticleDetail = (props: PropsArticleDetail) => {
                 />
               </form>
             </div>
+          </TabPanel>
+          <TabPanel header="Ruptura de precios" leftIcon="pi pi-fw pi-calendar">
+
           </TabPanel>
           <TabPanel header="Inventario" leftIcon="pi pi-fw pi-calendar">
             {/*//Lista donde estara disponible la sucursal*/}

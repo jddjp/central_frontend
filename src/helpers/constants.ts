@@ -17,7 +17,19 @@ const initProduct = {
   fresh: true,
   unidad_de_medida: 0,
   isFacturable: false,
-  clave_prod_serv: ""
+  clave_prod_serv: "",
+  ruptura_precio: {
+    data: {
+      attributes: {
+        rango_ruptura_precios:{
+          data : [{
+            precio: 0,
+            cantidad: 0
+          }]
+        }
+      }
+    }
+  }
   // cantidad_stock:0,
 }
 

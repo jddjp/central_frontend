@@ -1,4 +1,4 @@
-import { useState, SetStateAction, Dispatch, useRef } from 'react';
+import React, { useState, SetStateAction, Dispatch, useRef, useEffect } from 'react';
 import { Badge, Box, Input, Stack, Text, useToast } from '@chakra-ui/react';
 import Select, { SingleValue } from 'react-select';
 import { client, getClient, getClients } from 'services/api/cliente';
@@ -17,8 +17,25 @@ import { Dialog } from 'primereact/dialog';
 import NotaPrint from 'pages/orders/CreateOrderPage/NotaSimple/NotaPrint';
 import { useReactToPrint } from 'react-to-print';
 import { useTicketDetail } from "../../../zustand/useTicketDetails";
+import { DataScroller } from 'primereact/datascroller';
 
+import { ProductService } from 'services/ProductService';
+import { Rating } from 'primereact/rating';
+import { Tag } from 'primereact/tag';
 export interface ClientInformationProps {
+}
+
+interface Product {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  category: string;
+  quantity: number;
+  inventoryStatus: string;
+  rating: number;
 }
 
 const ExistingClient = (props: ClientInformationProps) => {
@@ -203,8 +220,6 @@ const ExistingClient = (props: ClientInformationProps) => {
         receptor, conceptos, impuesto_total);
     }
 
-    console.log("location----------------------------");
-    console.log(location);
     sendInvoice(factura)
   }
 
@@ -290,6 +305,58 @@ const ExistingClient = (props: ClientInformationProps) => {
     );
   };
 
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+      ProductService.getProducts().then((data) => setProducts(data));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getSeverity = (product: Product) => {
+      switch (product.inventoryStatus) {
+          case 'INSTOCK':
+              return 'success';
+
+          case 'LOWSTOCK':
+              return 'warning';
+
+          case 'OUTOFSTOCK':
+              return 'danger';
+
+          default:
+              return null;
+      }
+  };
+
+  const itemTemplate = (data:any) => {
+    return (
+        <div className="col-12">
+            <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={`https://primefaces.org/cdn/primereact/images/product/${data.image}`} alt={data.name} />
+                <div className="flex flex-column lg:flex-row justify-content-between align-items-center xl:align-items-start lg:flex-1 gap-4">
+                    <div className="flex flex-column align-items-center lg:align-items-start gap-3">
+                        <div className="flex flex-column gap-1">
+                            <div className="text-2xl font-bold text-900">{data.name}</div>
+                            <div className="text-700">{data.description}</div>
+                        </div>
+                        <div className="flex flex-column gap-2">
+                            <Rating value={data.rating} readOnly cancel={false}></Rating>
+                            <span className="flex align-items-center gap-2">
+                                <i className="pi pi-tag product-category-icon"></i>
+                                <span className="font-semibold">{data.category}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex flex-row lg:flex-column align-items-center lg:align-items-end gap-4 lg:gap-2">
+                        <span className="text-2xl font-semibold">${data.price}</span>
+                        <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
+                        <Tag value={data.inventoryStatus} severity={getSeverity(data)}></Tag>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+  }
+
   return (
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt='3' ml='3' mr='3'>
       <Text fontWeight='bold' fontSize={18}> Cliente</Text>
@@ -347,6 +414,10 @@ const ExistingClient = (props: ClientInformationProps) => {
               </div>
             </GridItem>
           </Grid>
+        </Card>
+
+        <Card title="Pedido" >
+            <DataScroller value={products} itemTemplate={itemTemplate} rows={5} inline scrollHeight="500px" header="Scroll Down to Load More" />
         </Card>
 
         <Box h='40px'>

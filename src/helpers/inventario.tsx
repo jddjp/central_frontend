@@ -1,4 +1,5 @@
 
+import { Button } from 'primereact/button';
 import {ColumnEditorOptions, ColumnEvent } from 'primereact/column';
 import { InputNumber, InputNumberChangeEvent, InputNumberValueChangeEvent } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
@@ -79,6 +80,8 @@ export const priceBodyTemplate = (rowData: any) => {
     return ""
   };
 
+ 
+
   export const priceEditor = (options: ColumnEditorOptions) => {
     const options2: any = options.editorCallback;
     if (options2) {
@@ -93,7 +96,6 @@ export const priceBodyTemplate = (rowData: any) => {
 
   export const cellEditor = (options: ColumnEditorOptions) => {
     if (options.field === 'attributes.cantidad') return priceEditor(options);
-    if (options.field === 'attributes.sucursal.data.attributes.nombre') return options.value;
     else return textEditor(options);
   };
 

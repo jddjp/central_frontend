@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { editProduct, getProductById, getProductByIdAndStore, getStocksByProductId, getStocksProductId } from "services/api/products";
-import { Link, Stack, useToast } from '@chakra-ui/react';
+import { Box, Flex, Link, Stack, useToast } from '@chakra-ui/react';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber, InputNumberChangeEvent, InputNumberValueChangeEvent } from 'primereact/inputnumber';
 import { MultiSelect } from 'primereact/multiselect';
@@ -20,7 +20,7 @@ import { DataTable } from 'primereact/datatable';
 import { Stock } from '../../types/Stock'
 import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil';
 import { Checkbox } from 'primereact/checkbox';
-        
+
 
 
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
@@ -74,11 +74,23 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     foto: "",
     isFiscal: false,
     isFisical: false,
-    iva:0,
+    iva: 0,
     // cantidad_stock: 0,
     unidad_de_medida: 0,
     isFacturable: false,
-    clave_prod_serv: ""
+    clave_prod_serv: "",
+    ruptura_precio: {
+      data: {
+        attributes: {
+          rango_ruptura_precios: {
+            data: [{
+              precio: 0,
+              cantidad: 0
+            }]
+          }
+        }
+      }
+    }
   })
   const [stock, setStock] = useState({
     cantidad: 0,
@@ -92,6 +104,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const [selectedStoresForDeletion, setSelectedStoresForDeletion] = useState(Array<number>); // Estado para los elementos seleccionados para eliminar
 
   const [stockProduct, setStockProduct] = useState([]);
+  const [rangosRupturaProductos, setRangosRupturaProductos] = useState<{
+
+  }[]>([]);
+
   const [stockProductTemp, setStockProductTemp] = useState<Stock[]>([]);
   useQuery(["productEdit", props.referenceId, props.referenceSucursal], () => getProductByIdAndStore(props.referenceId, props.referenceSucursal), {
     onSuccess(data: any) {
@@ -109,20 +125,24 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         isFisical: data.articulo ? data.articulo.data.attributes.isFisical : false,
         foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : '',
         iva: data.articulo ? data.articulo.data.attributes.iva : 0,
-        isFacturable: data.articulo ? data.articulo.data.attributes.isFacturable: false,
+        isFacturable: data.articulo ? data.articulo.data.attributes.isFacturable : false,
         // cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
         unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : '',
-        clave_prod_serv: data.articulo ? data?.articulo?.data?.attributes?.clave_prod_serv : ''
+        clave_prod_serv: data.articulo ? data?.articulo?.data?.attributes?.clave_prod_serv : '',
+        ruptura_precio: data.articulo ? data?.articulo?.data?.attributes?.ruptura_precio : ''
       })
       setStock({
         cantidad: data.cantidad ? data.cantidad : 0,
         unidad_de_medida: data.cantidad ? data.unidad_de_medida.data.id : '',
         sucursal: data.sucursal ? data.sucursal.data.id : '',
       })
-      setFacturable(data.articulo ? data.articulo.data.attributes.isFacturable: false)
-      if(data.articulo != undefined){
-      setPedidos(
-        [...data.articulo.data.attributes.orden_refills.data])
+      setFacturable(data.articulo ? data.articulo.data.attributes.isFacturable : false)
+      setRangosRupturaProductos(data.articulo ? data?.articulo?.data?.attributes?.ruptura_precio.data.attributes.rango_ruptura_precios.data : '')
+      console.log(rangosRupturaProductos);
+
+      if (data.articulo != undefined) {
+        setPedidos(
+          [...data.articulo.data.attributes.orden_refills.data])
       }
     },
   })
@@ -274,6 +294,11 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
     { field: 'attributes.cantidad', header: 'Cantidad' },
   ];
 
+  const columnsTableRuptura: ColumnMeta[] = [
+    { field: 'attributes.precio', header: 'Precio' },
+    { field: 'attributes.cantidad', header: 'Cantidad' },
+  ];
+
   const columnsTablePedidos: ColumnMeta[] = [
     { field: 'attributes.cantidad', header: 'Cantidad' },
     { field: 'attributes.createdAt', header: 'Fecha' },
@@ -298,24 +323,56 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const hideDialogOrder = () => {
   }
-  const changeTabs = async (index:any) => {
+  const changeTabs = async (index: any) => {
     setActiveIndex(index)
-    if(index == 1){
+    if (index == 1) {
       queryClient.invalidateQueries(["getStocksByProductId"]);
     }
-    if(index == 2){
+    if (index == 2) {
       queryClient.invalidateQueries(["products"]);
       queryClient.invalidateQueries(["productEdit"]);
     }
   };
+  const _handleAgregarRuptura = () => {
+    const rango = {
+      attributes: {
+        cantidad: "12",
+        precio: "1"
+      },
+      id: -1
+    }
+    setRangosRupturaProductos([...rangosRupturaProductos, rango])
+    console.log(rangosRupturaProductos);
+
+  }
+
+  const removeRango = (data: any, column:any) => {
+    console.log("data");
+    console.log(data);
+console.log(column);
+
+    return <Button icon="pi pi-times" rounded severity="danger" aria-label="Cancel" size="small" onClick={() => _handelRemoveRango(column.rowIndex)} />;
+  };
+
+  const _handelRemoveRango = (index: number) => {
+
+    
+
+    
+      //rangosRupturaProductos.splice(index, 1);
+      const nuevoArray = [...rangosRupturaProductos];
+    nuevoArray.splice(index, 1);
+      setRangosRupturaProductos(nuevoArray)
+    
+  }
+
   return (
     <Dialog style={{ width: '60%' }} header="DETALLE DEL ARTICULO" modal className="p-fluid"
       visible={props.isVisible}
       footer={productDialogFooter}
       onHide={onHandleHide}>
       <Stack spacing='1rem'>
-
-        <TabView  activeIndex={activeIndex} onTabChange={(e) =>{ changeTabs(e.index)}}>
+        <TabView activeIndex={activeIndex} onTabChange={(e) => { changeTabs(e.index) }}>
           <TabPanel header="Datos" leftIcon="pi pi-fw pi-home">
             <div className="field">
               <label htmlFor="name">Nombre</label>
@@ -337,21 +394,21 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             {
               facturable ? (
                 <div className="field">
-              <h5>Clave de producto facturable</h5>
-              <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
-            </div>
+                  <h5>Clave de producto facturable</h5>
+                  <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
+                </div>
               ) : ""
             }
-            { facturable && <div className="field">
+            {facturable && <div className="field">
               <label htmlFor="name">Inventario fiscal</label>
               <InputNumber value={product.inventario_fiscal} onChange={(e: any) => onInputNumberChange(e, 'inventario_fiscal')} required />
             </div>}
-           
+
             <div className="field">
-       
+
               <label htmlFor="name">Inventario fisico</label>
-              <InputNumber disabled={true}  value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
-              
+              <InputNumber disabled={true} value={product.inventario_fisico} onChange={(e: any) => onInputNumberChange(e, 'inventario_fisico')} required />
+
             </div>
             <div className="field">
               <label htmlFor="name">Descripción</label>
@@ -410,6 +467,28 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
             )}
           </TabPanel>
 
+          {/*Tabla de Ruptura de precios*/}
+          <TabPanel header="Ruptura de precios" leftIcon="pi pi-fw pi-dollar">
+            {product.ruptura_precio &&
+              <div>
+                <DataTable value={rangosRupturaProductos?.map((element: any) => element)} editMode="cell" tableStyle={{ minWidth: '50rem' }}>
+                  {columnsTableRuptura.map(({ field, header }) => {
+                    return <Column key={field} field={field} header={header} style={{ width: '25%' }} body={field === 'price' && priceBodyTemplate} editor={(options) => cellEditor(options)} onCellEditComplete={onCellEditComplete} />;
+                  })}
+                  <Column header={'Opciones'} style={{ width: '25%' }} body={removeRango}>
+
+                  </Column>
+                </DataTable>
+                <Flex align="center" color="gray.300">
+                  <Box>
+                    <Button label='Agregar' onClick={() => _handleAgregarRuptura()}>
+
+                    </Button>
+                  </Box>
+                </Flex>
+              </div>
+            }
+          </TabPanel>
           <TabPanel header="Inventario" leftIcon="pi pi-fw pi-calendar">
             {/*//Lista donde estara disponible la sucursal*/}
             <MultiSelect

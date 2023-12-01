@@ -107,7 +107,7 @@ export const getProductById = async (id: number) => {
 
 export const getProductByIdAndStore = async (id: number, sucursal: string) => {
   //populate=sucursal&populate=unidad_de_medida&populate=articulo&populate[1]=articulo.ruptura_precio&filters[articulo][id]=${id}
-  const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&populate[4]=articulo.unidad_de_medida&populate[5]=articulo.orden_refills&populate[7]=articulo.orden_refills.created__by&filters[articulo][id]=${id}`)
+  const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&populate[4]=articulo.unidad_de_medida&populate[5]=articulo.orden_refills&populate[7]=articulo.orden_refills.created__by&populate[8]=articulo.ruptura_precio.rango_ruptura_precios&filters[articulo][id]=${id}`)
   //const { data } = await axios.get(`${API_URL}/stocks?populate[1]=sucursal&populate[2]=unidad_de_medida&populate[3]=articulo.foto&filters[articulo][id]=${id}&filters[sucursal][id]=${sucursal}`)
 
   //console.log(data);
