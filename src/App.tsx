@@ -27,6 +27,9 @@ import AccountsPage from 'pages/accounts';
 import TaskBox from 'pages/taskbox';
 import Contador from 'pages/contador/index';
 import Asistencia from '../src/pages/asistencia/index';
+import { MenuCataloguePage } from 'pages/articles/MenuCataloguePage';
+import ClientesPage from 'pages/catalogues/Clientes';
+
 
 export const App = () => {
   useAuthInterceptors();
@@ -127,6 +130,20 @@ export const App = () => {
                 <CataloguePage />
               </RequiredAuthentication>
             }/>
+
+          <Route path="/menucatalogue"
+            element={
+              <RequiredAuthentication>
+                <MenuCataloguePage />
+              </RequiredAuthentication>
+            }/>
+          <Route path="/menucatalogue/clientes"
+            element={
+              <RequiredAuthentication>
+                <ClientesPage />
+              </RequiredAuthentication>
+            }/>
+            
           <Route path="/promotions"
             element={
               <RequiredAuthentication>
@@ -160,6 +177,8 @@ export const App = () => {
               </RequiredAuthentication>
             }/>
         </Route>
+
+        
       </Routes>
     </ChakraProvider>
   );

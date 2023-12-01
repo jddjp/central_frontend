@@ -15,7 +15,7 @@ export const DashboardSeller = () => {
     { name: "Pedidos existentes", route: "/orders" },
     { name: "Historial de venta", route: "/sales" },
     { name: "Promociones", route: "/promotions" },
-    { name: "Cátalogo", route: "/catalogue" },
+    { name: "Cátalogo", route: "/menucatalogue" },
     // {name: 'Articulos', route: '/articulos'},
     { name: "Lista de Asistencia", route: "/asistencia" },
   ];
@@ -79,13 +79,13 @@ export const DashboardSeller = () => {
   };
   return (
     <Stack spacing="3" w="80%" mx="auto" my="5">
-      <Text fontWeight="bold" textAlign="end">
+      {role != "Supervisor" &&<Text fontWeight="bold" textAlign="end">
           {" "}
           SUCURSAL:{" "}
           <Badge ml="1" fontSize="1.2em" colorScheme="red">
             {getSucursalName()}
           </Badge>
-        </Text>
+        </Text>}
       <Flex flex="1" dir="row" alignItems="center" justifyContent="center">
         <Menu flex="1" maxW="80%">
           {options.map((o: any) => (
