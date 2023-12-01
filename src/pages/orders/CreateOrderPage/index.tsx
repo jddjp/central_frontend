@@ -107,17 +107,15 @@ export const CreateOrderPage = () => {
       });
       return;
     }
-   
-    if (cliente === undefined || cliente == null) {
 
+    if (cliente === undefined || cliente == null) {
       // Todo poner un id existente
-      setCliente(
-        {
-          "id": 13,
-          "label": "Jose Daniel Daniel"
-        })
+      setCliente({
+        id: 13,
+        label: "Jose Daniel Daniel",
+      });
     }
-   
+
     if (client.id === undefined) {
       try {
         //Registrar cliente nuevo con datos dumi sin registro
@@ -231,6 +229,7 @@ export const CreateOrderPage = () => {
           (date.getSeconds() < 10
             ? "0" + date.getSeconds()
             : date.getSeconds()),
+        sucursal: Number(localStorage.getItem("sucursal")),
         estatus: "pendiente",
         distribution: false,
         librador: sendRandomId(libradores),
@@ -464,7 +463,7 @@ export const CreateOrderPage = () => {
     });
   };
   const [nameSuc, setNameSuc] = useState("");
-  const queryClient = useQueryClient();
+
   var suc: Number = Number(localStorage.getItem("sucursal"));
   const GetSucursalName = () => {
     var s = getSucursal(suc);
@@ -480,7 +479,7 @@ export const CreateOrderPage = () => {
   );
 
   useEffect(() => {
-    refetch()
+    refetch();
   }, []);
 
   return (
@@ -489,8 +488,8 @@ export const CreateOrderPage = () => {
       onSubmit={() => {}}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
-      <Text fontWeight="bold" textAlign="center" fontSize="1.2em">
-         Nueva Orden
+        <Text fontWeight="bold" textAlign="center" fontSize="1.2em">
+          Nueva Orden
         </Text>
         <Text fontWeight="bold" textAlign="end">
           {" "}

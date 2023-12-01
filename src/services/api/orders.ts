@@ -4,6 +4,7 @@ import { discountStock } from './stocks';
 import { API_URL } from '../../config/env';
 
 export const newOrder = async (payload: IOrderAttributes) => {
+    console.log(payload)
     const response = await axios.post(`${API_URL}/pedidos`, { data: { ...payload } });
     return response.data;
 }
@@ -93,8 +94,8 @@ export const getOrdersPendingLibrador = async (id: number) => {
     return data.data
 }
 
-export const getOrdersPendingDespachador = async (id: number) => {
-    const { data } = await axios.get(`${API_URL}/pedidos?populate=articulos&filters[estatus]=pendiente&filters[despachador_check]=false&filters[Despachador]=${id}`)
+export const getOrdersPendingDespachador = async (filter: any) => {
+    const { data } = await axios.get(`${API_URL}/pedidos?populate=articulos&filters[estatus]=pendiente&filters[despachador_check]=false&filters[Despachador]=${filter.id}&filters[sucursal][id]=${filter.sucursal}`)
 
     return data.data
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, Icon, Stack, useToast } from "@chakra-ui/react";
+import { Badge, Box, Flex, Icon, Stack, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
@@ -15,12 +15,13 @@ import {
   getOrdersPendingDespachador,
   putCheckOrders,
 } from "services/api/orders";
+import { getSucursal } from "services/api/articles";
 
 export default function AccountsPage() {
   const { data: users } = useQuery(["despachadores"], getDespachadores);
   const [id, setId] = useState(0);
-  var idEmpleadoE = 0
-  const [idEmpleado,setIdEmpledo] = useState(0)
+  var idEmpleadoE = 0;
+  const [idEmpleado, setIdEmpledo] = useState(0);
   const { data: pedidos, mutate } = useMutation(getOrdersPendingDespachador);
   //const { data: pedidos, refetch } = useQuery(["ordenesDespachador"],()=>getOrdersPendingDespachador(idEmpleadoE));
   const checkMutation = useMutation(putCheckOrders);
@@ -28,10 +29,11 @@ export default function AccountsPage() {
   const [visible, setVisible] = useState(false);
   const [visibleArticulo, setVisibleArticulo] = useState(false);
   const toast = useToast();
-  
+
   var open = (data: any) => {
-    setIdEmpledo(data)
-    mutate(data);
+    var filtros =  {id : data,sucursal : suc}
+    setIdEmpledo(data);
+    mutate(filtros);
     setVisible(true);
   };
   const openArticulos = (data: any, id: number) => {
@@ -45,17 +47,16 @@ export default function AccountsPage() {
   };
   const hideDialogArticulo = () => {
     setId(0);
-    setArticulos([])
+    setArticulos([]);
     setVisibleArticulo(false);
-    
-  }
+  };
 
   const hideDialogArticuloSuccess = () => {
     setId(0);
-    setArticulos([])
+    setArticulos([]);
     setVisibleArticulo(false);
-    open(idEmpleado)
-  }
+    open(idEmpleado);
+  };
   const pedidosDialogoFooter = (
     <>
       <Button
@@ -73,23 +74,24 @@ export default function AccountsPage() {
         icon="pi pi-check"
         className="p-button p-button-success"
         onClick={() => {
-          checkMutation.mutate({ id: id, despachador_check: true },{
-            onSuccess: async () => {
-              toast({
-                title: "El Pedido ha sido verificado exitosamente!!",
-                status: "success",
-              });
-              hideDialogArticuloSuccess()
-            
-            },
-            onError: async () => {
-              toast({
-                title: "Error",
-                status: "error",
-              });
-            },
-          });
-          
+          checkMutation.mutate(
+            { id: id, despachador_check: true },
+            {
+              onSuccess: async () => {
+                toast({
+                  title: "El Pedido ha sido verificado exitosamente!!",
+                  status: "success",
+                });
+                hideDialogArticuloSuccess();
+              },
+              onError: async () => {
+                toast({
+                  title: "Error",
+                  status: "error",
+                });
+              },
+            }
+          );
         }}
       />
       <Button
@@ -100,107 +102,135 @@ export default function AccountsPage() {
       />
     </>
   );
+  var suc: Number = Number(localStorage.getItem("sucursal"));
+  const [nameSuc, setNameSuc] = useState("");
+  const GetSucursalName = () => {
+    var s = getSucursal(suc);
+    s.then((response) => {
+      setNameSuc(response.attributes.nombre);
+    });
 
-  //console.log(pedidos);
+    //
+    return nameSuc;
+  };
   return (
-    <Box width="90%" display="flex" margin="auto">
-      <Stack spacing="3.5" direction="row" wrap="wrap">
-        {users?.map((user: any) => (
-          <Card
-            title={user.username}
-            subTitle={user.email}
-            style={{ width: "250px", marginTop: "1.25em" }}
+    <Stack spacing="3" w="80%" mx="auto" my="5">
+      <Stack spacing="3" w="80%" mx="auto" my="5">
+        
+        <Text fontWeight="bold" textAlign="end">
+          {" "}
+          SUCURSAL:{" "}
+          <Badge ml="1" fontSize="1.2em" colorScheme="red">
+           {GetSucursalName()}
+          </Badge>
+        </Text>
+        <Stack direction="row" textAlign="end"></Stack>
+      </Stack>
+      <Box width="90%" display="flex" margin="auto">
+        <Stack spacing="3.5" direction="row" wrap="wrap">
+          {users?.map((user: any) => (
+            <Card
+              title={user.username}
+              subTitle={user.email}
+              style={{ width: "250px", marginTop: "1.25em" }}
+            >
+              <>
+                <Flex mt="5px">
+                  <Center w="50%">
+                    <Text>{user.roleCons}</Text>
+                  </Center>
+                  <Center w="50%">
+                    <Button
+                      icon="pi pi-plus"
+                      className="p-button-rounded p-button-success mr-2 p-button-text"
+                      title="Pedidos"
+                      onClick={() => open(user.id)}
+                    />
+                  </Center>
+                </Flex>
+              </>
+            </Card>
+          ))}
+
+          <Dialog
+            header={"Pedidos de despachador " + GetSucursalName()}
+            style={{ width: "80%" }}
+            modal
+            className="p-fluid"
+            visible={visible}
+            footer={pedidosDialogoFooter}
+            onHide={hideDialog}
           >
             <>
-              <Flex mt="5px">
-                <Center w="50%">
-                  <Text>{user.roleCons}</Text>
-                </Center>
-                <Center w="50%">
-                  <Button
-                    icon="pi pi-plus"
-                    className="p-button-rounded p-button-success mr-2 p-button-text"
-                    title="Pedidos"
-                    onClick={() => open(user.id)}
-                  />
-                </Center>
-              </Flex>
-            </>
-          </Card>
-        ))}
-
-        <Dialog
-          header="Pedidos de despachador"
-          style={{ width: "80%" }}
-          modal
-          className="p-fluid"
-          visible={visible}
-          footer={pedidosDialogoFooter}
-          onHide={hideDialog}
-        >
-          <>
-            <DataTable value={ pedidos == undefined ? [] :pedidos?.map((element: any) => element)}>
-              <Column field="id" header="Pedido" />
-              <Column field="attributes.estatus" header="Estatus" />
-              <Column
-                field="attributes.fecha_pedido"
-                header="Fecha de pedido"
-              />
-              <Column
-                header="Hora Pedido"
-                body={(data: any) => {
-                  return moment(data.attributes.hora_pedido, "hhmm ").format(
-                    "hh:mm a"
-                  );
-                }}
-              />
-              <Column field="attributes.comentario" header="Comentario" />
-              <Column
-                header="Check"
-                field="attributes.despachador_check"
-                body={(data: any) =>
-                  data.attributes.despachador_check ? (
-                    <Icon as={MdCheckCircle} w={6} h={6} color="green.500" />
-                  ) : (
-                    <Icon as={MdUnpublished} w={6} h={6} color="red.500" />
-                  )
+              <DataTable
+                value={
+                  pedidos == undefined
+                    ? []
+                    : pedidos?.map((element: any) => element)
                 }
-              />
-              <Column
-                header="Artículos"
-                body={(data: any) => (
-                  <Button
-                    icon="pi pi-eye"
-                    className="p-button-rounded p-button-success mr-2 p-button-text"
-                    title="Articulos del pedido"
-                    onClick={() =>
-                      openArticulos(data.attributes.articulos.data, data.id)
-                    }
-                  />
-                )}
-                exportable={false}
-                style={{ minWidth: "8rem" }}
-              />
-            </DataTable>
-          </>
-        </Dialog>
-        <Dialog
-          header="Artículos"
-          style={{ width: "30%" }}
-          modal
-          className="p-fluid"
-          visible={visibleArticulo}
-          footer={articulosDialogoFooter}
-          onHide={hideDialogArticulo}
-        >
-          <>
-            <DataTable value={articulos.map((elementos: any) => elementos)}>
-              <Column field="attributes.nombre" header="Nombre" />
-              <Column field="attributes.descripcion" header="Descripción" />
-            </DataTable>
-          </>
-        </Dialog>
-      </Stack>
-    </Box>
+              >
+                <Column field="id" header="Pedido" />
+                <Column field="attributes.estatus" header="Estatus" />
+                <Column
+                  field="attributes.fecha_pedido"
+                  header="Fecha de pedido"
+                />
+                <Column
+                  header="Hora Pedido"
+                  body={(data: any) => {
+                    return moment(data.attributes.hora_pedido, "hhmm ").format(
+                      "hh:mm a"
+                    );
+                  }}
+                />
+                <Column field="attributes.comentario" header="Comentario" />
+                <Column
+                  header="Check"
+                  field="attributes.despachador_check"
+                  body={(data: any) =>
+                    data.attributes.despachador_check ? (
+                      <Icon as={MdCheckCircle} w={6} h={6} color="green.500" />
+                    ) : (
+                      <Icon as={MdUnpublished} w={6} h={6} color="red.500" />
+                    )
+                  }
+                />
+                <Column
+                  header="Artículos"
+                  body={(data: any) => (
+                    <Button
+                      icon="pi pi-eye"
+                      className="p-button-rounded p-button-success mr-2 p-button-text"
+                      title="Articulos del pedido"
+                      onClick={() =>
+                        openArticulos(data.attributes.articulos.data, data.id)
+                      }
+                    />
+                  )}
+                  exportable={false}
+                  style={{ minWidth: "8rem" }}
+                />
+              </DataTable>
+            </>
+          </Dialog>
+          <Dialog
+            header="Artículos"
+            style={{ width: "30%" }}
+            modal
+            className="p-fluid"
+            visible={visibleArticulo}
+            footer={articulosDialogoFooter}
+            onHide={hideDialogArticulo}
+          >
+            <>
+              <DataTable value={articulos.map((elementos: any) => elementos)}>
+                <Column field="attributes.nombre" header="Nombre" />
+                <Column field="attributes.descripcion" header="Descripción" />
+              </DataTable>
+            </>
+          </Dialog>
+        </Stack>
+      </Box>
+    </Stack>
   );
 }
