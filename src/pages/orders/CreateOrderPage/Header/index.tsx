@@ -29,11 +29,9 @@ export const Header = (props: HeaderProps) => {
   ) => {
 
     if(option != null && option != undefined){
-      //console.log(option.id)
       localStorage.setItem('sucursal', option.id)
       const resultA = await searchAriclesByStock(option.id)
       setArticulos(resultA)
-      //console.log(resultA)
     }
     else{
       localStorage.setItem('sucursal', "0")

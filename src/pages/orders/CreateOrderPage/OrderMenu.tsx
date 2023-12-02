@@ -241,7 +241,6 @@ export const OrderMenu = (props: OrderMenuProps) => {
             duration: 5000,
             isClosable: true,
           });
-          console.log("hola")
         }: onOpenCatalogueModal}
         icon={<CatalogueIcon />}
       />
