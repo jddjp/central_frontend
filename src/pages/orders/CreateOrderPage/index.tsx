@@ -491,13 +491,13 @@ export const CreateOrderPage = () => {
         <Text fontWeight="bold" textAlign="center" fontSize="1.2em">
           Nueva Orden
         </Text>
-        <Text fontWeight="bold" textAlign="end">
+        {auth.user?.roleCons != "Supervisor" && <Text fontWeight="bold" textAlign="end">
           {" "}
           SUCURSAL:{" "}
           <Badge ml="1" fontSize="1.2em" colorScheme="red">
             {GetSucursalName()}
           </Badge>
-        </Text>
+        </Text>}
         <Stack direction="row" textAlign="end"></Stack>
 
         {auth.user?.roleCons === "Supervisor" && (
