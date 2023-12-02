@@ -46,7 +46,6 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
 
   // FIXED BUG: https://github.com/JedWatson/react-select/issues/4675
   const { article, setArticle, type, origen ,listA} = props;
-  console.log(listA)
   const [inputValue, setInputValue] = useState("");
   const auth = useAuth();
   const sucursal = localStorage.getItem("sucursal");

@@ -233,7 +233,16 @@ export const OrderMenu = (props: OrderMenuProps) => {
         variant="outline"
         aria-label="Catálogo"
         fontSize="20px"
-        onClick={onOpenCatalogueModal}
+        onClick={ localStorage.getItem('sucursal') == '0' ? () => {
+          toast({
+            title: 'Upps',
+            description: 'Selecciona una opcion sucursal',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          console.log("hola")
+        }: onOpenCatalogueModal}
         icon={<CatalogueIcon />}
       />
       <IconAction

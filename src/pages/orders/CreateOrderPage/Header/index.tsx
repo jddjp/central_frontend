@@ -4,7 +4,7 @@ import { ShoppingCartArticle } from "../types";
 import { ArticleSelect } from "./ArticleSelect";
 import Select, { SingleValue } from "react-select";
 import { useAuth } from "hooks/useAuth";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { getSubsidiaries } from "services/api/subsidiary";
 import { useState } from "react";
 export interface HeaderProps extends StackProps {
@@ -16,6 +16,7 @@ export interface HeaderProps extends StackProps {
 
 export const Header = (props: HeaderProps) => {
   const auth = useAuth();
+  const queryClient = useQueryClient();
   const [articulos , setArticulos] = useState(undefined)
   const { selectedArticle, onSelectArticle, type, origen, ...rest } = props;
   const handleSelectArticle = (article: SearchArticle | null) => {
@@ -37,7 +38,7 @@ export const Header = (props: HeaderProps) => {
     else{
       localStorage.setItem('sucursal', "0")
     }
-
+    queryClient.invalidateQueries(["listaProductos"]);
   }
   return (
     <HStack {...rest}>

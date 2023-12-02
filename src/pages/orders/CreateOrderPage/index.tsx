@@ -45,6 +45,7 @@ import {
   updateStockSucursal,
 } from "services/api/articles";
 import async from "react-select/dist/declarations/src/async/index";
+import { columns } from '../ListExistedOrdersPage/config';
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -312,8 +313,9 @@ export const CreateOrderPage = () => {
     setArticle(article);
     onCloseCatalogueModal();
     onOpenAddItemModal();
+    //console.log("algo")
   };
-
+  
   const handleConfirmClearCart = () => {
     clear();
     onCloseConfirmationClear();
@@ -474,8 +476,15 @@ export const CreateOrderPage = () => {
     //
     return nameSuc;
   };
-  var { data: value, refetch } = useQuery(["listaProductos"], () =>
-    listArticlesBySucursal(suc)
+  var { data: value, refetch } = useQuery(["listaProductos"], () => {
+      if(auth.user?.roleCons != "Supervisor"){
+        return listArticlesBySucursal(suc)
+      }
+      else{
+        let sucusarSelec =  Number(localStorage.getItem('sucursal'))
+        return listArticlesBySucursal(sucusarSelec)
+      }
+    }
   );
 
   useEffect(() => {
@@ -485,7 +494,7 @@ export const CreateOrderPage = () => {
   return (
     <Formik
       initialValues={{ client: initialClient, payment: initialPayment }}
-      onSubmit={() => {}}
+      onSubmit={() => { }}
     >
       <Stack spacing="3" w="80%" mx="auto" my="5">
         <Text fontWeight="bold" textAlign="center" fontSize="1.2em">
