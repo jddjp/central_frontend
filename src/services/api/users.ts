@@ -2,6 +2,11 @@ import axios from 'axios';
 import { User } from 'types/User';
 import { API_URL } from '../../config/env';
 
+export const getUsuarios = async () => {
+  const { data } = await axios.get(`${API_URL}/users`)
+  return data
+}
+
 export const autocompleteByName = async (config: {search: string}): Promise<User[]>  => {
   const { search } = config;
   const params = {

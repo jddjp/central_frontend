@@ -8,9 +8,9 @@ export const MenuCataloguePage = () => {
   const options = [
     { name: "Articulos", route: "/catalogue" },
     { name: "Clientes", route: "/menucatalogue/clientes" },
-    { name: "Sucursales", route: "/promotions" },
-    { name: "Usuarios", route: "/promotions" },
-    { name: "Roles", route: "/promotions" },
+    { name: "Sucursales", route: "/menucatalogue/sucursales" },
+    { name: "Usuarios", route: "/menucatalogue/usuarios" },
+    { name: "Roles", route: "/menucatalogue/roles" },
 
   ];
 

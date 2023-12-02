@@ -7,8 +7,6 @@ import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getProductBySucursal, getProducts } from 'services/api/products';
-import { deleteStock } from 'services/api/stocks';
-import { useAuth } from 'hooks/useAuth';
 import Confirmation from 'components/modals/Confirmation';
 import ArticlePostDetail from 'components/modals/ArticlePostDetail';
 import ArticlePutDetail from 'components/modals/ArticlePutDetail';
@@ -19,14 +17,15 @@ import "primeicons/primeicons.css";
 import "./style.css"
 import React from 'react';
 import { getClients } from 'services/api/cliente';
+import { getSucursales } from 'services/api/articles';
 
-const ClientesPage = () => {
+const SucursalesPage = () => {
 
-  const auth = useAuth()
-  const sucursalRef = localStorage.getItem('sucursal')
-  const queryClient = useQueryClient()
+
+  //const sucursalRef = localStorage.getItem('sucursal')
+  //const queryClient = useQueryClient()
   const idRef = useRef(0);
-  const [rolFlag, setRolFlag] = useState(true);
+  //const [rolFlag, setRolFlag] = useState(true);
   const [visibleCreate, setVisibleCreate] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [visibleDelete, setVisibleDelete] = useState(false);
@@ -44,16 +43,16 @@ const ClientesPage = () => {
     cacheTime: 0,
     refetchInterval: 0,
   })*/
-  const { data: clientes , refetch } = useQuery(["clientes"],()=> getClients())
+  const { data: sucursales , refetch } = useQuery(["sucursalesCatalogue"],()=> getSucursales())
   //const removeProduct = useMutation(deleteStock)
 
   const openNewClient = () => {
     setVisibleCreate(true);
   }
-  const openDialogEdit = (id: number) => {
+  /*const openDialogEdit = (id: number) => {
     idRef.current = id
     setVisibleEdit(true);
-  }
+  }*/
 
   /*const hideDialogPost = () => {
     setVisibleCreate(false)
@@ -93,7 +92,7 @@ const ClientesPage = () => {
   return (
     <Box paddingTop='5' display='flex' margin='auto'>
       <DataTable paginator className="p-datatable-customers" showGridlines rows={10} editMode="row"
-        value={clientes?.map((product: any) => product)}
+        value={sucursales?.map((sucursal : any) => sucursal)}
         header={
           <Box maxW="sm" justifyContent="flex-start">
           <Box p="6">
@@ -104,7 +103,7 @@ const ClientesPage = () => {
                 px="2"
                 colorScheme="teal"
               >
-                CLIENTES
+                SUCURSALES
               </Badge>
             </Box>
           </Box>
@@ -129,17 +128,19 @@ const ClientesPage = () => {
           'attributes.nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
         }}>
         <Column field="attributes.nombre" header="Nombre" />
-        <Column field="attributes.apellido_paterno"  header="Apellido" />
-        <Column field="attributes.calle"  header="Calle" />
-        <Column field="attributes.telefono"  header="telefono" />
-        {rolFlag && (
+        <Column field="attributes.colonia"  header="Colonia" />
+        <Column field="attributes.codigo_postal"  header="C.P" />
+        <Column field="attributes.municipio"  header="Municipio" />
+        <Column field="attributes.estado"  header="Estado" />
+
+        {/*rolFlag && (
           <Column header='Acciones' body={(data: any) => (
             <Box display='flex' >
               <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" style={{ marginRight: '5px' }} onClick={() => openDialogEdit(data.id)} />
               <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" style={{ marginRight: '5px' }} onClick={() => confirmDelete(data.id)} />
             </Box>)}
             exportable={false} style={{ minWidth: '8rem' }} />
-        )}
+        )*/}
       </DataTable>
       <Confirmation
         isVisible={visibleDelete}
@@ -161,4 +162,4 @@ const ClientesPage = () => {
   );
 }
 
-export default ClientesPage;
+export default SucursalesPage;

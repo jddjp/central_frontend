@@ -29,6 +29,9 @@ import Contador from 'pages/contador/index';
 import Asistencia from '../src/pages/asistencia/index';
 import { MenuCataloguePage } from 'pages/articles/MenuCataloguePage';
 import ClientesPage from 'pages/catalogues/Clientes';
+import SucusalesPage from './pages/catalogues/Sucursales';
+import UsuariosPage from 'pages/catalogues/Usuarios';
+import RolesPage from 'pages/catalogues/Roles';
 
 
 export const App = () => {
@@ -143,7 +146,27 @@ export const App = () => {
                 <ClientesPage />
               </RequiredAuthentication>
             }/>
-            
+          
+          <Route path="/menucatalogue/sucursales"
+            element={
+              <RequiredAuthentication>
+                <SucusalesPage />
+              </RequiredAuthentication>
+            }/>
+
+          <Route path="/menucatalogue/usuarios"
+            element={
+              <RequiredAuthentication>
+                <UsuariosPage />
+              </RequiredAuthentication>
+            }/>
+            <Route path="/menucatalogue/roles"
+            element={
+              <RequiredAuthentication>
+                <RolesPage />
+              </RequiredAuthentication>
+            }/>
+
           <Route path="/promotions"
             element={
               <RequiredAuthentication>

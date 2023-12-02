@@ -19,6 +19,13 @@ export const getSucursal = async (suc : Number) =>{
   return data.data;
 }
 
+
+export const getSucursales = async () =>{
+  // const suc : Number = Number(localStorage.getItem('sucursal'));
+   const { data } = await axios.get(`${API_URL}/sucursales`)
+   return data.data;
+ }
+
 export const searchArticles = async ( name: string) => {
   const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=articulos_sustitutos&populate=contador&&populate=foto&populate=historial_numeros&populate=orden_refills&populate=proveedor&populate=stocks&populate=unidad_de_medida&populate=ruptura_precio.rango_ruptura_precios`)
   return data;
