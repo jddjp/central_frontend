@@ -13,12 +13,23 @@ export type SearchArticle = ContentType<
 >;
 
 
+export const createSucursal = async (param: any) => {
+  let data = {data : param.sucursal}
+    data = (await axios.post(`${API_URL}/sucursales`, data)).data;
+  return data;
+}
+
 export const getSucursal = async (suc : Number) =>{
  // const suc : Number = Number(localStorage.getItem('sucursal'));
   const { data } = await axios.get(`${API_URL}/sucursales/${suc}`)
   return data.data;
 }
 
+export const deleteSucursal = async (id: number) => {
+  console.log(id)
+  const data = await axios.delete(`${API_URL}/sucursales/${id}`)
+  return data
+}
 
 export const getSucursales = async () =>{
   // const suc : Number = Number(localStorage.getItem('sucursal'));
