@@ -26,6 +26,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
 import OrdenRefill, { AlertOrdenRefill } from './OrdenRefill';
 import { InputSwitch } from 'primereact/inputswitch';
+import { postRuptura } from 'services/api/ruptura';
 
 
 interface PropArticleDetail {
@@ -58,9 +59,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   const queryClient = useQueryClient()
   const updateProduct = useMutation(editProduct)
+  const createRuptura = useMutation(postRuptura);
   var { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const [rupuraId , setRupturaId] = useState(0);
   const [product, setProduct] = useState({
     nombre: "",
     marca: "",
@@ -137,6 +139,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         sucursal: data.sucursal ? data.sucursal.data.id : '',
       })
       setFacturable(data.articulo ? data.articulo.data.attributes.isFacturable : false)
+      if(data?.articulo?.data?.attributes?.ruptura_precio.data.id != undefined){
+        setRupturaId(data.articulo.data.attributes.ruptura_precio.data.id)
+      }
       setRangosRupturaProductos(data.articulo ? data?.articulo?.data?.attributes?.ruptura_precio.data.attributes.rango_ruptura_precios.data : '')
       console.log(rangosRupturaProductos);
 
@@ -216,6 +221,25 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   }
 
+  const saveRuptura = async () =>{
+    rangosRupturaProductos.forEach((ruptura: any) => {
+      if(ruptura.id == undefined){
+        createRuptura.mutate(
+          { data: { 
+            cantidad: ruptura.attributes.cantidad.toString(),
+            precio: ruptura["attributes.precio"],
+            ruptura_precio : rupuraId
+          } },
+          {
+            onSuccess: async (data) => {
+
+              console.log(data)
+            },
+          }
+        );
+      }
+    });
+  }
 
   const handleSelectStore = (data: any) => {
     const id = data.selectedOption.value;
@@ -254,7 +278,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const productDialogFooter = (
     <>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onHandleHide} />
-      <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={HandleUpdateProduct} />
+      {activeIndex == 0 && <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={HandleUpdateProduct} />}
+
+      {activeIndex == 1 && <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveRuptura} />}
     </>
   );
 
@@ -325,10 +351,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   }
   const changeTabs = async (index: any) => {
     setActiveIndex(index)
-    if (index == 1) {
+    if (index == 2) {
       queryClient.invalidateQueries(["getStocksByProductId"]);
     }
-    if (index == 2) {
+    if (index == 3) {
       queryClient.invalidateQueries(["products"]);
       queryClient.invalidateQueries(["productEdit"]);
     }
@@ -336,20 +362,20 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const _handleAgregarRuptura = () => {
     const rango = {
       attributes: {
-        cantidad: "12",
-        precio: "1"
+        cantidad: "1",
+        precio: "0"
       },
-      id: -1
+      //id: 0
     }
     setRangosRupturaProductos([...rangosRupturaProductos, rango])
-    console.log(rangosRupturaProductos);
+    //console.log(rangosRupturaProductos);
 
   }
 
   const removeRango = (data: any, column:any) => {
-    console.log("data");
-    console.log(data);
-console.log(column);
+    //console.log("data");
+    //console.log(data);
+    //console.log(column);
 
     return <Button icon="pi pi-times" rounded severity="danger" aria-label="Cancel" size="small" onClick={() => _handelRemoveRango(column.rowIndex)} />;
   };
