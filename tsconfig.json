@@ -19,9 +19,20 @@
   "types": ["cypress"],
   "include": [
     "./node_modules/cypress",
+    "./node_modules/primeflex/primeflex.css",
+    "./node_modules/primeicons/primeicons.css",
+    "./node_modules/primereact/resources/themes/saga-blue/theme.css",
+    "./node_modules/primereact/resources/primereact.min.css",
     "./src/**/*",
     "**/*.ts",
     "**/*.tsx",
     "decs.d.ts"
-  ]
+  ],
+  "styles": [
+    "./node_modules/primeflex/primeflex.css",
+    "./node_modules/primeicons/primeicons.css",
+    "./node_modules/primereact/resources/themes/saga-blue/theme.css",
+    "./node_modules/primereact/resources/primereact.min.css",
+    //...
+  ],
 }

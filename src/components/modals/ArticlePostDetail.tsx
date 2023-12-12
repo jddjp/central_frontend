@@ -12,6 +12,10 @@ import { categoria, estado, initProduct, initStock } from "helpers/constants";
 import { getUnidades } from "services/api/articles";
 import { TabView, TabPanel } from "primereact/tabview";
 import { InputSwitch } from "primereact/inputswitch";
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 
 import {
   cellEditor,

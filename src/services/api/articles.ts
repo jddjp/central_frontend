@@ -47,6 +47,11 @@ export const searchAriclesByStock = async (sucusal : string) =>{
   return data
 }
 
+export const searchAriclesByStockOnlyFiscal = async (sucusal : string, search : string) =>{
+  const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusal}&filters[articulo][isFacturable][$eq]=true&filters[articulo][inventario_fiscal][$not]=0&filters[articulo][nombre][$contains]=${search}`)
+  return data
+}
+
 export const searchArticlesByOrigen = async ( sucursal: string) => {
   const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucursal}`)
   return data;

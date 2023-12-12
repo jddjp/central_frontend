@@ -1,11 +1,11 @@
 import React, { useState, SetStateAction, Dispatch, useRef, useEffect } from 'react';
-import { Badge, Box, Input, Stack, Text, useToast } from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Badge, Box, Input, Stack, Text, textDecoration, useToast } from '@chakra-ui/react';
 import Select, { SingleValue } from 'react-select';
 import { client, getClient, getClients } from 'services/api/cliente';
 import { useQuery } from 'react-query';
 import { Button } from 'primereact/button';
 import { createInvoiceSAT } from 'services/api/facturacion';
-import { C_TIPOFACTOR, FormaPago, IInvoice, RegimenesFiscales, TASA_O_CUOTA, TIPO_IMPUESTO, UsosCFDI } from 'types/facturacion.sifei';
+import { C_TIPOFACTOR, FORMA_PAGO, IInvoice, RegimenesFiscales, TASA_O_CUOTA, TIPO_IMPUESTO, USOS_CFDI } from 'types/facturacion.sifei';
 import { useLocation, useParams } from 'react-router-dom';
 import { Card } from 'primereact/card';
 import { Grid, GridItem } from '@chakra-ui/react'
@@ -22,6 +22,10 @@ import { DataScroller } from 'primereact/datascroller';
 import { ProductService } from 'services/ProductService';
 import { Rating } from 'primereact/rating';
 import { Tag } from 'primereact/tag';
+import { BASE_URL } from 'config/env';
+import ProductoSustitutos from './ProductosSustitutos'
+import { pricingCalculator } from 'helpers/pricingCalculator';
+
 export interface ClientInformationProps {
 }
 
@@ -39,24 +43,28 @@ interface Product {
 }
 
 const ExistingClient = (props: ClientInformationProps) => {
-
+  // Constantes y Variables de Estado
   const location = useLocation();
+  console.log(location.state);
+  
   const [displaySimpleNote, setDisplaySimpleNote] = useState(false);
-  const { detail } = useTicketDetail();
-  console.log("------------INIT ExistingClient");
-  console.log(detail);
-  console.log(location);
+  //Datos resumen
+  const [total, setTotal] = useState("0.00");
+  const [subtotal, setSubtotal] = useState("0.00");
+  const [importeIVA, setImporteIVA] = useState("0.00");
 
+  const [needReplace, setNeedReplace] = useState(true);
+  const { detail } = useTicketDetail();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
+  const [cart, setCart] = useState<any>([]);
+
+
+  // Estados para selecciones y datos
   const [selectedRegimen, setSelectedRegimen] = useState<any>(null);
   const [selectedUsoCfdi, setSelectedUsoCfdi] = useState<any>(null);
   const [selectedFormaPago, setSelectedFormaPago] = useState<any>(null);
-  const regimenesFiscales = RegimenesFiscales;
-  const usosCFDI = UsosCFDI;
-  const formaPago = FormaPago;
-
   const [user, setUser] = useState<any>(null);
   const [client, setClient] = useState<Cliente>();
   const { data: clients } = useQuery(["list-client"], getClients)
@@ -66,17 +74,35 @@ const ExistingClient = (props: ClientInformationProps) => {
     lastName: ""
   });
 
-  const componentRef = useRef<HTMLDivElement>(null);
+  const boxNote = useRef<HTMLDivElement>(null);
 
   const handleChange = (option: SingleValue<any>) => {
-    console.log(option);
-    //formik.setFieldValue('city', option.value);
-
     !option ? setUser('') : setUser(option);
     if (option) {
       getDataClient(option.id)
     }
   };
+
+  const validSustituto = (_cart: any) => {
+    let valid = true;
+    setNeedReplace(false);
+
+    _cart.map((item: any) => {
+      console.log(item.product.article.attributes.isFacturable);
+      if (item.sustituto == null && item.product.article.attributes.isFacturable == false) {
+        valid = false;
+        setNeedReplace(true);
+      }
+
+    })
+    return valid;
+  };
+
+  const redondearDosDecimales = (numero: any) => {
+    var amount = 0.0;
+    amount = Math.round(numero * 100) / 100;
+    return amount;
+  }
 
   const validEnvio = () => {
     let valid = true;
@@ -116,9 +142,58 @@ const ExistingClient = (props: ClientInformationProps) => {
     return valid
   }
 
+  const resumenInvoice = (_cart: any) => {
+
+    let _total: number = 0;
+
+    let _subtotal: number = 0;
+    let _total_iva: number = 0;
+    let containTaxClasification = false;
+    _cart.map((item: any) => {
+      if (item.product.article.attributes.iva == 16) {
+        containTaxClasification = true;
+      }
+
+      let importeProducto : any = (item.product.amount * item.product.customPrice);
+      if (item.sustituto != null) {
+        const importe  = (item.product.amount * item.product.priceBroken) / pricingCalculator(
+          item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+          item.product.amount
+        ).price;
+        console.log("....");
+        
+        
+        importeProducto = round(importe * pricingCalculator(
+          item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+          item.product.amount
+        ).price);
+        
+      }
+
+
+      _total += importeProducto;
+      _subtotal += importeProducto;
+
+      //Se agrega el objeto del detalle del impuesto por producto
+      if (containTaxClasification) {
+        const importeProductoIVA = Number(importeProducto * (item.product.article.attributes.iva / 100));
+        _total_iva += importeProductoIVA;
+        _total = Number(_total) + Number(importeProductoIVA);
+        
+        console.log(importeProductoIVA);
+        console.log(_total);
+      }
+    });
+    setTotal(round(_total));
+    setImporteIVA(round(_total_iva));
+    setSubtotal(round(_subtotal))
+  }
 
   const onSave = async () => {
-    console.log(location.state.cart.cart);
+    if (!validSustituto(cart)) {
+      toast({ status: 'error', title: 'Aviso', description: "Debe sustituir los productos que nos son facturables." });
+      return;
+    }
 
     //formik.handleSubmit()
     if (!validEnvio()) {
@@ -126,47 +201,45 @@ const ExistingClient = (props: ClientInformationProps) => {
     }
     setLoading(true)
     //Se obtiene el detalle del pedido
-    const cart = location.state.cart.cart;
+    const cart_ = location.state.cart.cart;
     //Se obtiene datos del cliente
     const receptor = await getDataClient(user.id);
 
     let conceptos: any = [];
-    let total: number = 0;
-    let subtotal: number = 0;
-    let total_iva: number = 0;
+    //let total: number = 0;
+    //let subtotal: number = 0;
+    //let total_iva: number = 0;
     let containTaxClasification = false;
 
 
-    cart.items.map((item: any) => {
+    cart.map((item: any) => {
       let detalleConceptos;
-      if (item.article.attributes.iva == 16) {
+      if (item.product.article.attributes.iva == 16) {
         containTaxClasification = true;
       }
-      const importeProducto = (item.amount * item.customPrice);
-      //const importeProductoIVA = (importeProducto * .16);
-      ///const importeProductoIVA = (importeProducto);
+      const importeProducto = (item.product.amount * item.product.customPrice);
 
       detalleConceptos = {
-        "clave_prod_serv": item.article.attributes.clave_prod_serv,
-        "no_identificacion": item.article.id,
-        "cantidad": item.amount,
-        "clave_unidad": item.article.attributes.unidad_de_medida.data.attributes.clave_unidad_sat,
-        "unidad": item.article.attributes.unidad_de_medida.data.attributes.nombre,
-        "descripcion": item.article.attributes.nombre,
-        "valor_unitario": round(item.customPrice),
+        "clave_prod_serv": item.sustituto == null ? item.product.article.attributes.clave_prod_serv : item.sustituto.attributes.articulo.data.attributes.clave_prod_serv,
+        "no_identificacion": item.sustituto == null ? item.product.article.id : item.sustituto.attributes.articulo.data.id,
+        "cantidad": item.sustituto == null ? item.product.amount : round((item.product.amount * item.product.priceBroken) / pricingCalculator(item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos, item.product.amount).price),
+        "clave_unidad": item.sustituto == null ? item.product.article.attributes.unidad_de_medida.data.attributes.clave_unidad_sat : item.sustituto.attributes.articulo.data.attributes.unidad_de_medida.data.attributes.clave_unidad_sat,
+        "unidad": item.sustituto == null ? item.product.article.attributes.unidad_de_medida.data.attributes.nombre : item.sustituto.attributes.articulo.data.attributes.unidad_de_medida.data.attributes.nombre,
+        "descripcion": item.sustituto == null ? item.product.article.attributes.nombre : item.sustituto.attributes.articulo.data.attributes.nombre,
+        "valor_unitario": item.sustituto == null ? round(item.product.customPrice) : pricingCalculator(item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos, item.product.amount).price,
         "importe": round(importeProducto),
         "descuento": "0.00",
         "objeto_impuesto": "01"
       }
 
-      total += importeProducto;
-      subtotal += importeProducto;
+      //total += importeProducto;
+      //subtotal += importeProducto;
 
       //Se agrega el objeto del detalle del impuesto por producto
       if (containTaxClasification) {
-        const importeProductoIVA = (importeProducto * (item.article.attributes.iva / 100));
-        total_iva += importeProductoIVA;
-        total += importeProductoIVA;
+        const importeProductoIVA = (importeProducto * (item.product.article.attributes.iva / 100));
+        //total_iva += importeProductoIVA;
+        //total += importeProductoIVA;
 
         detalleConceptos.objeto_impuesto = "02";
         detalleConceptos = {
@@ -187,36 +260,33 @@ const ExistingClient = (props: ClientInformationProps) => {
       }
 
       conceptos.push({ ...detalleConceptos })
-      //total += importeProducto + importeProductoIVA;
-      //total_iva += importeProducto * .16;
-      //total_iva += importeProducto;
     });
-
 
     let factura;
     if (!containTaxClasification) {
-      factura = new IInvoice(client?.attributes.correo,location.state.cart.cart.id_pedido,
-        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+      factura = new IInvoice(client?.attributes.correo, location.state.cart.cart.id_pedido,
+        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id, round(Number(subtotal)), round(Number(total)),
         receptor, conceptos);
     }
     if (containTaxClasification) {
 
       //Se llena el detalle del total de impuestos
       const impuesto_total: any = {
-        "total_impuestos_trasladados": total_iva,
+        "total_impuestos_trasladados": importeIVA,
         "traslados": [
           {
             "base": subtotal,
             "impuesto": TIPO_IMPUESTO.IVA,
             "tipo_factor": C_TIPOFACTOR.TASA,
             "tasa_o_cuota": TASA_O_CUOTA._16,
-            "importe": total_iva
+            "importe": importeIVA
           }
         ]
       };
-
+      console.log(total);
+      
       factura = new IInvoice(client?.attributes.correo, location.state.cart.cart.id_pedido,
-        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id, round(subtotal), round(total),
+        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id,round(Number(subtotal)), round(Number(total)),
         receptor, conceptos, impuesto_total);
     }
 
@@ -267,15 +337,15 @@ const ExistingClient = (props: ClientInformationProps) => {
   };
 
   const round = (number: number) => {
-    return (number).toFixed(2)
-  }
+    return (Math.round(number * 100) / 100).toFixed(2);
+}
 
   const opentSimpleNote = (name: any) => {
     setDisplaySimpleNote(true);
   };
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current
+    content: () => boxNote.current
   });
 
   const getCurrentDate = () => {
@@ -295,7 +365,7 @@ const ExistingClient = (props: ClientInformationProps) => {
     return (
       <div>
 
-        <Button outlined  severity="secondary"
+        <Button outlined severity="secondary"
           onClick={() => setDisplaySimpleNote(false)}
         >Cancelar</Button>
         <Button icon="pi pi-print" severity="success" label='Imprimir'
@@ -307,61 +377,135 @@ const ExistingClient = (props: ClientInformationProps) => {
 
   const [products, setProducts] = useState<Product[]>([]);
 
+  const _handleRemplazar = (product: any, sustituto: any) => {
+    const newArrayDeObjetos = cart.map((item: any) => {
+      if (item.product.article.id === product.article.id) {
+        return { product: item.product, sustituto: sustituto }
+      }
+      // Mantén los otros objetos sin cambios
+      return item;
+    })
+    setCart(newArrayDeObjetos);
+    validSustituto(newArrayDeObjetos);
+    resumenInvoice(newArrayDeObjetos);
+  }
+
   useEffect(() => {
-      ProductService.getProducts().then((data) => setProducts(data));
+    ProductService.getProducts().then((data) => setProducts(data));
+    let cartTemp: any = [];
+    location.state.cart.cart.items.map((item: any) => {
+      const newItem = { product: item, sustituto: null }
+      cartTemp.push(newItem);
+
+
+    })
+    setCart(cartTemp)
+    validSustituto(cartTemp);
+    resumenInvoice(cartTemp);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getSeverity = (product: Product) => {
-      switch (product.inventoryStatus) {
-          case 'INSTOCK':
-              return 'success';
+    switch (product.inventoryStatus) {
+      case 'NO_FACTURABLE':
+        return 'warning';
 
-          case 'LOWSTOCK':
-              return 'warning';
+      case 'LOWSTOCK':
+        return 'warning';
 
-          case 'OUTOFSTOCK':
-              return 'danger';
+      case 'OUTOFSTOCK':
+        return 'danger';
 
-          default:
-              return null;
-      }
+      default:
+        return null;
+    }
   };
 
-  const itemTemplate = (data:any) => {
+  const itemTemplate = (data: any) => {
     return (
-        <div className="col-12">
-            <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-                <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={`https://primefaces.org/cdn/primereact/images/product/${data.image}`} alt={data.name} />
-                <div className="flex flex-column lg:flex-row justify-content-between align-items-center xl:align-items-start lg:flex-1 gap-4">
-                    <div className="flex flex-column align-items-center lg:align-items-start gap-3">
-                        <div className="flex flex-column gap-1">
-                            <div className="text-2xl font-bold text-900">{data.name}</div>
-                            <div className="text-700">{data.description}</div>
-                        </div>
-                        <div className="flex flex-column gap-2">
-                            <Rating value={data.rating} readOnly cancel={false}></Rating>
-                            <span className="flex align-items-center gap-2">
-                                <i className="pi pi-tag product-category-icon"></i>
-                                <span className="font-semibold">{data.category}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div className="flex flex-row lg:flex-column align-items-center lg:align-items-end gap-4 lg:gap-2">
-                        <span className="text-2xl font-semibold">${data.price}</span>
-                        <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
-                        <Tag value={data.inventoryStatus} severity={getSeverity(data)}></Tag>
-                    </div>
+      <div className="col-12 sssss">
+
+        <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+          {data.sustituto == null &&
+            (<img className="w-9 sm:w-16rem xl:w-10rem xl:h-10rem shadow-2 block xl:block mx-auto border-round p-0 " style={{ objectFit: 'cover' }} src={`${BASE_URL}${data?.product.article?.attributes?.foto.data?.attributes?.url}`} alt={data.name} />)
+          }
+          {data.sustituto != null &&
+            (<img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round p-0" src={`${BASE_URL}${data.sustituto.attributes.articulo.data.attributes?.foto.data?.attributes?.url}`} alt={data.name} />)
+          }
+          <div className="flex flex-column lg:flex-row justify-content-between align-items-center xl:align-items-start lg:flex-1 gap-4">
+            <div className="flex flex-column align-items-center lg:align-items-start gap-3">
+              <div className="flex flex-column gap-1">
+                <div className="text-2xl font-bold text-900">
+                  <span style={{ textDecorationLine: data.sustituto != null ? 'line-through' : 'none' }}>{data?.product.article?.attributes?.nombre}</span>
+                  {data.sustituto != null &&
+                    <span className='ml-2'>{data.sustituto.attributes.articulo.data.attributes.nombre}</span>
+                  }
                 </div>
+                <div className="text-700">
+                  <span style={{ textDecorationLine: data.sustituto != null ? 'line-through' : 'none' }}>{`${data.product.amount} x $${data.product.priceBroken}`}</span>
+                  {data.sustituto != null &&
+                    <span className='ml-2'>{`${round((data.product.amount * data.product.priceBroken) / pricingCalculator(
+                      data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                      data.product.amount
+                    ).price)} x $${pricingCalculator(
+                      data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                      data.product.amount
+                    ).price}`}</span>
+                  }
+
+                </div>
+              </div>
             </div>
+            <div className="flex flex-row lg:flex-column align-items-center lg:align-items-end gap-4 lg:gap-2">
+              <span className="text-2xl font-semibold">
+                {data.sustituto == null &&
+                  `$${data.product.priceBroken! * data.product.amount}`
+                }
+                {data.sustituto != null &&
+                  `${round((data.product.amount * data.product.priceBroken) / pricingCalculator(
+                    data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                    1
+                  ).price * pricingCalculator(
+                    data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                    data.product.amount
+                  ).price) }`
+                }
+              </span>
+              {data?.product.article?.attributes?.isFacturable == false &&
+                (
+                  <>
+
+                    <ProductoSustitutos usar={_handleRemplazar} producto={data.product} cart={cart}></ProductoSustitutos>
+
+                    {data.sustituto == null &&
+                      <Tag className="mr-2 bg-orange-500 text-white" icon="pi pi-info-circle" value="No facturable"></Tag>
+                    }
+                  </>
+                )
+              }
+            </div>
+          </div>
         </div>
+      </div>
     );
+  }
+
+  const titleCardCliente = () => {
+    return (
+      <><i className="pi pi-user" style={{ fontSize: '1.3rem' }}></i> Datos del cliente</>
+    )
+  }
+
+  const titleCardPedido = () => {
+    return (
+      <><i className="pi pi-shopping-cart" style={{ fontSize: '1.3rem' }}></i> Pedido</>
+    )
   }
 
   return (
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt='3' ml='3' mr='3'>
-      <Text fontWeight='bold' fontSize={18}> Cliente</Text>
+      <Text fontWeight='bold' fontSize={30}> Factura Electronica</Text>
       <>
-        <Select onChange={handleChange} isClearable placeholder='Busca y selecciona un cliente para facturar'
+        <Select onChange={handleChange} isClearable placeholder='Busca y selecciona un cliente a quien facturar'
           isDisabled={textValue.name || textValue.firstName || textValue.lastName ? true : false}
           key='normal'
           hideSelectedOptions
@@ -373,13 +517,13 @@ const ExistingClient = (props: ClientInformationProps) => {
           })} />
         {//getFormErrorMessage('city')
         }
-        <Card title="Datos del cliente" >
+        <Card title={titleCardCliente} className='border-round-3xl shadow-none'>
           <Grid templateColumns='repeat(2, 1fr)' gap={8} mb={10}>
             <GridItem w='100%' h='2' ><div><span style={{ fontWeight: 'bold', opacity: '0.8' }}>RFC:</span> {client?.attributes.RFC}</div></GridItem>
             <GridItem w='100%' h='2' ><div><span style={{ fontWeight: 'bold', opacity: '0.8' }}>Razon Social:</span> {client?.attributes.razon_social}</div></GridItem>
             <GridItem w='100%' h='2' ><div><span style={{ fontWeight: 'bold', opacity: '0.8' }}>Domicilio Fiscal:</span> {client?.attributes.codigo_postal}</div></GridItem>
             <GridItem w='100%' h='2' ><div><span style={{ fontWeight: 'bold', opacity: '0.8' }}>Regimen Fiscal:</span>
-              <Dropdown value={selectedRegimen} onChange={(e) => setSelectedRegimen(e.value)} options={regimenesFiscales?.map((regimenFiscal: any) => {
+              <Dropdown value={selectedRegimen} onChange={(e) => setSelectedRegimen(e.value)} options={RegimenesFiscales?.map((regimenFiscal: any) => {
                 return {
                   id: regimenFiscal.c_RegimenFiscal,
                   name: `${regimenFiscal.Descripcion}`
@@ -391,7 +535,7 @@ const ExistingClient = (props: ClientInformationProps) => {
             <GridItem w='100%' h='57' >
               <div>
                 <span style={{ fontWeight: 'bold', opacity: '0.8' }}>Uso CFDI:</span>
-                <Dropdown value={selectedUsoCfdi} onChange={(e) => setSelectedUsoCfdi(e.value)} options={usosCFDI?.map((regimenFiscal: any) => {
+                <Dropdown value={selectedUsoCfdi} onChange={(e) => setSelectedUsoCfdi(e.value)} options={USOS_CFDI?.map((regimenFiscal: any) => {
                   return {
                     id: regimenFiscal.c_UsoCFDI,
                     name: `${regimenFiscal.Descripcion}`
@@ -404,7 +548,7 @@ const ExistingClient = (props: ClientInformationProps) => {
             <GridItem w='100%' h='57' >
               <div>
                 <span style={{ fontWeight: 'bold', opacity: '0.8' }}>Forma de pago:</span>
-                <Dropdown value={selectedFormaPago} onChange={(e) => setSelectedFormaPago(e.value)} options={formaPago?.map((regimenFiscal: any) => {
+                <Dropdown value={selectedFormaPago} onChange={(e) => setSelectedFormaPago(e.value)} options={FORMA_PAGO?.map((regimenFiscal: any) => {
                   return {
                     id: regimenFiscal.c_FormaPago,
                     name: `${regimenFiscal.Descripcion}`
@@ -416,14 +560,38 @@ const ExistingClient = (props: ClientInformationProps) => {
           </Grid>
         </Card>
 
-        <Card title="Pedido" >
-            <DataScroller value={products} itemTemplate={itemTemplate} rows={5} inline scrollHeight="500px" header="Scroll Down to Load More" />
+        <Card title={titleCardPedido} className='border-round-3xl shadow-none'>
+          {needReplace &&
+            (
+              <>
+                <Alert status='warning'>
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>¡Espera!</AlertTitle>
+                    <AlertDescription> Hay Articulos que no son facturables, sustituye los articulos para facturar.</AlertDescription>
+                  </Box>
+                </Alert>
+              </>
+            )
+          }
+          <DataScroller value={cart} itemTemplate={itemTemplate} rows={5} inline scrollHeight="500px" />
+        </Card>
+
+        <Card className='border-round-3xl shadow-none w-5 ml-auto text-right' >
+          <Grid templateColumns='repeat(2, 1fr)' gap={2}>
+            <GridItem w='100%' h='10' ><span className='font-bold opacity-80'>SUBTOTAL: </span></GridItem>
+            <GridItem w='100%' h='10' >{subtotal}</GridItem>
+            <GridItem w='100%' h='10' ><span className='font-bold opacity-80'>IMPUESTO: </span></GridItem>
+            <GridItem w='100%' h='10' >{importeIVA}</GridItem>
+            <GridItem w='100%' h='10'  ><span className='font-bold opacity-80'>TOTAL: </span></GridItem>
+            <GridItem w='100%' h='10' >{total}</GridItem>
+          </Grid>
         </Card>
 
         <Box h='40px'>
-          <Box display='flex' alignItems='baseline'>
+          <Box display='flex' alignItems='baseline' className='justify-content-end'>
             <Badge borderRadius='full' px='2' colorScheme='teal'>
-              <Button label="Confirmar" loading={loading} icon="pi pi-check" className="p-button p-button-success" style={{ marginLeft: 'auto', display: 'block' }} onClick={onSave} />
+              <Button label="Confirmar" loading={loading} icon="pi pi-error" className="p-button p-button-success border-round-3xl" style={{ marginLeft: 'auto', display: 'block', background: 'var(--chakra-colors-brand-500)' }} onClick={onSave} />
             </Badge>
             <Box
               color='gray.500'
@@ -434,10 +602,12 @@ const ExistingClient = (props: ClientInformationProps) => {
               ml='2'
             >
 
-              <Button label="Nota simple" loading={loading} icon="pi pi-book" className="p-button p-button-info" style={{ marginLeft: 'auto', display: 'block' }} onClick={opentSimpleNote} />
+              <Button label="Nota simple" loading={loading} icon="pi pi-book" className="p-button p-button-secondary border-round-3xl" style={{ marginLeft: 'auto', display: 'block' }} onClick={opentSimpleNote} />
             </Box>
           </Box>
         </Box>
+
+
 
         <Dialog
           visible={displaySimpleNote}
@@ -446,8 +616,8 @@ const ExistingClient = (props: ClientInformationProps) => {
           onHide={() => setDisplaySimpleNote(false)}
         // 
         >
-          <Box display='flex' justifyContent='center' alignItems='center' height='100vh' ref={componentRef}>
-            <NotaPrint client={location.state.cart.client} items={location.state.cart.cart.items} folio={detail.data.id} />
+          <Box display='flex' justifyContent='center' alignItems='center' height='100vh' ref={boxNote}>
+            <NotaPrint client={location.state.cart.cart.client} items={location.state.cart.cart.items} folio={detail?.data?.id} />
           </Box>
           {/* <Nota client={cart.cart.client}  items={cart.cart.cart.items}/> */}
         </Dialog>

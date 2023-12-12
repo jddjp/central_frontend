@@ -316,7 +316,7 @@ export const RegimenesFiscales = [
     }
 ]
 
-export const UsosCFDI = [
+export const USOS_CFDI = [
     {
         "c_UsoCFDI": "G01",
         "Descripcion": "Adquisición de mercancías.",
@@ -487,7 +487,7 @@ export const UsosCFDI = [
     }
 ]
 
-export const FormaPago = [
+export const FORMA_PAGO = [
     {
       "c_FormaPago": "01",
       "Descripcion": "Efectivo"
