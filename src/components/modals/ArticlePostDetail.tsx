@@ -12,10 +12,11 @@ import { categoria, estado, initProduct, initStock } from "helpers/constants";
 import { getUnidades } from "services/api/articles";
 import { TabView, TabPanel } from "primereact/tabview";
 import { InputSwitch } from "primereact/inputswitch";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
+import Select, { SingleValue } from "react-select";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+//import 'primeflex/primeflex.css';
 
 import {
   cellEditor,
@@ -31,6 +32,8 @@ import { MultiSelect } from "primereact/multiselect";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Checkbox } from "primereact/checkbox";
+import { postRuptura, postRupturaPrecio } from "services/api/ruptura";
+import { postStock } from "services/api/stocks";
 
 interface PropsArticleDetail {
   isVisible: boolean;
@@ -47,6 +50,9 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries);
   const { data: unidadMedida } = useQuery(["unidades"], getUnidades);
   const createProduct = useMutation(postProduct);
+  const createRuptura = useMutation(postRuptura);
+  const createRupturaPrecio = useMutation(postRupturaPrecio);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedStoresForDeletion, setSelectedStoresForDeletion] = useState(
     Array<number>
@@ -54,7 +60,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   const [stockProductTemp, setStockProductTemp] = useState<Stock[]>([]);
   const [storesSelected, setStoresSelected] = useState([]);
   const [stockProduct, setStockProduct] = useState([]);
-
+  const [sucursal, setSucursal] = useState(0);
   const toast = useToast();
   const columnsTableInventario: ColumnMeta[] = [
     { field: "attributes.sucursal.data.attributes.nombre", header: "Sucursal" },
@@ -79,7 +85,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     fresh: true,
     unidad_de_medida: 0,
     isFacturable: false,
-    clave_prod_serv: ""
+    clave_prod_serv: "",
     // cantidad_stock: 0,
   });
 
@@ -115,6 +121,14 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       });
       return;
     }
+
+    if(sucursal == 0){
+      toast({
+        title: "Selecciona una sucursal",
+        status: "error",
+      });
+      return;
+    }
     //product.unidad_de_medida = stock.unidad_de_medida;
     createProduct.mutate(
       { product: { data: product }, stock: { data: stock } },
@@ -128,6 +142,47 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             stockProduct,
             product,
             selectedStoresForDeletion
+          );
+          
+          postStock({
+            data: {
+              cantidad: product.inventario_fisico,
+              sucursal: sucursal,
+              unidad_de_medida: product.unidad_de_medida,
+              articulo: data.data.id,
+            },
+          });
+          //console.log(data.data);
+          createRupturaPrecio.mutate(
+            {
+              data: {
+                cantidad: "0",
+                precio: "0",
+                descripcion_descuento: product.nombre + "_ruptura",
+                articulo: data.data.id,
+                unidad_de_medida: product.unidad_de_medida,
+              },
+            },
+            {
+              onSuccess: async (data) => {
+                //console.log(data);
+                createRuptura.mutate(
+                  {
+                    data: {
+                      cantidad: "1",
+                      precio: "0",
+                      ruptura_precio: data.data.id,
+                    },
+                  },
+                  {
+                    onSuccess: async (data) => {
+                      console.log("fin");
+                      console.log(data);
+                    },
+                  }
+                );
+              },
+            }
           );
 
           onHandleHide();
@@ -185,7 +240,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       ...product,
       isFiscal: product.inventario_fiscal ? true : false,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fiscal]);
 
   useEffect(() => {
@@ -193,7 +247,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       ...product,
       isFisical: product.inventario_fisico ? true : false,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fisico]);
 
   const handleSelectStore = (data: any) => {
@@ -231,7 +284,18 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     const restoreStore: any = recuperarCantidad(stockProductTemp, data.value);
     setStockProduct(restoreStore);
   };
+  const handleOrigenDistribucion = async (
+    option: SingleValue<any>,
+    target: string
+  ) => {
 
+    if(option != null && option != undefined){
+      setSucursal(option.id)
+    }
+    else{
+      localStorage.setItem('sucursal', "0")
+    }
+  }
   return (
     <Dialog
       style={{ width: "60%" }}
@@ -271,15 +335,34 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               />
             </div>
 
-            {
-              facturable ? (
-                <div className="field">
-                  <h5>Clave de producto facturable</h5>
-                  <InputText value={product.clave_prod_serv} onChange={onInputTextChange} autoFocus name='clave_prod_serv' />
-                </div>
-              ) : ""
-            }
+            {facturable ? (
+              <div className="field">
+                <h5>Clave de producto facturable</h5>
+                <InputText
+                  value={product.clave_prod_serv}
+                  onChange={onInputTextChange}
+                  autoFocus
+                  name="clave_prod_serv"
+                />
+              </div>
+            ) : (
+              ""
+            )}
             <br></br>
+            <Select
+              onChange={(e) => handleOrigenDistribucion(e, "sucursal")}
+              isClearable={true}
+              placeholder="Selecciona sucursal"
+              hideSelectedOptions
+              key="origen-sucursal"
+              options={subsidiaries?.map((subsidiary: any) => {
+                return {
+                  id: subsidiary?.id,
+                  label: `${subsidiary.attributes?.nombre}`,
+                };
+              })}
+            />
+
             {facturable && (
               <div className="field">
                 <label htmlFor="name">Inventario fiscal</label>
@@ -393,9 +476,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               </form>
             </div>
           </TabPanel>
-          <TabPanel header="Ruptura de precios" leftIcon="pi pi-fw pi-calendar">
-
-          </TabPanel>
+          <TabPanel
+            header="Ruptura de precios"
+            leftIcon="pi pi-fw pi-calendar"
+          ></TabPanel>
           <TabPanel header="Inventario" leftIcon="pi pi-fw pi-calendar">
             {/*//Lista donde estara disponible la sucursal*/}
             <MultiSelect

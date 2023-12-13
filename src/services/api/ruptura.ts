@@ -11,3 +11,10 @@ export const postRuptura = async (param: any) => {
   data = (await axios.post(`${API_URL}/rango-ruptura-precios`, param)).data;
   return data;
 };
+
+export const postRupturaPrecio = async (param: any) => {
+  let data: any;
+  data = (await axios.post(`${API_URL}/rupturaprecios`, param)).data;
+  return data;
+};
+
