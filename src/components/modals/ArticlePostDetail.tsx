@@ -129,6 +129,8 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       });
       return;
     }
+
+    product.inventario_fisico = stock.cantidad
     //product.unidad_de_medida = stock.unidad_de_medida;
     createProduct.mutate(
       { product: { data: product }, stock: { data: stock } },
@@ -146,13 +148,12 @@ const ArticleDetail = (props: PropsArticleDetail) => {
           
           postStock({
             data: {
-              cantidad: product.inventario_fisico,
+              cantidad: stock.cantidad,
               sucursal: sucursal,
               unidad_de_medida: product.unidad_de_medida,
               articulo: data.data.id,
             },
           });
-          //console.log(data.data);
           createRupturaPrecio.mutate(
             {
               data: {
@@ -165,7 +166,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             },
             {
               onSuccess: async (data) => {
-                //console.log(data);
+             
                 createRuptura.mutate(
                   {
                     data: {
@@ -176,8 +177,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
                   },
                   {
                     onSuccess: async (data) => {
-                      console.log("fin");
-                      console.log(data);
+                     
                     },
                   }
                 );
@@ -376,7 +376,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               <label htmlFor="name">Inventario fisico</label>
               <InputNumber
                 value={product.inventario_fisico}
-                onChange={(e) => onInputNumberChange(e, "inventario_fisico")}
+                onChange={(e) => onInputNumberChange(e, "cantidad")}
                 required
               />
             </div>
