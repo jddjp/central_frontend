@@ -13,6 +13,8 @@ import { Button } from 'primereact/button';
 import { createInvoiceSAT } from 'services/api/facturacion';
 import { C_TIPOFACTOR, IInvoice, TASA_O_CUOTA, TIPO_IMPUESTO } from 'types/facturacion.sifei';
 
+import {ISucursal} from 'types/Sucursal';
+
 export interface ClientInformationProps {
   setCliente?: Dispatch<SetStateAction<client | undefined>>;
   setDistribution?: Dispatch<SetStateAction<any>>;

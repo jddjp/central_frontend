@@ -45,7 +45,6 @@ interface Product {
 const ExistingClient = (props: ClientInformationProps) => {
   // Constantes y Variables de Estado
   const location = useLocation();
-  console.log(location.state);
   
   const [displaySimpleNote, setDisplaySimpleNote] = useState(false);
   //Datos resumen
@@ -264,8 +263,9 @@ const ExistingClient = (props: ClientInformationProps) => {
 
     let factura;
     if (!containTaxClasification) {
-      factura = new IInvoice(client?.attributes.correo, location.state.cart.cart.id_pedido,
-        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id, round(Number(subtotal)), round(Number(total)),
+      factura = new IInvoice(client?.attributes.correo, location.state.cart.cart.id_pedido, 
+        location.state.cart.client.id, location.state.cart.sucursal.id, 
+        getCurrentDate(), selectedFormaPago.id, round(Number(subtotal)), round(Number(total)),
         receptor, conceptos);
     }
     if (containTaxClasification) {
@@ -286,7 +286,8 @@ const ExistingClient = (props: ClientInformationProps) => {
       console.log(total);
       
       factura = new IInvoice(client?.attributes.correo, location.state.cart.cart.id_pedido,
-        location.state.cart.client.id, getCurrentDate(), selectedFormaPago.id,round(Number(subtotal)), round(Number(total)),
+        location.state.cart.client.id, location.state.cart.sucursal.id, getCurrentDate(),
+         selectedFormaPago.id,round(Number(subtotal)), round(Number(total)),
         receptor, conceptos, impuesto_total);
     }
 
@@ -402,6 +403,8 @@ const ExistingClient = (props: ClientInformationProps) => {
     setCart(cartTemp)
     validSustituto(cartTemp);
     resumenInvoice(cartTemp);
+    
+  console.log(location.state);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getSeverity = (product: Product) => {

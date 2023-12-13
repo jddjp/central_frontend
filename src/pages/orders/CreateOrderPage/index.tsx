@@ -46,6 +46,7 @@ import {
 } from "services/api/articles";
 import async from "react-select/dist/declarations/src/async/index";
 import { columns } from '../ListExistedOrdersPage/config';
+import { Sucursal } from "types/Sucursal";
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -68,6 +69,7 @@ export const CreateOrderPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [cliente, setCliente] = useState<any>();
+  const [sucursal, setSucursal] = useState<any>();
   const [paymentsDetails, setPaymentsDetails] = useState<string>();
   const itemMutation = useMutation(newItem);
   const { data: libradores } = useQuery(["users_librador"], getLibradores, {
@@ -96,7 +98,7 @@ export const CreateOrderPage = () => {
 
   const [stockId, setstockId] = useState(0);
   const state = location.state as LocationOrdenEdit;
-  const redirectTo = (route: string, cart: any, client: any) => () => {
+  const redirectTo = (route: string, cart: any, client: any, sucursal: any) => () => {
     if (paymentsDetails !== "finished") {
       toast({
         title: "Detalle de Pago",
@@ -179,11 +181,11 @@ export const CreateOrderPage = () => {
                     unidad_de_medida: extract,
                     nombre_articulo: item.article.attributes.nombre,
                   },
-                };
-
+                }; 
+                ////.......................
                 itemMutation.mutate(itemNew, {
                   onSuccess: () => {
-                    navigate(route, { state: { cart, client } });
+                    navigate(route, { state: { cart, client, sucursal } });
                   },
                 });
                 order = response.data;
@@ -270,7 +272,7 @@ export const CreateOrderPage = () => {
             };
             itemMutation.mutate(itemNew, {
               onSuccess: () => {
-                navigate(route, { state: { cart, client } });
+                navigate(route, { state: { cart, client, sucursal } });
               },
             });
             order = response.data;
@@ -340,6 +342,10 @@ export const CreateOrderPage = () => {
       setArticle(article);
     }
   };
+
+  const handleSelectSucursal = async (sucursal: Sucursal | null) => {
+    setSucursal(sucursal);
+  }
 
   useEffect(() => {
     if (state != null) {
@@ -527,6 +533,7 @@ export const CreateOrderPage = () => {
         {!type && (
           <Header
             selectedArticle={article}
+            onSelectSucursal={handleSelectSucursal}
             onSelectArticle={handleSelectArticle}
           />
         )}
@@ -549,6 +556,7 @@ export const CreateOrderPage = () => {
         {type && (
           <Header
             selectedArticle={article}
+            onSelectSucursal={handleSelectSucursal}
             onSelectArticle={handleSelectArticle}
             type={type}
             origen={origen}
@@ -589,7 +597,7 @@ export const CreateOrderPage = () => {
                 fontSize="md"
                 rightIcon={<ArrowRightIcon />}
                 disabled={cart.items.length === 0}
-                onClick={redirectTo("/orders/typeNote", cart, cliente)}
+                onClick={redirectTo("/orders/typeNote", cart, cliente, sucursal)}
               >
                 Pagar
               </Button>

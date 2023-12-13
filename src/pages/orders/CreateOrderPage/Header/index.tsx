@@ -6,9 +6,12 @@ import Select, { SingleValue } from "react-select";
 import { useAuth } from "hooks/useAuth";
 import { useQuery, useQueryClient } from "react-query";
 import { getSubsidiaries } from "services/api/subsidiary";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { ISucursal, Sucursal } from "types/Sucursal";
 export interface HeaderProps extends StackProps {
   onSelectArticle: (article: ShoppingCartArticle | null) => void;
+  onSelectSucursal: (sucursal: Sucursal | null) => void;
+  //setSucursal?: Dispatch<SetStateAction<ISucursal | undefined>>;
   selectedArticle: ShoppingCartArticle | null;
   type?: boolean | undefined;
   origen?: { bodega: number; sucursal: number; receptor: number };
@@ -18,7 +21,7 @@ export const Header = (props: HeaderProps) => {
   const auth = useAuth();
   const queryClient = useQueryClient();
   const [articulos , setArticulos] = useState(undefined)
-  const { selectedArticle, onSelectArticle, type, origen, ...rest } = props;
+  const { selectedArticle, onSelectArticle,onSelectSucursal, type, origen, ...rest } = props;
   const handleSelectArticle = (article: SearchArticle | null) => {
     onSelectArticle(article);
   };
@@ -32,6 +35,14 @@ export const Header = (props: HeaderProps) => {
       localStorage.setItem('sucursal', option.id)
       const resultA = await searchAriclesByStock(option.id)
       setArticulos(resultA)
+      const sucursal : Sucursal = {
+        id: option.id,
+        attributes: {
+          nombre: ""
+        }
+      };
+      //props.setSucursal?.(sucursal);
+      onSelectSucursal(sucursal);
     }
     else{
       localStorage.setItem('sucursal', "0")

@@ -23,6 +23,7 @@ export interface IRequestGetXML {
     email?: string ,
     id_pedido: number ,
     id_client: number,
+    id_sucursal: number,
     comprobante: IComprobante,
     configuracion?: IConfiguracion
 }
@@ -36,7 +37,7 @@ export interface IResponseGetXML {
 export class IInvoice implements ISFDI {
     requestGeneraXML: IRequestGetXML
 
-    constructor(email: string | undefined,id_pedido: number, id_client: number, fecha: string, forma_pago: string, subtotal: any, total: any,
+    constructor(email: string | undefined,id_pedido: number, id_client: number, id_sucursal: number, fecha: string, forma_pago: string, subtotal: any, total: any,
         receptor: Receptor, conceptos: Concepto[]
         , impuestos?: Impuestos2
     ) {
@@ -44,6 +45,7 @@ export class IInvoice implements ISFDI {
             email: email,
             id_pedido: id_pedido,
             id_client: id_client,
+            id_sucursal: id_sucursal,
             comprobante: {
                 version: "4.0",
                 serie: "A",
