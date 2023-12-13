@@ -15,7 +15,7 @@ export const DashboardSeller = () => {
     { name: "Pedidos existentes", route: "/orders" },
     { name: "Historial de venta", route: "/sales" },
     { name: "Promociones", route: "/promotions" },
-    { name: "Cátalogo", route: "/menucatalogue" },
+    { name: "Cátalogos", route: "/menucatalogue" },
     // {name: 'Articulos', route: '/articulos'},
     { name: "Lista de Asistencia", route: "/asistencia" },
   ];
@@ -24,12 +24,12 @@ export const DashboardSeller = () => {
     { name: "Pedidos existentes", route: "/orders" },
     { name: "Promociones", route: "/promotions" },
     { name: "Historial de venta", route: "/sales" },
-    { name: "Cátalogo", route: "/catalogue" },
+    { name: "Cátalogos", route: "/catalogue" },
   ];
   const optionsVendedor = [
     { name: "Ingresar pedido", route: "/orders/new" },
     { name: "Promociones", route: "/promotions" },
-    { name: "Cátalogo", route: "/catalogue" },
+    { name: "Cátalogos", route: "/catalogue" },
   ];
   const optionsDespachador = [
     { name: "Cuentas y Accesos", route: "/accounts" },
