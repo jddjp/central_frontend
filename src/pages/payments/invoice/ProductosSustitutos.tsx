@@ -43,10 +43,15 @@ const ProductosSustitutos = (props: ProductosSustitutosProps) => {
     const priceBodyTemplate = (product: any) => {
 
         try {
+            console.log("---------------------");
+            console.log(product.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data);
             const { price, tag } = pricingCalculator(
-                product.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                product.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
+                //product.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
                 1
+                
             );
+            
             return price;
             //setCustomPrice(price);
             //tagRef.current = tag;

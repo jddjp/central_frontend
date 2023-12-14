@@ -46,17 +46,17 @@ export const getSucursales = async () =>{
  }
 
 export const searchArticles = async ( name: string) => {
-  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=articulos_sustitutos&populate=contador&&populate=foto&populate=historial_numeros&populate=orden_refills&populate=proveedor&populate=stocks&populate=unidad_de_medida&populate=ruptura_precio.rango_ruptura_precios`)
+  const { data } = await axios.get(`${API_URL}/articulos?filters[nombre][$contains]=${name}&populate=articulos_sustitutos&populate=contador&populate=foto&populate=historial_numeros&populate=orden_refills&populate=proveedor&populate=stocks&populate=unidad_de_medida&populate=ruptura_precio.rango_ruptura_precios&populate=unidad_de_medida`)
   return data;
 };
 
 export const searchAriclesByStock = async (sucusal : string) =>{
-  const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusal}`)
+  const { data } = await axios.get(`${API_URL}/stocks?filters[sucursal]=${sucusal}&populate=articulo.ruptura_precio&populate=articulo.ruptura_precio.rango_ruptura_precios&populate=articulo.stocks.sucursal&populate=articulo.unidad_de_medida&populate=articulo.foto`)
   return data
 }
 
 export const searchAriclesByStockOnlyFiscal = async (sucusal : string, search : string) =>{
-  const { data } = await axios.get(`${API_URL}/stocks?populate[articulo][populate]=*&filters[sucursal]=${sucusal}&filters[articulo][isFacturable][$eq]=true&filters[articulo][inventario_fiscal][$not]=0&filters[articulo][nombre][$contains]=${search}`)
+  const { data } = await axios.get(`${API_URL}/stocks?populate=articulo.ruptura_precio&populate=articulo.ruptura_precio.rango_ruptura_precios&populate=articulo.stocks.sucursal&populate=articulo.unidad_de_medida&populate=articulo.foto&filters[sucursal]=${sucusal}&filters[articulo][isFacturable][$eq]=true&filters[articulo][inventario_fiscal][$not]=0&filters[articulo][nombre][$contains]=${search}`)
   return data
 }
 

@@ -58,9 +58,12 @@ export const AddItemModal = (props: AddItemModalProps) => {
   useEffect(() => {
     try {
       const { price, tag } = pricingCalculator(
-        article?.attributes.ruptura_precio.data.attributes.rangos,
+        //article?.attributes.ruptura_precio.data.attributes.rangos,
+        article?.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
         amount!
       );
+      console.log("price: " + price);
+      
   
       setCustomPrice(price);
       tagRef.current = tag;

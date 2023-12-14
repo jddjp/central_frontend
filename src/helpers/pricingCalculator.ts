@@ -1,6 +1,6 @@
-import { BrokenPrice } from "types/brokenPrices";
+import { BrokenPrice, BrokenPriceM } from "types/brokenPrices";
 
-export const pricingCalculator = (brokenPrices: BrokenPrice, weight: number): {price: number, tag:number} => {
+export const pricingCalculator = (brokenPrices: BrokenPriceM, weight: number): {price: number, tag:number} => {
 
   let price = 0
   let tag = 0
@@ -10,9 +10,11 @@ export const pricingCalculator = (brokenPrices: BrokenPrice, weight: number): {p
   for (let i = 0; i < brokenPrices?.length; i++) {
     let joins = [brokenPrices[i], brokenPrices[i+1]]
 
-    if (weight > Object.values(joins[0])[0] && weight <= Object.values(joins[1])[0]) {
-      price = weight * Number(Object.keys(joins[1])[0]) 
-      tag = Number(Object.keys(joins[1])[0])
+    if (weight > joins[0].attributes.cantidad && weight <= joins[1].attributes.cantidad) {
+      console.log("..............");
+      
+      price = weight * Number(joins[1].attributes.precio) 
+      tag = Number(joins[1].attributes.precio)
     }
   }
 
