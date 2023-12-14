@@ -32,8 +32,9 @@ const SucursalesPage = () => {
   };
   const openDialogEdit = (id: number) => {
     idRef.current = id;
-    setVisibleEdit(true);
     setNewSucursal(false)
+    setVisibleEdit(true);
+    
   };
   const hideDialogPut = () => {
     idRef.current = 0;

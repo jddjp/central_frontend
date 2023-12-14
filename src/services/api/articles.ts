@@ -19,6 +19,15 @@ export const createSucursal = async (param: any) => {
   return data;
 }
 
+export const updateSucursal = async (param: any) => {
+  //console.log(param)
+  let data = {data : param.sucursal}
+  //console.log(data)
+  data = (await axios.put(`${API_URL}/sucursales/${param.sucursal.referenceId}`, data)).data;
+  return data;
+}
+
+
 export const getSucursal = async (suc : Number) =>{
  // const suc : Number = Number(localStorage.getItem('sucursal'));
   const { data } = await axios.get(`${API_URL}/sucursales/${suc}`)
@@ -26,7 +35,6 @@ export const getSucursal = async (suc : Number) =>{
 }
 
 export const deleteSucursal = async (id: number) => {
-  console.log(id)
   const data = await axios.delete(`${API_URL}/sucursales/${id}`)
   return data
 }
