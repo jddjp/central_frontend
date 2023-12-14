@@ -1,33 +1,28 @@
 import { useRef, useState } from "react";
-import { Badge, Box, Text } from "@chakra-ui/react";
+import { Badge, Box, useToast } from "@chakra-ui/react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
-import { useQuery, useQueryClient } from "react-query";
-import { useAuth } from "hooks/useAuth";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Confirmation from "components/modals/Confirmation";
-import { AlertOrdenRefill } from "components/modals/OrdenRefill";
 import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
 import "primereact/resources/primereact.min.css"; //core css
 import "primeicons/primeicons.css";
 import "./style.css";
-import { getClients } from "services/api/cliente";
+import { deleteCliente, getClients } from "services/api/cliente";
 import ClientesModal from "./modals/clientes";
 
 const ClientesPage = () => {
-  //const auth = useAuth()
-  //const sucursalRef = localStorage.getItem('sucursal')
   const queryClient = useQueryClient();
+  const toast = useToast();
   const idRef = useRef(0);
-  const [rolFlag, setRolFlag] = useState(true);
-  const [visibleCreate, setVisibleCreate] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [visibleDelete, setVisibleDelete] = useState(false);
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   const [newCliente, setNewCliente] = useState(false);
-  //const ordenRefillRef = useRef<AlertOrdenRefill>(null);
+  const removeCliente = useMutation(deleteCliente);
   const { data: clientes, refetch } = useQuery(["clientes"], () =>
     getClients()
   );
@@ -50,7 +45,16 @@ const ClientesPage = () => {
   };
 
   const handleDelete = () => {
-    hideDialogDelete();
+    removeCliente.mutate(idRef.current, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["clientes"]);
+        toast({
+          title: "El cliente ha sido borrado",
+          status: "warning",
+        });
+        hideDialogDelete();
+      },
+    });
   };
 
   const hideDialogPut = () => {
@@ -112,29 +116,28 @@ const ClientesPage = () => {
         <Column field="attributes.apellido_paterno" header="Apellido" />
         <Column field="attributes.calle" header="Calle" />
         <Column field="attributes.telefono" header="telefono" />
-        {rolFlag && (
-          <Column
-            header="Acciones"
-            body={(data: any) => (
-              <Box display="flex">
-                <Button
-                  icon="pi pi-pencil"
-                  className="p-button-rounded p-button-success"
-                  style={{ marginRight: "5px" }}
-                  onClick={() => openDialogEdit(data.id)}
-                />
-                <Button
-                  icon="pi pi-trash"
-                  className="p-button-rounded p-button-warning"
-                  style={{ marginRight: "5px" }}
-                  onClick={() => confirmDelete(data.id)}
-                />
-              </Box>
-            )}
-            exportable={false}
-            style={{ minWidth: "8rem" }}
-          />
-        )}
+        <Column
+          header="Acciones"
+          body={(data: any) => (
+            <Box display="flex">
+              <Button
+                icon="pi pi-pencil"
+                className="p-button-rounded p-button-success"
+                style={{ marginRight: "5px" }}
+                onClick={() => openDialogEdit(data.id)}
+              />
+              <Button
+                icon="pi pi-trash"
+                className="p-button-rounded p-button-warning"
+                style={{ marginRight: "5px" }}
+                onClick={() => confirmDelete(data.id)}
+              />
+            </Box>
+          )}
+          exportable={false}
+          style={{ minWidth: "8rem" }}
+        />
+
       </DataTable>
       <Confirmation
         isVisible={visibleDelete}

@@ -2,12 +2,12 @@ import { ChangeEvent, useState } from "react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Stack, Text, useToast } from "@chakra-ui/react";
+import { Stack, useToast } from "@chakra-ui/react";
 import { InputText } from "primereact/inputtext";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 import { TabView, TabPanel } from "primereact/tabview";
-import { createSucursal, getSucursal, updateSucursal } from "services/api/articles";
-import { sucursalModel } from "models/sucursal";
+import { clienteModel } from "models/cliente";
+import { createCliente, getCliente, updateCliente } from "services/api/cliente";
 
 interface PropClientesDetail {
   isVisible: boolean;
@@ -18,13 +18,13 @@ interface PropClientesDetail {
 
 const ClientesModal = (props: PropClientesDetail) => {
   const queryClient = useQueryClient();
-  const [cliente, setCliente] = useState(sucursalModel);
+  const [cliente, setCliente] = useState(clienteModel);
   const toast = useToast();
-  const createS = useMutation(createSucursal);
-  const updateS = useMutation(updateSucursal)
+  const cCliente = useMutation(createCliente);
+  const uCliente = useMutation(updateCliente)
   useQuery(
     ["nuevaSucursal", props.referenceId],
-    props.referenceId != 0 ? () => getSucursal(props.referenceId) : () => {setCliente(sucursalModel)},
+    props.referenceId != 0 ? () => getCliente(props.referenceId) : () => {setCliente(clienteModel)},
     {
       onSuccess(data: any) {
         if (data != undefined) {
@@ -39,31 +39,43 @@ const ClientesModal = (props: PropClientesDetail) => {
   };
   const HandleCreateProduct = async () => {
     if (props.newCliente) {
-      createS.mutate(
+      cCliente.mutate(
         { cliente },
         {
           onSuccess: async () => {
-            queryClient.invalidateQueries(["sucursalesCatalogue"]);
+            queryClient.invalidateQueries(["clientes"]);
             toast({
               status: "success",
-              title: "Sucursal Agregada correctamente",
+              title: "Cliente agregado correctamente",
             });
             onHandleHide();
           },
+          onError: async (error:any) => {
+            toast({
+              status: "error",
+              title: error.response.data.error.message,
+            });
+          }
         }
       );
     }
     else{
       cliente.referenceId = props.referenceId
-      updateS.mutate({cliente},{
+      uCliente.mutate({cliente},{
         onSuccess: async () => {
           toast({
             status: "success",
-            title: "Sucursal Actualizada correctamente",
+            title: "Cliente Actualizado correctamente",
           });
-           queryClient.invalidateQueries(["sucursalesCatalogue"]);
+           queryClient.invalidateQueries(["clientes"]);
            onHandleHide();
          },
+         onError: async (error:any) => {
+          toast({
+            status: "error",
+            title: error.response.data.error.message,
+          });
+        }
       })
     }
   };
@@ -117,6 +129,24 @@ const ClientesModal = (props: PropClientesDetail) => {
               />
             </div>
             <div className="field">
+              <label htmlFor="name">Apellido Paterno</label>
+              <InputText
+                value={cliente.apellido_paterno}
+                onChange={onInputTextChange}
+                autoFocus
+                name="apellido_paterno"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">Apellido Materno</label>
+              <InputText
+                value={cliente.apellido_materno}
+                onChange={onInputTextChange}
+                autoFocus
+                name="apellido_materno"
+              />
+            </div>
+            <div className="field">
               <label htmlFor="name">Calle</label>
               <InputText
                 value={cliente.calle}
@@ -133,21 +163,21 @@ const ClientesModal = (props: PropClientesDetail) => {
               />
             </div>
             <div className="field">
-              <label htmlFor="name">Numero Exterior</label>
+              <label htmlFor="name">RFC</label>
               <InputText
-                value={cliente.numero_exterior}
+                value={cliente.RFC}
                 onChange={onInputTextChange}
                 required
-                name="numero_exterior"
+                name="RFC"
               />
             </div>
             <div className="field">
-              <label htmlFor="name">Numero Interior</label>
+              <label htmlFor="name">Correo</label>
               <InputText
-                value={cliente.numero_interior}
+                value={cliente.correo}
                 onChange={onInputTextChange}
                 required
-                name="numero_interior"
+                name="correo"
               />
             </div>
             <div className="field">
@@ -161,10 +191,10 @@ const ClientesModal = (props: PropClientesDetail) => {
             <div className="field">
               <label htmlFor="name">Municipio</label>
               <InputText
-                value={cliente.municipio}
+                value={cliente.telefono}
                 onChange={onInputTextChange}
                 required
-                name="municipio"
+                name="telefono"
               />
             </div>
             <div className="field">
@@ -176,33 +206,22 @@ const ClientesModal = (props: PropClientesDetail) => {
                 name="estado"
               />
             </div>
-            <br></br>
-            <Text as="b">DATOS DE FACTURACIÓN</Text>
             <div className="field">
-              <label htmlFor="name">RFC EMISOR</label>
+              <label htmlFor="name">Cuidad</label>
               <InputText
-                value={cliente.rfc_emisor}
+                value={cliente.ciudad}
                 onChange={onInputTextChange}
                 required
-                name="rfc_emisor"
+                name="ciudad"
               />
             </div>
             <div className="field">
-              <label htmlFor="name">NOMBRE FISCAL</label>
+              <label htmlFor="name">Razon Social</label>
               <InputText
-                value={cliente.nombre_fiscal_emisor}
+                value={cliente.razon_social}
                 onChange={onInputTextChange}
-                required
-                name="nombre_fiscal_emisor"
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="name">REGIMEN FISCAL</label>
-              <InputText
-                value={cliente.regimen_fiscal_emisor}
-                onChange={onInputTextChange}
-                required
-                name="regimen_fiscal_emisor"
+                
+                name="razon_social"
               />
             </div>
           </TabPanel>

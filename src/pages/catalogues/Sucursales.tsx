@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Badge, Box } from "@chakra-ui/react";
+import { Badge, Box, useToast } from "@chakra-ui/react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -15,6 +15,7 @@ import { deleteSucursal, getSucursales } from "services/api/articles";
 import SucusalesDetail from "./modals/sucursales";
 
 const SucursalesPage = () => {
+  const toast = useToast();
   const queryClient = useQueryClient();
   const idRef = useRef(0);
   const [newSucursal, setNewSucursal] = useState(false);
@@ -52,6 +53,10 @@ const SucursalesPage = () => {
     removeSurcusal.mutate(idRef.current, {
       onSuccess: () => {
         queryClient.invalidateQueries(["sucursalesCatalogue"]);
+        toast({
+          title: "La sucursal ha sido borrada",
+          status: "warning",
+        });
         hideDialogDelete();
       },
     });
