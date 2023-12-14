@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Badge, Box } from "@chakra-ui/react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -7,7 +7,6 @@ import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import Confirmation from "components/modals/Confirmation";
-import { AlertOrdenRefill } from "components/modals/OrdenRefill";
 import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
 import "primereact/resources/primereact.min.css"; //core css
 import "primeicons/primeicons.css";

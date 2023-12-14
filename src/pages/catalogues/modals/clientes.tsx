@@ -9,38 +9,38 @@ import { TabView, TabPanel } from "primereact/tabview";
 import { createSucursal, getSucursal, updateSucursal } from "services/api/articles";
 import { sucursalModel } from "models/sucursal";
 
-interface PropSucursalDetail {
+interface PropClientesDetail {
   isVisible: boolean;
   referenceId: number;
-  newSucursal: boolean;
+  newCliente: boolean;
   onHandleHide: () => void;
 }
 
-const SucusalesDetail = (props: PropSucursalDetail) => {
+const ClientesModal = (props: PropClientesDetail) => {
   const queryClient = useQueryClient();
-  const [sucursal, setSucursal] = useState(sucursalModel);
+  const [cliente, setCliente] = useState(sucursalModel);
   const toast = useToast();
   const createS = useMutation(createSucursal);
   const updateS = useMutation(updateSucursal)
   useQuery(
     ["nuevaSucursal", props.referenceId],
-    props.referenceId != 0 ? () => getSucursal(props.referenceId) : () => {setSucursal(sucursalModel)},
+    props.referenceId != 0 ? () => getSucursal(props.referenceId) : () => {setCliente(sucursalModel)},
     {
       onSuccess(data: any) {
         if (data != undefined) {
-          setSucursal(data.attributes);
+          setCliente(data.attributes);
         }
       },
     }
   );
 
   const onHandleHide = () => {
-    props.onHandleHide();
+   props.onHandleHide();
   };
   const HandleCreateProduct = async () => {
-    if (props.newSucursal) {
+    if (props.newCliente) {
       createS.mutate(
-        { sucursal },
+        { cliente },
         {
           onSuccess: async () => {
             queryClient.invalidateQueries(["sucursalesCatalogue"]);
@@ -54,8 +54,8 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
       );
     }
     else{
-      sucursal.referenceId = props.referenceId
-      updateS.mutate({sucursal},{
+      cliente.referenceId = props.referenceId
+      updateS.mutate({cliente},{
         onSuccess: async () => {
           toast({
             status: "success",
@@ -77,7 +77,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
         onClick={onHandleHide}
       />
       <Button
-        label={props.newSucursal ? "Guardar" : "Actualizar"}
+        label={props.newCliente ? "Guardar" : "Actualizar"}
         icon="pi pi-check"
         className="p-button-text"
         onClick={HandleCreateProduct}
@@ -88,16 +88,16 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
   const onInputTextChange = (
     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    setSucursal({ ...sucursal, [e.target.name]: e.target.value });
+    setCliente({ ...cliente, [e.target.name]: e.target.value });
   };
   const onInputNumberChange = (e: InputNumberChangeEvent, tag: string) => {
-    setSucursal({ ...sucursal, [tag]: e.value });
+    setCliente({ ...cliente, [tag]: e.value });
   };
 
   return (
     <Dialog
       style={{ width: "60%" }}
-      header={props.newSucursal ? "Nueva Sucursal" : "Editar Sucursal"}
+      header={props.newCliente ? "Nuevo Cliente" : "Editar Cliente"}
       modal
       className="p-fluid"
       visible={props.isVisible}
@@ -106,11 +106,11 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
     >
       <Stack spacing="1rem">
         <TabView>
-          <TabPanel header="SUCURSAL" leftIcon="pi pi-fw pi-home">
+          <TabPanel header="CLIENTE" leftIcon="pi pi-fw pi-user">
             <div className="field">
               <label htmlFor="name">Nombre</label>
               <InputText
-                value={sucursal.nombre}
+                value={cliente.nombre}
                 onChange={onInputTextChange}
                 autoFocus
                 name="nombre"
@@ -119,7 +119,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">Calle</label>
               <InputText
-                value={sucursal.calle}
+                value={cliente.calle}
                 onChange={onInputTextChange}
                 name="calle"
               />
@@ -127,7 +127,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">Colonia</label>
               <InputText
-                value={sucursal.colonia}
+                value={cliente.colonia}
                 onChange={onInputTextChange}
                 name="colonia"
               />
@@ -135,7 +135,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">Numero Exterior</label>
               <InputText
-                value={sucursal.numero_exterior}
+                value={cliente.numero_exterior}
                 onChange={onInputTextChange}
                 required
                 name="numero_exterior"
@@ -144,7 +144,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">Numero Interior</label>
               <InputText
-                value={sucursal.numero_interior}
+                value={cliente.numero_interior}
                 onChange={onInputTextChange}
                 required
                 name="numero_interior"
@@ -153,7 +153,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">C.P.</label>
               <InputNumber
-                value={sucursal.codigo_postal}
+                value={cliente.codigo_postal}
                 onChange={(e: any) => onInputNumberChange(e, "codigo_postal")}
                 required
               />
@@ -161,7 +161,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">Municipio</label>
               <InputText
-                value={sucursal.municipio}
+                value={cliente.municipio}
                 onChange={onInputTextChange}
                 required
                 name="municipio"
@@ -170,7 +170,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">Estado</label>
               <InputText
-                value={sucursal.estado}
+                value={cliente.estado}
                 onChange={onInputTextChange}
                 required
                 name="estado"
@@ -181,7 +181,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">RFC EMISOR</label>
               <InputText
-                value={sucursal.rfc_emisor}
+                value={cliente.rfc_emisor}
                 onChange={onInputTextChange}
                 required
                 name="rfc_emisor"
@@ -190,7 +190,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">NOMBRE FISCAL</label>
               <InputText
-                value={sucursal.nombre_fiscal_emisor}
+                value={cliente.nombre_fiscal_emisor}
                 onChange={onInputTextChange}
                 required
                 name="nombre_fiscal_emisor"
@@ -199,7 +199,7 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
             <div className="field">
               <label htmlFor="name">REGIMEN FISCAL</label>
               <InputText
-                value={sucursal.regimen_fiscal_emisor}
+                value={cliente.regimen_fiscal_emisor}
                 onChange={onInputTextChange}
                 required
                 name="regimen_fiscal_emisor"
@@ -212,4 +212,4 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
   );
 };
 
-export default SucusalesDetail;
+export default ClientesModal;
