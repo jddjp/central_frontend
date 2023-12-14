@@ -19,7 +19,7 @@ import React from 'react';
 import { getClients } from 'services/api/cliente';
 import { getSucursales } from 'services/api/articles';
 import { getUsuarios } from 'services/api/users';
-
+import UsuarioModal from './modals/usuarios';
 const UsuariosPage = () => {
 
 
@@ -31,41 +31,27 @@ const UsuariosPage = () => {
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [visibleDelete, setVisibleDelete] = useState(false);
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
-  const [currentStore, setCurrentStore] = useState('');
+  const [newUsuario, setNewUsuario] = useState(false);
 
   const ordenRefillRef = useRef<AlertOrdenRefill>(null);
 
-
-  /*const { data: products, refetch } = useQuery(["products"], auth.user?.roleCons !== 'Supervisor' ?
-   () => getProductBySucursal(Number(sucursalRef)) : getProducts, {
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    staleTime: 0,
-    cacheTime: 0,
-    refetchInterval: 0,
-  })*/
-  const { data: usuarios , refetch } = useQuery(["usuarios"],()=> getUsuarios())
+  const { data: usuarios, refetch } = useQuery(["usuarios"], () => getUsuarios())
   //const removeProduct = useMutation(deleteStock)
 
-  const openNewClient = () => {
-    setVisibleCreate(true);
+  const openNewUsuario = () => {
+    setNewUsuario(true);
+    setVisibleEdit(true)
   }
-  /*const openDialogEdit = (id: number) => {
+  const openDialogEdit = (id: number) => {
     idRef.current = id
+    setNewUsuario(false)
     setVisibleEdit(true);
-  }*/
-
-  /*const hideDialogPost = () => {
-    setVisibleCreate(false)
   }
+
   const hideDialogPut = () => {
-    idRef.current = 0
-    setVisibleEdit(false)
-  }
-
-  const hideDialogOrder = () => {
-    queryClient.invalidateQueries(['products'])
-  }*/
+    idRef.current = 0;
+    setVisibleEdit(false);
+  };
   const hideDialogDelete = () => {
     idRef.current = 0
     setVisibleDelete(false);
@@ -93,72 +79,66 @@ const UsuariosPage = () => {
   return (
     <Box paddingTop='5' display='flex' margin='auto'>
       <DataTable paginator className="p-datatable-customers" showGridlines rows={10} editMode="row"
-        value={usuarios?.map((usuario : any) => usuario)}
+        value={usuarios?.map((usuario: any) => usuario)}
         header={
           <Box maxW="sm" justifyContent="flex-start">
-          <Box p="6">
-            <Box display="flex" alignItems="baseline">
-              <Badge
-                borderRadius="full"
-                fontSize="16"
-                px="2"
-                colorScheme="teal"
-              >
-                USUARIOS
-              </Badge>
+            <Box p="6">
+              <Box display="flex" alignItems="baseline">
+                <Badge
+                  borderRadius="full"
+                  fontSize="16"
+                  px="2"
+                  colorScheme="teal"
+                >
+                  USUARIOS
+                </Badge>
+              </Box>
             </Box>
-          </Box>
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-              value={globalFilterValue1}
-              onChange={onGlobalFilterChange1}
-            />
-            
+            <span className="p-input-icon-left">
+              <i className="pi pi-search" />
+              <InputText
+                value={globalFilterValue1}
+                onChange={onGlobalFilterChange1}
+              />
+
               <Button
                 label="Nuevo"
                 icon="pi pi-plus"
                 className="p-button-success mr-2"
-                onClick={openNewClient}
+                onClick={openNewUsuario}
               />
-            
-          </span>
-        </Box>
+
+            </span>
+          </Box>
         }
         filters={{
           'attributes.nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
         }}>
         <Column field="username" header="Nombre Usuario" />
-        <Column field="nombre"  header="Nombre" />
-        <Column field="apellido_paterno"  header="Apellido" />
-        <Column field="roleCons"  header="Rol" />
-        <Column field={"blocked"}  header="Bloqueado" />
+        <Column field="nombre" header="Nombre" />
+        <Column field="apellido_paterno" header="Apellido" />
+        <Column field="roleCons" header="Rol" />
+        <Column field={"blocked"} header="Bloqueado" />
 
-        {/*rolFlag && (
-          <Column header='Acciones' body={(data: any) => (
-            <Box display='flex' >
-              <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" style={{ marginRight: '5px' }} onClick={() => openDialogEdit(data.id)} />
-              <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" style={{ marginRight: '5px' }} onClick={() => confirmDelete(data.id)} />
-            </Box>)}
-            exportable={false} style={{ minWidth: '8rem' }} />
-        )*/}
+
+        <Column header='Acciones' body={(data: any) => (
+          <Box display='flex' >
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" style={{ marginRight: '5px' }} onClick={() => openDialogEdit(data.id)} />
+            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" style={{ marginRight: '5px' }} onClick={() => confirmDelete(data.id)} />
+          </Box>)}
+          exportable={false} style={{ minWidth: '8rem' }} />
+
       </DataTable>
       <Confirmation
         isVisible={visibleDelete}
         titleText={'¿Estas seguro de eliminar al cliente ?'}
         onHandleHide={hideDialogDelete}
         onHandleAgree={handleDelete} />
-      {/* Modals *
-      <Confirmation
-        isVisible={visibleDelete}
-        titleText='¿Estas seguro que quieres que eliminarlo?'
-        onHandleHide={hideDialogDelete}
-        onHandleAgree={handleDeleteProduct} />
-
-      <ArticlePostDetail isVisible={visibleCreate} onHandleHide={hideDialogPost} />
-      <ArticlePutDetail isVisible={visibleEdit} onHandleHide={hideDialogPut} referenceId={idRef.current} referenceSucursal={currentStore} />
-      <OrdenRefill ref={(ordenRefillRef)} onHandleHide={hideDialogOrder} referenceId={idRef.current} ></OrdenRefill>
-    */}
+    <UsuarioModal
+     isVisible={visibleEdit}
+     newUsuario={newUsuario}
+     onHandleHide={hideDialogPut}
+     referenceId={idRef.current}></UsuarioModal>
     </Box>
   );
 }

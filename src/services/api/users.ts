@@ -40,3 +40,26 @@ export const getLibradores = async () => {
   const { data } = await axios.get(`${API_URL}/users/?populate=pedidos&filters[roleCons][$contains]=Librador`)
   return data
 }
+
+export const createUser = async (params: any) => {
+  console.log(params)
+  let data = {data : params.usuario}
+  data = (await axios.post(`${API_URL}/users`, data)).data;
+  return data;
+};
+
+export const updateUser = async (params: any) => {
+ let data = {data : params.usuario}
+ data = (await axios.put(`${API_URL}/users/${params.cliente.referenceId}`, data)).data;
+ return data;
+};
+
+export const deleteUser = async (id: number) => {
+  const data = await axios.delete(`${API_URL}/users/${id}`)
+  return data
+}
+
+export const getUser = async (id : Number) =>{
+  const { data } = await axios.get(`${API_URL}/users/${id}`)
+  return data.data;
+}
