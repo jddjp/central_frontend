@@ -15,7 +15,7 @@ export const getBodegas = async () => {
 
 export const getStockBySucursal = async (articleId: number) => {
   const sucursalStorage = localStorage.getItem('sucursal')
-  const { data } = await axios.get(`${API_URL}/articulos/${articleId}?populate=stocks&populate=stocks.sucursal&populate=stocks.unidad_de_medida`)
+  const { data } = await axios.get(`${API_URL}/articulos/${articleId}?populate=stocks&populate=stocks.sucursal&populate=stocks.unidad_de_medida&populate=ruptura_precio.rango_ruptura_precios`)
   const result = data.data.attributes.stocks.data.find((stock: any) =>
     stock.attributes.sucursal.data.id === Number(sucursalStorage) && stock
   )

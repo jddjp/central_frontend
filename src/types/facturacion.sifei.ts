@@ -61,7 +61,7 @@ export class IInvoice implements ISFDI {
                 tipo_de_comprobante: "I",
                 exportacion: "01",
                 metodo_pago: "PUE",
-                lugar_expedicion: "72010",
+                //lugar_expedicion: "72010",
                 // cfdi_relacionados: cfdi_relacionados,
                 receptor: receptor,
                 conceptos: conceptos,
@@ -89,7 +89,7 @@ export interface IComprobante {
     tipo_de_comprobante?: string
     exportacion?: string
     metodo_pago?: string
-    lugar_expedicion?: string
+    //lugar_expedicion?: string
     cfdi_relacionados?: CfdiRelacionado[]
     //emisor: Emisor
     receptor: Receptor

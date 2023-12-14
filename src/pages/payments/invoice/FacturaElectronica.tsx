@@ -26,6 +26,11 @@ import { BASE_URL } from 'config/env';
 import ProductoSustitutos from './ProductosSustitutos'
 import { pricingCalculator } from 'helpers/pricingCalculator';
 
+import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.css';
+import 'primeflex/primeflex.css';
+
 export interface ClientInformationProps {
 }
 
@@ -156,14 +161,16 @@ const ExistingClient = (props: ClientInformationProps) => {
       let importeProducto : any = (item.product.amount * item.product.customPrice);
       if (item.sustituto != null) {
         const importe  = (item.product.amount * item.product.priceBroken) / pricingCalculator(
-          item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+          //item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+          item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
           item.product.amount
         ).price;
         console.log("....");
         
         
         importeProducto = round(importe * pricingCalculator(
-          item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+          //item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+          item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
           item.product.amount
         ).price);
         
@@ -221,11 +228,11 @@ const ExistingClient = (props: ClientInformationProps) => {
       detalleConceptos = {
         "clave_prod_serv": item.sustituto == null ? item.product.article.attributes.clave_prod_serv : item.sustituto.attributes.articulo.data.attributes.clave_prod_serv,
         "no_identificacion": item.sustituto == null ? item.product.article.id : item.sustituto.attributes.articulo.data.id,
-        "cantidad": item.sustituto == null ? item.product.amount : round((item.product.amount * item.product.priceBroken) / pricingCalculator(item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos, item.product.amount).price),
+        "cantidad": item.sustituto == null ? item.product.amount : round((item.product.amount * item.product.priceBroken) / pricingCalculator(item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data, item.product.amount).price),
         "clave_unidad": item.sustituto == null ? item.product.article.attributes.unidad_de_medida.data.attributes.clave_unidad_sat : item.sustituto.attributes.articulo.data.attributes.unidad_de_medida.data.attributes.clave_unidad_sat,
         "unidad": item.sustituto == null ? item.product.article.attributes.unidad_de_medida.data.attributes.nombre : item.sustituto.attributes.articulo.data.attributes.unidad_de_medida.data.attributes.nombre,
         "descripcion": item.sustituto == null ? item.product.article.attributes.nombre : item.sustituto.attributes.articulo.data.attributes.nombre,
-        "valor_unitario": item.sustituto == null ? round(item.product.customPrice) : pricingCalculator(item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos, item.product.amount).price,
+        "valor_unitario": item.sustituto == null ? round(item.product.customPrice) : pricingCalculator(item.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data, item.product.amount).price,
         "importe": round(importeProducto),
         "descuento": "0.00",
         "objeto_impuesto": "01"
@@ -379,6 +386,10 @@ const ExistingClient = (props: ClientInformationProps) => {
   const [products, setProducts] = useState<Product[]>([]);
 
   const _handleRemplazar = (product: any, sustituto: any) => {
+    console.log("+++++++++++++++++++++++++++");
+    console.log(sustituto);
+    
+    
     const newArrayDeObjetos = cart.map((item: any) => {
       if (item.product.article.id === product.article.id) {
         return { product: item.product, sustituto: sustituto }
@@ -447,10 +458,12 @@ const ExistingClient = (props: ClientInformationProps) => {
                   <span style={{ textDecorationLine: data.sustituto != null ? 'line-through' : 'none' }}>{`${data.product.amount} x $${data.product.priceBroken}`}</span>
                   {data.sustituto != null &&
                     <span className='ml-2'>{`${round((data.product.amount * data.product.priceBroken) / pricingCalculator(
-                      data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                      //data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                      data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
+                      //data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
                       data.product.amount
                     ).price)} x $${pricingCalculator(
-                      data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                      data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
                       data.product.amount
                     ).price}`}</span>
                   }
@@ -465,10 +478,10 @@ const ExistingClient = (props: ClientInformationProps) => {
                 }
                 {data.sustituto != null &&
                   `${round((data.product.amount * data.product.priceBroken) / pricingCalculator(
-                    data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
-                    1
+                    data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
+                    data.product.amount
                   ).price * pricingCalculator(
-                    data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rangos,
+                    data.sustituto.attributes.articulo.data.attributes.ruptura_precio.data.attributes.rango_ruptura_precios.data,
                     data.product.amount
                   ).price) }`
                 }
