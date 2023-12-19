@@ -38,6 +38,13 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
     props.onHandleHide();
   };
   const HandleCreateProduct = async () => {
+    if(sucursal.nombre == "" || sucursal.nombre == undefined){
+      toast({
+        status: "warning",
+        title: "Ingresa un nombre valido",
+      });
+      return
+    }
     if (props.newSucursal) {
       createS.mutate(
         { sucursal },

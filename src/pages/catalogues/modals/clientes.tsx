@@ -38,6 +38,14 @@ const ClientesModal = (props: PropClientesDetail) => {
    props.onHandleHide();
   };
   const HandleCreateProduct = async () => {
+
+    if(cliente.nombre == "" || cliente.nombre == undefined){
+      toast({
+        status: "warning",
+        title: "Ingresa un nombre valido",
+      });
+      return
+    }
     if (props.newCliente) {
       cCliente.mutate(
         { cliente },
