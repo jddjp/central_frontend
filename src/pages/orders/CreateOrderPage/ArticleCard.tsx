@@ -27,6 +27,7 @@ interface ArticleCardProps extends StackProps {
   amount: number;
   setAmount: Dispatch<number>;
   stock: any;
+  //stocks:any;
   type: boolean;
   origen?: { bodega: number; sucursal: number; receptor: number; desc: string };
 }
@@ -39,7 +40,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
     props;
   const { nombre, descripcion, cantidad_stock } = article.attributes;
   useEffect(() => {
-    if (amount > 10 && !type) {
+    if (amount > article.attributes.stocks.data[0].attributes.cantidad) {
       setAmount(1)
       toast({
         title: 'Stock excedido',
