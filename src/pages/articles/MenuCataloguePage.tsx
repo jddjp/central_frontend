@@ -10,7 +10,7 @@ export const MenuCataloguePage = () => {
     { name: "Clientes", route: "/menucatalogue/clientes" },
     { name: "Sucursales", route: "/menucatalogue/sucursales" },
     { name: "Usuarios", route: "/menucatalogue/usuarios" },
-    { name: "Roles", route: "/menucatalogue/roles" },
+    //{ name: "Roles", route: "/menucatalogue/roles" },
 
   ];
 

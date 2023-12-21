@@ -53,7 +53,7 @@ export const Header = (props: HeaderProps) => {
     <HStack {...rest}>
 
       {auth.user?.roleCons == "Supervisor"
-       &&  <Select
+       &&  !props.type && <Select
         onChange={(e) => handleOrigenDistribucion(e, "sucursal")}
         isClearable={true}
         placeholder="Selecciona sucursal"
@@ -65,15 +65,15 @@ export const Header = (props: HeaderProps) => {
             label: `${subsidiary.attributes?.nombre}`
           };
         })}
-      />
-      }
-      <ArticleSelect
+      />}
+      { !props.type && <ArticleSelect
         listA={articulos}
         type={props.type}
         article={selectedArticle}
         setArticle={handleSelectArticle}
         origen={props.origen}
-      />
+      />}
+      
     </HStack>
   );
 };

@@ -14,6 +14,7 @@ import { createInvoiceSAT } from 'services/api/facturacion';
 import { C_TIPOFACTOR, IInvoice, TASA_O_CUOTA, TIPO_IMPUESTO } from 'types/facturacion.sifei';
 
 import {ISucursal} from 'types/Sucursal';
+import { ArticleSelect } from "pages/orders/CreateOrderPage/Header/ArticleSelect";
 
 export interface ClientInformationProps {
   setCliente?: Dispatch<SetStateAction<client | undefined>>;
@@ -110,6 +111,7 @@ const ExistingClient = (props: ClientInformationProps) => {
       </Text>
       {props.type ? (
         <>
+          
           <Select
             onChange={(e) => handleOrigenDistribucion(e, "sucursal")}
             isClearable={true}
@@ -123,6 +125,7 @@ const ExistingClient = (props: ClientInformationProps) => {
               };
             })}
           />
+           
         </>
       ) : (
         ""
@@ -133,6 +136,19 @@ const ExistingClient = (props: ClientInformationProps) => {
 
       {props.type ? (
         <>
+        <Select
+            onChange={(e) => handleOrderDistribucion(e, "sucursal")}
+            isClearable={true}
+            placeholder="Buscar sucursal"
+            hideSelectedOptions
+            key="distribution-sucursal"
+            options={subsidiaries?.map((subsidiary: any) => {
+              return {
+                id: subsidiary?.id,
+                label: `${subsidiary.attributes?.nombre}`,
+              };
+            })}
+          />
           <Select
             onChange={(e) => handleOrderDistribucion(e, "receptor")}
             isClearable={true}
@@ -146,19 +162,7 @@ const ExistingClient = (props: ClientInformationProps) => {
               };
             })}
           />
-          <Select
-            onChange={(e) => handleOrderDistribucion(e, "sucursal")}
-            isClearable={true}
-            placeholder="Buscar sucursal"
-            hideSelectedOptions
-            key="distribution-sucursal"
-            options={subsidiaries?.map((subsidiary: any) => {
-              return {
-                id: subsidiary?.id,
-                label: `${subsidiary.attributes?.nombre}`,
-              };
-            })}
-          />
+          
         </>
       ) : (
         <>
