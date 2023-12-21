@@ -1,4 +1,4 @@
-import { HStack, StackProps } from "@chakra-ui/react";
+import { HStack, StackProps, Text } from "@chakra-ui/react";
 import { SearchArticle, searchAriclesByStock } from "services/api/articles";
 import { ShoppingCartArticle } from "../types";
 import { ArticleSelect } from "./ArticleSelect";
@@ -51,7 +51,6 @@ export const Header = (props: HeaderProps) => {
   }
   return (
     <HStack {...rest}>
-
       {auth.user?.roleCons == "Supervisor"
        &&  !props.type && <Select
         onChange={(e) => handleOrigenDistribucion(e, "sucursal")}
@@ -66,13 +65,13 @@ export const Header = (props: HeaderProps) => {
           };
         })}
       />}
-      { !props.type && <ArticleSelect
+       <ArticleSelect
         listA={articulos}
         type={props.type}
         article={selectedArticle}
         setArticle={handleSelectArticle}
         origen={props.origen}
-      />}
+      />
       
     </HStack>
   );

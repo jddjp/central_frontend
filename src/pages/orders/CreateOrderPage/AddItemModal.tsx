@@ -105,7 +105,7 @@ export const AddItemModal = (props: AddItemModalProps) => {
     if (value.trim().length === 0) {
       setAmount(1);
     } else {
-      if (type) {
+     /* if (type) {
         if (article?.attributes.cantidad_stock! < Number(event.target.value)) {
           toast({
             title: "Uppps!!!",
@@ -116,13 +116,13 @@ export const AddItemModal = (props: AddItemModalProps) => {
           });
           return;
         }
-      }
+      }*/
       setAmount(Number(event.target.value));
     }
   };
 
   const handleStepAmount = (step: number) => {
-    if (type) {
+    /*if (type) {
       if (article?.attributes.cantidad_stock! < amount) {
         toast({
           title: "Uppps!!!",
@@ -138,7 +138,8 @@ export const AddItemModal = (props: AddItemModalProps) => {
       }
     } else {
       return () => setAmount((prev) => (prev || 0) + step);
-    }
+    }*/
+    return () => setAmount((prev) => (prev || 0) + step);
   };
 
   const closeAndReset = () => {

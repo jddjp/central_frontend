@@ -99,7 +99,7 @@ export const ArticleSelect = (props: ArticleSelectProps) => {
   };
 
   const getArticleLabel = (article: any) => {
-    return article.attributes.articulo.data.attributes.nombre
+    return article.attributes.articulo?.data.attributes.nombre
   }
   const handleAutocomplete = async (search: string) => {
 

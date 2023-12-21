@@ -106,13 +106,9 @@ const ExistingClient = (props: ClientInformationProps) => {
   };
   return (
     <Stack w="100%" mx="auto" mb="10" direction="column" spacing="4" mt="3">
-      <Text fontWeight="bold" fontSize={18}>
-        {props.type ? "Origen" : ""}
-      </Text>
       {props.type ? (
         <>
-          
-          <Select
+         { /*<Select
             onChange={(e) => handleOrigenDistribucion(e, "sucursal")}
             isClearable={true}
             placeholder="Buscar sucursal"
@@ -124,7 +120,7 @@ const ExistingClient = (props: ClientInformationProps) => {
                 label: `${subsidiary.attributes?.nombre}`,
               };
             })}
-          />
+          />*/}
            
         </>
       ) : (

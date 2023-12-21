@@ -326,9 +326,10 @@ export const CreateOrderPage = () => {
   const handleSelectArticle = async (article: ShoppingCartArticle | null) => {
     if (article) {
       setArticle(article);
-      if (!type) {
+      //if (!type) {
         onOpenAddItemModal();
-      } else {
+      //}
+      /* else {
         const result = await getStockByArticleAndSucursal(
           origen.sucursal,
           article.id
@@ -337,7 +338,7 @@ export const CreateOrderPage = () => {
         setstockId(result[0].id);
         setArticle(article);
         onOpenAddItemModal();
-      }
+      }*/
     } else {
       setArticle(article);
     }
@@ -353,6 +354,21 @@ export const CreateOrderPage = () => {
     }
   }, [state]);
   const submitDistribution = async () => {
+
+    const storedStore = localStorage.getItem("sucursal");
+
+    if(storedStore == "0"){
+      toast({
+        title: "Datos incompletos",
+        description: "Selecciona un origen para continuar",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    distribution.sucursal = Number(storedStore)
     if (cart.items.length == 0) {
       toast({
         title: "Lista Vacia",
@@ -385,7 +401,7 @@ export const CreateOrderPage = () => {
       return;
     }
 
-    if (origen.sucursal == 0) {
+    /*if (origen.sucursal == 0) {
       toast({
         title: "Datos incompletos",
         description: "Selecciona un origen para continuar",
@@ -394,7 +410,7 @@ export const CreateOrderPage = () => {
         isClosable: true,
       });
       return;
-    }
+    }*/
     var date = new Date();
     let orderdistribution: any = {
       id: 0,
@@ -484,7 +500,8 @@ export const CreateOrderPage = () => {
   };
   var { data: value, refetch } = useQuery(["listaProductos"], () => {
       if(auth.user?.roleCons != "Supervisor"){
-        return listArticlesBySucursal(suc)
+        let sucusarSelec =  Number(localStorage.getItem('sucursal'))
+        return listArticlesBySucursal(sucusarSelec)
       }
       else{
         let sucusarSelec =  Number(localStorage.getItem('sucursal'))
@@ -529,8 +546,12 @@ export const CreateOrderPage = () => {
             {type ? "Distribucion" : "Normal"}
           </Checkbox>
         )}
-
-        {!type && (
+        {
+            type && <Text fontWeight="bold" fontSize={18}>
+               Origen
+              </Text>
+        }
+        {(
           <Header
             selectedArticle={article}
             onSelectSucursal={handleSelectSucursal}
@@ -553,7 +574,7 @@ export const CreateOrderPage = () => {
           articles={articles}
           setArticles={setArticles}
         />
-        {type && (
+        {/*type && (
           <Header
             selectedArticle={article}
             onSelectSucursal={handleSelectSucursal}
@@ -561,7 +582,7 @@ export const CreateOrderPage = () => {
             type={type}
             origen={origen}
           />
-        )}
+        )*/}
 
         <Cart
           minH="85vh"
