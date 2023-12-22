@@ -18,3 +18,8 @@ export const postRupturaPrecio = async (param: any) => {
   return data;
 };
 
+
+export const deleteRupturaPrecio = async (id: number) => {
+  const { data } = await axios.delete(`${API_URL}/rango-ruptura-precios/${id}`);
+  return data;
+};

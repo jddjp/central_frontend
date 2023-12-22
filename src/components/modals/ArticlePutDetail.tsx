@@ -12,13 +12,12 @@ import { getSubsidiaries } from 'services/api/subsidiary';
 import { categoria, estado, initProduct, initStock, unidadMedida } from 'helpers/constants';
 import { BASE_URL } from 'config/env';
 import { RiExternalLinkLine } from 'react-icons/ri';
-import { deleteStock, deleteStockById, getStock, postStock, putStock, updateStock } from 'services/api/stocks';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { getProductsMini } from 'services/api/productservice'
-import { Column, ColumnEvent, ColumnEditorOptions } from 'primereact/column';
+import { Column  } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Stock } from '../../types/Stock'
-import { OrderRefill, OrderRefillAttributes } from 'types/OrderRefil';
+import { OrderRefill,  } from 'types/OrderRefil';
 import { Checkbox } from 'primereact/checkbox';
 
 
@@ -26,7 +25,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { cellEditor, onCellEditComplete, priceBodyTemplate, priceEditor, recuperarCantidad, saveStockProd, textEditor, validLimitStock, validarExistenciaUnidadEnStock } from 'helpers/inventario'
 import OrdenRefill, { AlertOrdenRefill } from './OrdenRefill';
 import { InputSwitch } from 'primereact/inputswitch';
-import { postRuptura } from 'services/api/ruptura';
+import { deleteRupturaPrecio, postRuptura } from 'services/api/ruptura';
 
 
 interface PropArticleDetail {
@@ -60,6 +59,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const queryClient = useQueryClient()
   const updateProduct = useMutation(editProduct)
   const createRuptura = useMutation(postRuptura);
+  const removeRuptura = useMutation(deleteRupturaPrecio)
   var { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries)
   const [activeIndex, setActiveIndex] = useState(0);
   const [rupuraId , setRupturaId] = useState(0);
@@ -128,7 +128,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         foto: data.articulo ? data?.articulo?.data?.attributes?.foto.data?.attributes?.url : '',
         iva: data.articulo ? data.articulo.data.attributes.iva : 0,
         isFacturable: data.articulo ? data.articulo.data.attributes.isFacturable : false,
-        // cantidad_stock: data.articulo ? data?.articulo?.data?.attributes?.cantidad_stock : '',
         unidad_de_medida: data.articulo ? data?.articulo?.data?.attributes?.unidad_de_medida.data.id : '',
         clave_prod_serv: data.articulo ? data?.articulo?.data?.attributes?.clave_prod_serv : '',
         ruptura_precio: data.articulo ? data?.articulo?.data?.attributes?.ruptura_precio : ''
@@ -144,9 +143,13 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
       }
 
       var rangos : any = data?.articulo?.data?.attributes?.ruptura_precio.data.attributes.rango_ruptura_precios.data
-      rangos = rangos?.sort((a : any,b : any) => (a.attributes.cantidad < b.attributes.cantidad ? -1:1))
-      rangos.shift()
-      setRangosRupturaProductos(rangos ? rangos : '')
+
+      if(rangos != undefined){
+        rangos = rangos?.sort((a : any,b : any) => (a.attributes.cantidad < b.attributes.cantidad ? -1:1))
+        rangos.shift()
+        setRangosRupturaProductos(rangos ? rangos : '')
+      }
+     
       if (data.articulo != undefined) {
         setPedidos(
           [...data.articulo.data.attributes.orden_refills.data])
@@ -226,6 +229,22 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const saveRuptura = async () =>{
     rangosRupturaProductos.forEach((ruptura: any) => {
       if(ruptura.id == undefined){
+        if( ruptura["attributes.precio"] == 0 ||  ruptura["attributes.precio"] == undefined){
+          toast({
+            title: "El precio debe ser mayor a 0",
+            status: "error",
+          });
+  
+          return "";
+        }
+        if( ruptura.attributes.cantidad == 0 ||  ruptura.attributes.cantidad == undefined){
+          toast({
+            title: "La cantidad debe ser mayor a 0",
+            status: "error",
+          });
+  
+          return "";
+        }
         createRuptura.mutate(
           { data: { 
             cantidad: ruptura.attributes.cantidad.toString(),
@@ -234,8 +253,10 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
           } },
           {
             onSuccess: async (data) => {
-
-              console.log(data)
+              toast({
+                title: "Ruptura guardadas correctamente",
+                status: "success",
+              });
             },
           }
         );
@@ -280,9 +301,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   const productDialogFooter = (
     <>
       <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onHandleHide} />
-      {activeIndex == 0 && <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={HandleUpdateProduct} />}
+      {activeIndex == 0 && <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={HandleUpdateProduct} />}
 
-      {activeIndex == 1 && <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveRuptura} />}
+      {activeIndex == 1 && <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={saveRuptura} />}
     </>
   );
 
@@ -312,7 +333,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   useEffect(() => {
     setProduct({ ...product, isFiscal: product.inventario_fiscal ? true : false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fiscal]);
 
   const [products, setProducts] = useState<Product[] | null>(null);
@@ -323,8 +343,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
   ];
 
   const columnsTableRuptura: ColumnMeta[] = [
-    { field: 'attributes.precio', header: 'Precio' },
     { field: 'attributes.cantidad', header: 'Cantidad' },
+    { field: 'attributes.precio', header: 'Precio' },
   ];
 
   const columnsTablePedidos: ColumnMeta[] = [
@@ -340,7 +360,6 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
 
   useEffect(() => {
     setProduct({ ...product, isFisical: product.inventario_fisico ? true : false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.inventario_fisico]);
 
   const ordenRefillRef = useRef<AlertOrdenRefill>(null);
@@ -367,30 +386,30 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         cantidad: "1",
         precio: "0"
       },
-      //id: 0
     }
     setRangosRupturaProductos([...rangosRupturaProductos, rango])
-    //console.log(rangosRupturaProductos);
 
   }
 
   const removeRango = (data: any, column:any) => {
-    //console.log("data");
-    //console.log(data);
-    //console.log(column);
-
     return <Button icon="pi pi-times" rounded severity="danger" aria-label="Cancel" size="small" onClick={() => _handelRemoveRango(column.rowIndex)} />;
   };
 
   const _handelRemoveRango = (index: number) => {
-
-    
-
-    
-      //rangosRupturaProductos.splice(index, 1);
       const nuevoArray = [...rangosRupturaProductos];
-    nuevoArray.splice(index, 1);
-      setRangosRupturaProductos(nuevoArray)
+      let selectRuptura : any= nuevoArray[index]
+      if(selectRuptura.id == undefined){
+        nuevoArray.splice(index, 1);
+        setRangosRupturaProductos(nuevoArray)
+        return;
+      }
+      removeRuptura.mutate(selectRuptura.id, {
+        onSuccess: () => {
+          nuevoArray.splice(index, 1);
+          setRangosRupturaProductos(nuevoArray)
+        }
+      })
+      
     
   }
 
