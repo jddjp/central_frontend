@@ -145,8 +145,9 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
       var rangos : any = data?.articulo?.data?.attributes?.ruptura_precio.data.attributes.rango_ruptura_precios.data
 
       if(rangos != undefined){
-        rangos = rangos?.sort((a : any,b : any) => (a.attributes.cantidad < b.attributes.cantidad ? -1:1))
+        rangos = rangos?.sort((a : any,b : any) => (Number(a.attributes.cantidad) < Number(b.attributes.cantidad) ? -1:1))
         rangos.shift()
+        console.log(rangos)
         setRangosRupturaProductos(rangos ? rangos : '')
       }
      
@@ -247,8 +248,8 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
         }
         createRuptura.mutate(
           { data: { 
-            cantidad: ruptura.attributes.cantidad.toString(),
-            precio: ruptura["attributes.precio"],
+            cantidad: ruptura.attributes.cantidad.toString().replace(/^(0+)/g, ''),
+            precio: ruptura["attributes.precio"].replace(/^(0+)/g, ''),
             ruptura_precio : rupuraId
           } },
           {
@@ -257,6 +258,7 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
                 title: "Ruptura guardadas correctamente",
                 status: "success",
               });
+              onHandleHide()
             },
           }
         );

@@ -142,7 +142,7 @@ const CataloguePage = () => {
       {/* Modals */}
       <Confirmation 
       isVisible={visibleDelete} 
-      titleText='¿Estas seguro que quieres que eliminarlo?'
+      titleText='¿Estas seguro que deseas eliminarlo?'
       onHandleHide={hideDialogDelete} 
       onHandleAgree={handleDeleteProduct}/>
 
