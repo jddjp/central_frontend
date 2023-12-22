@@ -130,6 +130,32 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       return;
     }
 
+    if(product.precio_lista == 0){
+      toast({
+        title: "El precio debe ser mayor a 0",
+        status: "error",
+      });
+      return;
+
+    }
+
+    if(stock.cantidad == 0){
+      toast({
+        title: "La cantidad a registrar debe ser mayor a 0",
+        status: "error",
+      });
+      return;
+
+    }
+
+    if(product.nombre == "" || product.nombre == undefined){
+      toast({
+        title: "Ingresa un nombre valido",
+        status: "error",
+      });
+      return;
+
+    }
     product.inventario_fisico = stock.cantidad
     createProduct.mutate(
       { product: { data: product }, stock: { data: stock } },
