@@ -20,7 +20,7 @@ import { ShoppingCartArticle } from "./types";
 // import { useQuery } from "react-query";
 import { BASE_URL } from "../../../config/env";
 // import { getStockBySucursal } from "services/api/subsidiary";
-import { Dispatch, useEffect } from "react";
+import { Dispatch, useEffect, useState } from "react";
 
 interface ArticleCardProps extends StackProps {
   article: ShoppingCartArticle;
@@ -39,6 +39,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
   const { article, children, amount, setAmount, stock, type, origen, ...rest } =
     props;
   const { nombre, descripcion, cantidad_stock } = article.attributes;
+  const [stockSu,setSuct] = useState(article.attributes.stocks.data[0].attributes.cantidad)
   useEffect(() => {
     if (amount > article.attributes.stocks.data[0].attributes.cantidad) {
       setAmount(1)
@@ -118,7 +119,7 @@ export const ArticleCard = (props: ArticleCardProps) => {
                     ? "Cantidad en la sucursal " + origen?.desc
                     : "Cantidad"}
                 </Text>
-                <Text>{cantidad_stock ?? 0}</Text>
+                <Text>{stockSu ?? 0}</Text>
               </Stack>
             </Stack>
           </MotionStack>
