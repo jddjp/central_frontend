@@ -142,9 +142,11 @@ const ArticlePutDetail = (props: PropArticleDetail) => {
       if(data?.articulo?.data?.attributes?.ruptura_precio.data.id != undefined){
         setRupturaId(data.articulo.data.attributes.ruptura_precio.data.id)
       }
-      setRangosRupturaProductos(data.articulo ? data?.articulo?.data?.attributes?.ruptura_precio.data.attributes.rango_ruptura_precios.data : '')
-      console.log(rangosRupturaProductos);
 
+      var rangos : any = data?.articulo?.data?.attributes?.ruptura_precio.data.attributes.rango_ruptura_precios.data
+      rangos = rangos?.sort((a : any,b : any) => (a.attributes.cantidad < b.attributes.cantidad ? -1:1))
+      rangos.shift()
+      setRangosRupturaProductos(rangos ? rangos : '')
       if (data.articulo != undefined) {
         setPedidos(
           [...data.articulo.data.attributes.orden_refills.data])

@@ -131,7 +131,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     }
 
     product.inventario_fisico = stock.cantidad
-    //product.unidad_de_medida = stock.unidad_de_medida;
     createProduct.mutate(
       { product: { data: product }, stock: { data: stock } },
       {
@@ -170,14 +169,35 @@ const ArticleDetail = (props: PropsArticleDetail) => {
                 createRuptura.mutate(
                   {
                     data: {
-                      cantidad: "1",
+                      cantidad: "0",
                       precio: "0",
                       ruptura_precio: data.data.id,
                     },
                   },
                   {
                     onSuccess: async (data) => {
-                     
+                  
+                    },
+                  }
+                );
+
+                createRuptura.mutate(
+                  {
+                    
+                    data: {
+                      cantidad: product.inventario_fisico.toString(),
+                      precio: product.precio_lista.toString(),
+                      ruptura_precio: data.data.id,
+                    },
+                  },
+                  {
+                    onSuccess: async (data) => {
+                      toast({
+                        title: "Articulo agregado correctamente",
+                        status: "success",
+                      });
+
+                      onHandleHide();
                     },
                   }
                 );
@@ -185,7 +205,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
             }
           );
 
-          onHandleHide();
+         
         },
       }
     );
@@ -455,7 +475,14 @@ const ArticleDetail = (props: PropsArticleDetail) => {
                 onChange={(e) => onDropdownChangeStock(e, 'sucursal')} optionLabel="name" required
               />
             </div>*/}
-
+             <div className="field">
+              <label htmlFor="name">Precio</label>
+              <InputNumber
+                value={product.precio_lista}
+                onChange={(e) => onInputNumber(e, "precio_lista")}
+                required
+              />
+            </div>
             <div className="field">
               <label htmlFor="name">IVA</label>
               <InputNumber
@@ -476,12 +503,13 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               </form>
             </div>
           </TabPanel>
-          <TabPanel
+         { /*<TabPanel
             header="Ruptura de precios"
             leftIcon="pi pi-fw pi-calendar"
-          ></TabPanel>
-          <TabPanel header="Inventario" leftIcon="pi pi-fw pi-calendar">
-            {/*//Lista donde estara disponible la sucursal*/}
+          ></TabPanel>*/}
+
+          {/*<TabPanel header="Inventario" leftIcon="pi pi-fw pi-calendar">
+           
             <MultiSelect
               options={subsidiaries?.map((subsiduary: any) => {
                 return {
@@ -496,7 +524,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               maxSelectedLabels={3}
               className="w-full md:w-20rem"
             />
-            {/*Tabla de stock por unidad*/}
+            
             <DataTable
               value={stockProduct?.map((element: any) => element)}
               editMode="cell"
@@ -517,6 +545,8 @@ const ArticleDetail = (props: PropsArticleDetail) => {
               })}
             </DataTable>
           </TabPanel>
+            */}
+        
         </TabView>
       </Stack>
     </Dialog>
