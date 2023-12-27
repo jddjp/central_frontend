@@ -11,4 +11,12 @@ export const sucursalModel = {
   rfc_emisor: "",
   nombre_fiscal_emisor: "",
   regimen_fiscal_emisor: "",
+  certificado_facturacion:"",
+  key_facturacion:"",
+  clave_facturacion:"",
+  password_sifei :"",
+  token_sifei_pdf:"",
+  id_equipo_sifei:"",
+  password_soap_sifei:"",
+  user_sifei:"",
 };

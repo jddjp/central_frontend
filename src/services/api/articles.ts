@@ -22,7 +22,7 @@ export const createSucursal = async (param: any) => {
 export const updateSucursal = async (param: any) => {
   //console.log(param)
   let data = {data : param.sucursal}
-  //console.log(data)
+  console.log(data)
   data = (await axios.put(`${API_URL}/sucursales/${param.sucursal.referenceId}`, data)).data;
   return data;
 }

@@ -212,6 +212,78 @@ const SucusalesDetail = (props: PropSucursalDetail) => {
                 name="regimen_fiscal_emisor"
               />
             </div>
+            <div className="field">
+              <label htmlFor="name">CERTIFICADO DE FACTURACIÓN</label>
+              <InputText
+                value={sucursal.certificado_facturacion}
+                onChange={onInputTextChange}
+                required
+                name="certificado_facturacion"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">KEY FACTURACIÓN</label>
+              <InputText
+                value={sucursal.key_facturacion}
+                onChange={onInputTextChange}
+                required
+                name="key_facturacion"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">CLAVE FACTURACIÓN</label>
+              <InputText
+                value={sucursal.clave_facturacion}
+                onChange={onInputTextChange}
+                required
+                name="clave_facturacion"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">USER SIFEI</label>
+              <InputText
+                value={sucursal.user_sifei}
+                onChange={onInputTextChange}
+                required
+                name="user_sifei"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">PASSWORD SIFEI</label>
+              <InputText
+                value={sucursal.password_sifei}
+                onChange={onInputTextChange}
+                required
+                name="password_sifei"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">TOKEN SIFEI</label>
+              <InputText
+                value={sucursal.token_sifei_pdf}
+                onChange={onInputTextChange}
+                required
+                name="token_sifei_pdf"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">EQUIPO SIFEI</label>
+              <InputText
+                value={sucursal.id_equipo_sifei}
+                onChange={onInputTextChange}
+                required
+                name="id_equipo_sifei"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="name">PASWORD SOAP</label>
+              <InputText
+                value={sucursal.password_soap_sifei}
+                onChange={onInputTextChange}
+                required
+                name="password_soap_sifei"
+              />
+            </div>
           </TabPanel>
         </TabView>
       </Stack>
