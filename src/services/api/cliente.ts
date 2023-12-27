@@ -26,6 +26,7 @@ export const newCliente = async (payload: any) => {
 };
 
 export const createCliente = async (params: any) => {
+  console.log(params)
   let data = {data : params.cliente}
   data = (await axios.post(`${API_URL}/clientes`, data)).data;
   return data;
@@ -53,6 +54,10 @@ export const getClients = async () => {
   return response.data
 }
 
+export const getClientsByName = async (nombre: any) => {
+  const { data: response } = await axios.get(`${API_URL}/clientes?filters[nombre]=${nombre}`)
+  return response.data
+}
 export const getCliente = async (id : Number) =>{
    const { data } = await axios.get(`${API_URL}/clientes/${id}`)
    return data.data;

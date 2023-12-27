@@ -24,7 +24,7 @@ import { PaymentDetails } from "./PaymentDetails";
 import { OrderMenu } from "./OrderMenu";
 import { ShoppingCartArticle } from "./types";
 import { useLocation } from "react-router-dom";
-import { client } from "services/api/cliente";
+import { client, createCliente, getClientsByName } from "services/api/cliente";
 import { IOrderAttributes, Item } from "types/Order";
 import ExistingClient from "pages/payments/invoice/ExistingClient";
 import { newItem, newOrder } from "services/api/orders";
@@ -47,6 +47,7 @@ import {
 import async from "react-select/dist/declarations/src/async/index";
 import { columns } from '../ListExistedOrdersPage/config';
 import { Sucursal } from "types/Sucursal";
+import { clienteModel } from "models/cliente";
 
 const initialClient = { name: "ss" };
 const initialPayment = {
@@ -72,6 +73,7 @@ export const CreateOrderPage = () => {
   const [sucursal, setSucursal] = useState<any>();
   const [paymentsDetails, setPaymentsDetails] = useState<string>();
   const itemMutation = useMutation(newItem);
+  const cCliente = useMutation(createCliente);
   const { data: libradores } = useQuery(["users_librador"], getLibradores, {
     select: (data) => data.map((users: any) => users.id),
   });
@@ -112,13 +114,34 @@ export const CreateOrderPage = () => {
     }
 
     if (cliente === undefined || cliente == null) {
-      // Todo poner un id existente
-      setCliente({
-        id: 13,
-        label: "Jose Daniel Daniel",
-      });
+      let clienteGeneral = getClientsByName("CLIENTE GENERAL");
+      clienteGeneral.then((response) => {
+        if (response.length == 0) {
+          cCliente.mutate(
+            { cliente: { nombre: "CLIENTE GENERAL", apellido_paterno: "Cliente general", apellido_materno: "CLIENTE GENERAL", calle: "1", colonia:"1",RFC:"1",correo:"cliente@gmail.com"} },
+            {
+              onSuccess: async (result) => {
+                setCliente(result.data)
+              },
+              onError: async (error: any) => {
+                toast({
+                  status: "error",
+                  title: error.response.data.error.message,
+                });
+              }
+            }
+          );
+        }
+        else {
+          console.log( response[0].id)
+           setCliente({
+              id: response[0].id,
+              label:response[0].attributes.nombre,
+            });
+          
+        }
+      })
     }
-
     if (client.id === undefined) {
       try {
         //Registrar cliente nuevo con datos dumi sin registro
@@ -317,7 +340,7 @@ export const CreateOrderPage = () => {
     onOpenAddItemModal();
     //console.log("algo")
   };
-  
+
   const handleConfirmClearCart = () => {
     clear();
     onCloseConfirmationClear();
@@ -327,7 +350,7 @@ export const CreateOrderPage = () => {
     if (article) {
       setArticle(article);
       //if (!type) {
-        onOpenAddItemModal();
+      onOpenAddItemModal();
       //}
       /* else {
         const result = await getStockByArticleAndSucursal(
@@ -357,7 +380,7 @@ export const CreateOrderPage = () => {
 
     const storedStore = localStorage.getItem("sucursal");
 
-    if(storedStore == "0"){
+    if (storedStore == "0") {
       toast({
         title: "Datos incompletos",
         description: "Selecciona un origen para continuar",
@@ -499,15 +522,15 @@ export const CreateOrderPage = () => {
     return nameSuc;
   };
   var { data: value, refetch } = useQuery(["listaProductos"], () => {
-      if(auth.user?.roleCons != "Supervisor"){
-        let sucusarSelec =  Number(localStorage.getItem('sucursal'))
-        return listArticlesBySucursal(sucusarSelec)
-      }
-      else{
-        let sucusarSelec =  Number(localStorage.getItem('sucursal'))
-        return listArticlesBySucursal(sucusarSelec)
-      }
+    if (auth.user?.roleCons != "Supervisor") {
+      let sucusarSelec = Number(localStorage.getItem('sucursal'))
+      return listArticlesBySucursal(sucusarSelec)
     }
+    else {
+      let sucusarSelec = Number(localStorage.getItem('sucursal'))
+      return listArticlesBySucursal(sucusarSelec)
+    }
+  }
   );
 
   useEffect(() => {
@@ -547,9 +570,9 @@ export const CreateOrderPage = () => {
           </Checkbox>
         )}
         {
-            type && <Text fontWeight="bold" fontSize={18}>
-               Origen
-              </Text>
+          type && <Text fontWeight="bold" fontSize={18}>
+            Origen
+          </Text>
         }
         {(
           <Header
