@@ -1,6 +1,6 @@
-export const usuarioModel = {
+export const usuarioModel : TusuarioModel = {
   username: "",
-  password: "" || undefined,
+  password: "" ,
   nombre: "",
   apellido_paterno: "",
   apellido_materno: "",
@@ -17,9 +17,31 @@ export const usuarioModel = {
   blocked: false
 };
 
+export const GENEROS = [
+  { name: 'Masculino', value: 'masculino' },
+  { name: 'Femenino', value: 'femenino' },
+];
+
+export const ESTADOS_CIVILES = [
+  { name: 'Soltero', value: 'soltero' },
+  { name: 'Casado', value: 'casado' },
+  { name: 'Divorciado', value: 'divorciado' },
+  { name: 'Viudo', value: 'viudo' },
+];
+
+export const ROLES = [
+  { name: 'Supervisor', value: 'Supervisor' },
+  { name: 'Cajero', value: 'Cajero' },
+  { name: 'Vendedor', value: 'Vendedor' },
+  { name: 'Despachador', value: 'Despachador' },
+  { name: 'Librador', value: 'Librador' },
+  { name: 'Receptor', value: 'Receptor' },
+  { name: 'Contador', value: 'Contador' },
+];
+
 export type TusuarioModel = {
-  username: "",
-  password: "",
+  username: string,
+  password?: string | undefined,
   nombre: "",
   apellido_paterno: "",
   apellido_materno: "",
@@ -27,10 +49,10 @@ export type TusuarioModel = {
   telefono: "",
   sexo: "",
   CURP: "",
-  estatus_marital: null,
-  fecha_nacimiento: null,
-  fecha_contrato: null,
-  fecha_termino: null,
+  estatus_marital: string,
+  fecha_nacimiento: string,
+  fecha_contrato: string,
+  fecha_termino: string,
   roleCons: "",
   confirmed: true,
   blocked: false

@@ -7,15 +7,14 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Password } from 'primereact/password';
-import { TusuarioModel, usuarioModel } from "models/usuario";
+import { TusuarioModel, usuarioModel, GENEROS, ESTADOS_CIVILES, ROLES } from "models/usuario";
 import { createUser, getUser, updateUser } from "services/api/users";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { FormikTouched, useFormik } from "formik";
 import { classNames } from "primereact/utils";
 
 import { Calendar } from 'primereact/calendar';
-import { addLocale } from 'primereact/api';
-
+import * as Yup from 'yup';
 
 interface PropClientesDetail {
   isVisible: boolean;
@@ -36,107 +35,45 @@ const UsuarioModal = (props: PropClientesDetail) => {
   const uUsuario = useMutation(updateUser);
 
   const [loading, setLoading] = useState(false);
-  const generos = [
-    { name: 'Masculino', value: 'masculino' },
-    { name: 'Femenino', value: 'femenino' },
-  ];
+  
+  const createValidations = () => {
+    let shchema: any = {
+      username: Yup.string()
+        .required('Requerido'),
+      nombre: Yup.string()
+        .required('Requerido'),
+      apellido_paterno: Yup.string()
+        .required('Requerido'),
+      apellido_materno: Yup.string()
+        .required('Requerido'),
+      email: Yup.string().email('Correo invalido').required('Requerido'),
+      telefono: Yup.string()
+        .required('Requerido'),
+      sexo: Yup.string()
+        .required('Requerido'),
+      CURP: Yup.string()
+        .required('Requerido'),
+      estatus_marital: Yup.string()
+        .required('Requerido'),
+      roleCons: Yup.string()
+        .required('Requerido'),
+    };
 
-  const estadosCiviles = [
-    { name: 'Soltero', value: 'soltero' },
-    { name: 'Casado', value: 'casado' },
-    { name: 'Divorciado', value: 'divorciado' },
-    { name: 'Viudo', value: 'viudo' },
-  ];
+    if (props.newUsuario) {
+      shchema = {
+        ...shchema, password: Yup.string()
+          .min(6, 'Debe ingresar al menos 6 caracteres')
+          .required('Requerido')
+      };
+    }
+    return Yup.object().shape(shchema)
+  }
 
-  const roles = [
-    { name: 'Supervisor', value: 'Supervisor' },
-    { name: 'Cajero', value: 'Cajero' },
-    { name: 'Vendedor', value: 'Vendedor' },
-    { name: 'Despachador', value: 'Despachador' },
-    { name: 'Librador', value: 'Librador' },
-    { name: 'Receptor', value: 'Receptor' },
-    { name: 'Contador', value: 'Contador' },
-  ];
+  const SignupSchema = createValidations();
 
   const formik = useFormik({
     initialValues: usuarioModel,
-    validate: (data: any) => {
-      let errors = {
-        username: "",
-        password: "",
-        nombre: "",
-        apellido_paterno: "",
-        apellido_materno: "",
-        email: "",
-        telefono: "",
-        sexo: "",
-        CURP: "",
-        estatus_marital: "",
-        fecha_nacimiento: "",
-        fecha_contrato: "",
-        fecha_termino: "",
-        roleCons: "",
-        confirmed: true,
-      }
-
-      let containError = false;
-
-      if (!data.username) {
-        errors.username = 'Nombre de usuario requerido';
-        containError = true;
-      }
-      if (!data.password && props.newUsuario) {
-        errors.password = 'Contrasena requerido';
-        containError = true;
-      }
-
-      if (formik.values.password && validarContrasena(data.password) != "") {
-        errors.password = validarContrasena(formik.values.password);
-        containError = true;
-      }
-      if (!data.nombre) {
-        errors.nombre = 'Nombre requerido';
-        containError = true;
-      }
-      if (!data.apellido_paterno) {
-        errors.apellido_paterno = 'Apellido paterno requerido';
-        containError = true;
-      }
-      if (!data.apellido_materno) {
-        errors.apellido_materno = 'Apellido materno requerido';
-        containError = true;
-      }
-      if (!data.email) {
-        errors.email = 'Correo requerido';
-        containError = true;
-      }
-      if (!data.telefono) {
-        errors.telefono = 'Telefono requerido';
-        containError = true;
-      }
-      if (!data.CURP) {
-        errors.CURP = 'Curp requerido';
-        containError = true;
-      }
-      if (!data.sexo) {
-        errors.sexo = 'Sexo requerido';
-        containError = true;
-      }
-      if (!data.estatus_marital) {
-        errors.estatus_marital = 'Estado civil requerido';
-        containError = true;
-      }
-      if (!data.roleCons) {
-        errors.roleCons = 'Rol requerido';
-        containError = true;
-      }
-
-      if (!containError) {
-        return {}
-      }
-
-      return errors;
-    },
+    validationSchema: SignupSchema,
     onSubmit: async (data) => {
       setLoading(true);
       formik.values.fecha_nacimiento = (fechaNacimiento) ? getFechaACadena(fechaNacimiento) : "";
@@ -201,6 +138,14 @@ const UsuarioModal = (props: PropClientesDetail) => {
 
   const onHandleHide = () => {
     setLoading(false);
+    restForm();
+    setFechaContrato(undefined)
+    setFechaNacimiento(undefined)
+    setFechaTermino(undefined)
+    props.onHandleHide();
+  };
+
+  const restForm = () => {
     formik.values.username = "";
     formik.values.nombre = "";
     formik.values.apellido_paterno = "";
@@ -214,11 +159,8 @@ const UsuarioModal = (props: PropClientesDetail) => {
     formik.values.fecha_nacimiento = "";
     formik.values.fecha_contrato = "";
     formik.values.fecha_termino = "";
-    setFechaContrato(undefined)
-    setFechaNacimiento(undefined)
-    setFechaTermino(undefined)
-    props.onHandleHide();
-  };
+  }
+
   const HandleCreateProduct = async () => {
     const dataUser = formik.values;
     if (props.newUsuario) {
@@ -302,14 +244,6 @@ const UsuarioModal = (props: PropClientesDetail) => {
   const onInputTerminoChange = (data: any) => {
     setFechaTermino(data)
   };
-
-  const validarContrasena = (contrasena: string) => {
-    // Verificar si la longitud de la contraseña es al menos 6 caracteres
-    if (contrasena.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres.';
-    }
-    return '';
-  }
 
   return (
     <Dialog
@@ -415,14 +349,14 @@ const UsuarioModal = (props: PropClientesDetail) => {
                 </div>
                 <div className="field col-12 md:col-4">
                   <label htmlFor="name">Sexo*</label>
-                  <Dropdown value={formik.values.sexo} onChange={(e) => onInputDropdownChange(e, 'sexo')} options={generos} optionLabel="name"
+                  <Dropdown value={formik.values.sexo} onChange={(e) => onInputDropdownChange(e, 'sexo')} options={GENEROS} optionLabel="name"
                     placeholder="Seleccionar genero"
                     className={classNames({ 'p-invalid': !!(formik.touched.sexo && formik.errors.sexo), 'w-full': true })} />
                   {!!(formik.touched.sexo && formik.errors.sexo) ? <small className="p-error">{formik.errors.sexo}</small> : <small className="p-error">&nbsp;</small>}
                 </div>
                 <div className="field col-12 md:col-4">
                   <label htmlFor="name">Estado civil*</label>
-                  <Dropdown value={formik.values.estatus_marital} onChange={(e) => onInputDropdownChange(e, 'estatus_marital')} options={estadosCiviles} optionLabel="name"
+                  <Dropdown value={formik.values.estatus_marital} onChange={(e) => onInputDropdownChange(e, 'estatus_marital')} options={ESTADOS_CIVILES} optionLabel="name"
                     placeholder="Seleccionar estado civil"
                     className={classNames({ 'p-invalid': !!(formik.touched.estatus_marital && formik.errors.estatus_marital), 'w-full': true })} />
                   {!!(formik.touched.estatus_marital && formik.errors.estatus_marital) ? <small className="p-error">{formik.errors.estatus_marital}</small> : <small className="p-error">&nbsp;</small>}
@@ -444,7 +378,7 @@ const UsuarioModal = (props: PropClientesDetail) => {
                 </div>
                 <div className="field col-12 md:col-3">
                   <label htmlFor="name">Tipo usuario*</label>
-                  <Dropdown value={formik.values.roleCons} onChange={(e) => onInputDropdownChange(e, 'roleCons')} options={roles} optionLabel="name"
+                  <Dropdown value={formik.values.roleCons} onChange={(e) => onInputDropdownChange(e, 'roleCons')} options={ROLES} optionLabel="name"
                     placeholder="Seleccionar tipo de usuario"
                     className={classNames({ 'p-invalid': !!(formik.touched.roleCons && formik.errors.roleCons), 'w-full': true })} />
                   {!!(formik.touched.roleCons && formik.errors.roleCons) ? <small className="p-error">{formik.errors.roleCons}</small> : <small className="p-error">&nbsp;</small>}

@@ -76,6 +76,9 @@ export const createUser = async (params: any) => {
 
 export const updateUser = async (params: any) => {
  let data = params.usuario;
+ if(params.usuario.password == ""){
+  delete params.usuario.password;
+ }
  if(params.usuario.fecha_nacimiento == ""){
   params.usuario.fecha_nacimiento = null;
  }
