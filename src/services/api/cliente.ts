@@ -1,6 +1,10 @@
 import axios from 'axios'
 import { API_URL } from '../../config/env';
-import {Cliente} from 'types/Cliente'
+import {Cliente} from 'types/Cliente';
+import Strapi from 'strapi-sdk-js';
+import { baseUrl } from 'config/api';
+
+const strapi = new Strapi({ url: baseUrl });
 
 export interface client {
   attributes: {
@@ -66,4 +70,18 @@ export const getCliente = async (id : Number) =>{
 export const getClient = async (id: number) : Promise<Cliente> => {
   const { data: response } = await axios.get(`${API_URL}/clientes/${id}`)
   return Promise.resolve(response.data)
+}
+
+export const getClienteGeneral = async () : Promise<Cliente> => {
+  const clientes = (await strapi.find<Cliente[]>('clientes',{
+    filters: {
+      nombre: {
+        $eq: 'Cliente General'
+      }
+    },
+  })).data;
+  if (clientes.length == 0){
+    return Promise.reject(null);
+  }
+  return Promise.resolve(clientes[0]);
 }

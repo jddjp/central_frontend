@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Badge, Box, Text } from "@chakra-ui/react";
+import { Badge, Box, Grid, GridItem, Text } from "@chakra-ui/react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -77,69 +77,74 @@ const UsuariosPage = () => {
   }
 
   return (
-    <Box paddingTop='5' display='flex' margin='auto'>
-      <DataTable paginator className="p-datatable-customers" showGridlines rows={10} editMode="row"
-        value={usuarios?.map((usuario: any) => usuario)}
-        header={
-          <Box maxW="sm" justifyContent="flex-start">
-            <Box p="6">
-              <Box display="flex" alignItems="baseline">
-                <Badge
-                  borderRadius="full"
-                  fontSize="16"
-                  px="2"
-                  colorScheme="teal"
-                >
-                  USUARIOS
-                </Badge>
+    <Grid  gap={1} className='ml-auto mr-auto'>
+      <GridItem w='100%' h='10'  >
+
+        <Box paddingTop='5' display='flex' margin='auto' className='aaaaaaaaa'>
+          <DataTable paginator className="p-datatable-customers" showGridlines rows={10} editMode="row" tableStyle={{ minWidth: "80rem" }}
+            value={usuarios?.map((usuario: any) => usuario)}
+            header={
+              <Box maxW="sm" justifyContent="flex-start">
+                <Box p="6">
+                  <Box display="flex" alignItems="baseline">
+                    <Badge
+                      borderRadius="full"
+                      fontSize="16"
+                      px="2"
+                      colorScheme="teal"
+                    >
+                      USUARIOS
+                    </Badge>
+                  </Box>
+                </Box>
+                <span className="p-input-icon-left">
+                  <i className="pi pi-search" />
+                  <InputText
+                    value={globalFilterValue1}
+                    onChange={onGlobalFilterChange1}
+                  />
+
+                  <Button
+                    label="Nuevo"
+                    icon="pi pi-plus"
+                    className="p-button-success mr-2"
+                    onClick={openNewUsuario}
+                  />
+
+                </span>
               </Box>
-            </Box>
-            <span className="p-input-icon-left">
-              <i className="pi pi-search" />
-              <InputText
-                value={globalFilterValue1}
-                onChange={onGlobalFilterChange1}
-              />
-
-              <Button
-                label="Nuevo"
-                icon="pi pi-plus"
-                className="p-button-success mr-2"
-                onClick={openNewUsuario}
-              />
-
-            </span>
-          </Box>
-        }
-        filters={{
-          'attributes.nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
-        }}>
-        <Column field="username" header="Nombre Usuario" />
-        <Column field="nombre" header="Nombre" />
-        <Column field="apellido_paterno" header="Apellido" />
-        <Column field="roleCons" header="Rol" />
-        <Column field={"blocked"} header="Bloqueado" />
+            }
+            filters={{
+              'attributes.nombre': { value: globalFilterValue1, matchMode: FilterMatchMode.STARTS_WITH }
+            }}>
+            <Column field="username" header="Nombre Usuario" />
+            <Column field="nombre" header="Nombre" />
+            <Column field="apellido_paterno" header="Apellido" />
+            <Column field="roleCons" header="Rol" />
+            <Column field={"blocked"} header="Bloqueado" />
 
 
-        <Column header='Acciones' body={(data: any) => (
-          <Box display='flex' >
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" style={{ marginRight: '5px' }} onClick={() => openDialogEdit(data.id)} />
-            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" style={{ marginRight: '5px' }} onClick={() => confirmDelete(data.id)} />
-          </Box>)}
-          exportable={false} style={{ minWidth: '8rem' }} />
+            <Column header='Acciones' body={(data: any) => (
+              <Box display='flex' >
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" style={{ marginRight: '5px' }} onClick={() => openDialogEdit(data.id)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" style={{ marginRight: '5px' }} onClick={() => confirmDelete(data.id)} />
+              </Box>)}
+              exportable={false} style={{ minWidth: '8rem' }} />
 
-      </DataTable>
-      <Confirmation
-        isVisible={visibleDelete}
-        titleText={'¿Estas seguro de eliminar al cliente ?'}
-        onHandleHide={hideDialogDelete}
-        onHandleAgree={handleDelete} />
-    <UsuarioModal
-     isVisible={visibleEdit}
-     newUsuario={newUsuario}
-     onHandleHide={hideDialogPut}
-     referenceId={idRef.current}></UsuarioModal>
-    </Box>
+          </DataTable>
+          <Confirmation
+            isVisible={visibleDelete}
+            titleText={'¿Estas seguro de eliminar al cliente ?'}
+            onHandleHide={hideDialogDelete}
+            onHandleAgree={handleDelete} />
+          <UsuarioModal
+            isVisible={visibleEdit}
+            newUsuario={newUsuario}
+            onHandleHide={hideDialogPut}
+            referenceId={idRef.current}></UsuarioModal>
+        </Box>
+      </GridItem>
+    </Grid>
   );
 }
 

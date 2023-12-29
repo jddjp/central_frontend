@@ -24,7 +24,7 @@ import { PaymentDetails } from "./PaymentDetails";
 import { OrderMenu } from "./OrderMenu";
 import { ShoppingCartArticle } from "./types";
 import { useLocation } from "react-router-dom";
-import { client, createCliente, getClientsByName } from "services/api/cliente";
+import { client, createCliente, getClienteGeneral, getClientsByName } from "services/api/cliente";
 import { IOrderAttributes, Item } from "types/Order";
 import ExistingClient from "pages/payments/invoice/ExistingClient";
 import { newItem, newOrder } from "services/api/orders";
@@ -100,7 +100,7 @@ export const CreateOrderPage = () => {
 
   const [stockId, setstockId] = useState(0);
   const state = location.state as LocationOrdenEdit;
-  const redirectTo = (route: string, cart: any, client: any, sucursal: any) => () => {
+  const redirectTo = (route: string, cart: any, client: any, sucursal: any) => async () => {
     if (paymentsDetails !== "finished") {
       toast({
         title: "Detalle de Pago",
@@ -114,34 +114,22 @@ export const CreateOrderPage = () => {
     }
 
     if (cliente === undefined || cliente == null) {
-      let clienteGeneral = getClientsByName("CLIENTE GENERAL");
-      clienteGeneral.then((response) => {
-        if (response.length == 0) {
-          cCliente.mutate(
-            { cliente: { nombre: "CLIENTE GENERAL", apellido_paterno: "Cliente general", apellido_materno: "CLIENTE GENERAL", calle: "1", colonia:"1",RFC:"1",correo:"cliente@gmail.com"} },
-            {
-              onSuccess: async (result) => {
-                setCliente(result.data)
-              },
-              onError: async (error: any) => {
-                toast({
-                  status: "error",
-                  title: error.response.data.error.message,
-                });
-              }
-            }
-          );
-        }
-        else {
-          console.log( response[0].id)
-           setCliente({
-              id: response[0].id,
-              label:response[0].attributes.nombre,
-            });
-          
-        }
-      })
+      const clienteGeneral = await getClienteGeneral();
+      
+      setCliente(clienteGeneral);
+      setCliente((prevValor: any) => {
+        console.log('Valor actualizado inmediatamente:', prevValor);
+  
+        // Puedes realizar otras operaciones con el valor actualizado aquí
+        // ...
+  
+        // Devuelve el nuevo valor que deseas asignar
+        return clienteGeneral;
+      });
+
     }
+
+    
     if (client.id === undefined) {
       try {
         //Registrar cliente nuevo con datos dumi sin registro

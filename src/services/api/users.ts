@@ -43,14 +43,49 @@ export const getLibradores = async () => {
 
 export const createUser = async (params: any) => {
   console.log(params)
-  let data = {data : params.usuario}
+  if(params.usuario.fecha_nacimiento == ""){
+   params.usuario.fecha_nacimiento = null;
+  }
+  if(params.usuario.fecha_contrato == ""){
+   params.usuario.fecha_contrato = null;
+  }
+  if(params.usuario.fecha_termino == ""){
+   params.usuario.fecha_termino = null;
+  }
+  let data = params.usuario;
+  /*{
+    "username": "testt",
+    "email": "test22@gmail.com",
+    "confirmed": true,
+    "nombre": "Mario",
+    "apellido_paterno": "test",
+    "apellido_materno": "test",
+    "sexo": "masculino",
+    "CURP": null,
+    "telefono": null,
+    "estatus_marital": null,
+    "fecha_nacimiento": null,
+    "fecha_contrato": null,
+    "fecha_termino": null,
+    "roleCons": "Supervisor",
+    "password": "123456"
+  }*/
   data = (await axios.post(`${API_URL}/users`, data)).data;
   return data;
 };
 
 export const updateUser = async (params: any) => {
- let data = {data : params.usuario}
- data = (await axios.put(`${API_URL}/users/${params.cliente.referenceId}`, data)).data;
+ let data = params.usuario;
+ if(params.usuario.fecha_nacimiento == ""){
+  params.usuario.fecha_nacimiento = null;
+ }
+ if(params.usuario.fecha_contrato == ""){
+  params.usuario.fecha_contrato = null;
+ }
+ if(params.usuario.fecha_termino == ""){
+  params.usuario.fecha_termino = null;
+ }
+ data = (await axios.put(`${API_URL}/users/${params.id}`, data)).data;
  return data;
 };
 
@@ -60,6 +95,10 @@ export const deleteUser = async (id: number) => {
 }
 
 export const getUser = async (id : Number) =>{
-  const { data } = await axios.get(`${API_URL}/users/${id}`)
-  return data.data;
+  const { data } = await axios.get(`${API_URL}/users/${id}`);
+  console.log("----data");
+  
+  console.log(data);
+  
+  return data;
 }
