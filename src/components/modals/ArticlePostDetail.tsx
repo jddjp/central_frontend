@@ -47,6 +47,7 @@ interface ColumnMeta {
 
 const ArticleDetail = (props: PropsArticleDetail) => {
   const queryClient = useQueryClient();
+  const [save,setSave] = useState (false);
   const { data: subsidiaries } = useQuery(["subsidiaries"], getSubsidiaries);
   const { data: unidadMedida } = useQuery(["unidades"], getUnidades);
   const createProduct = useMutation(postProduct);
@@ -96,6 +97,7 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   });
 
   const onHandleHide = () => {
+    setSave(false)
     props.onHandleHide();
     setSelectedStoresForDeletion([]);
     setStockProduct([]);
@@ -105,6 +107,15 @@ const ArticleDetail = (props: PropsArticleDetail) => {
   };
 
   const handleSaveProduct = () => {
+    setSave(true)
+    if(product.nombre == ""){
+      toast({
+        title: "Ingresa un nombre valido",
+        status: "error",
+      });
+      return;
+
+    }
     //Valida que no se ingrese una cantidad de stock mayor a la general
     if (product.inventario_fisico < validLimitStock(stockProduct)) {
       toast({
@@ -129,16 +140,6 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       });
       return;
     }
-
-    if(product.precio_lista == 0){
-      toast({
-        title: "El precio debe ser mayor a 0",
-        status: "error",
-      });
-      return;
-
-    }
-
     if(stock.cantidad == 0){
       toast({
         title: "La cantidad a registrar debe ser mayor a 0",
@@ -147,7 +148,42 @@ const ArticleDetail = (props: PropsArticleDetail) => {
       return;
 
     }
+    if(product.estado == ""){
+      toast({
+        title: "Seleccione un estado del articulo",
+        status: "error",
+      });
+      return;
 
+    }
+
+    if(product.categoria == ""){
+      toast({
+        title: "Seleccione una categoria para el articulo",
+        status: "error",
+      });
+      return;
+
+    }
+
+    if(product.unidad_de_medida == 0){
+      toast({
+        title: "Seleccione una unidad para el articulo",
+        status: "error",
+      });
+      return;
+
+    }
+
+    
+    if(product.precio_lista == 0){
+      toast({
+        title: "El precio debe ser mayor a 0",
+        status: "error",
+      });
+      return;
+
+    }
     if(product.nombre == "" || product.nombre == undefined){
       toast({
         title: "Ingresa un nombre valido",
@@ -160,11 +196,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
     createProduct.mutate(
       { product: { data: product }, stock: { data: stock } },
       {
-        onSuccess: async (data) => {
-          queryClient.invalidateQueries(["products"]);
-          setProduct(initProduct);
-          //Guarda el stock de las unidades
-          await saveStockProd(
+        onSuccess:(data) => {
+          console.log("registre")
+          console.log(data)
+          saveStockProd(
             data.data.id,
             stockProduct,
             product,
@@ -222,7 +257,9 @@ const ArticleDetail = (props: PropsArticleDetail) => {
                         title: "Articulo agregado correctamente",
                         status: "success",
                       });
-
+                      setProduct(initProduct);
+                      queryClient.invalidateQueries(["products"]);
+                      setSucursal(0);
                       onHandleHide();
                     },
                   }
@@ -233,6 +270,9 @@ const ArticleDetail = (props: PropsArticleDetail) => {
 
          
         },
+        onError : (error) =>{
+          console.log(error)
+        }
       }
     );
   };
@@ -246,9 +286,10 @@ const ArticleDetail = (props: PropsArticleDetail) => {
         onClick={onHandleHide}
       />
       <Button
-        label="Save"
+        label="Guardar"
         icon="pi pi-check"
         className="p-button-text"
+        disabled = {save}
         onClick={handleSaveProduct}
       />
     </>

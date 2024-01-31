@@ -30,8 +30,9 @@ export const getProductBySucursal = async (sucursalRef: number) => {
 
 export const postProduct = async (param: any) => {
   let data: any;
-  if (param.product.data.foto === "") {
+  if (param.product.data.foto === "" || param.product.data.foto == undefined) {
     delete param.product.data.foto;
+    delete param.product.data.ruptura_precio;
 
     data = (await axios.post(`${API_URL}/articulos`, param.product)).data;
     param.stock.data.articulo = data.id
@@ -40,7 +41,6 @@ export const postProduct = async (param: any) => {
   } else {
     const file = new FormData();
     file.append("files", param.product.data.foto);
-
     const fileSave = await axios.post(`${API_URL}/upload`, file);
     param.product.data.foto = fileSave.data[0].id
     data = (await axios.post(`${API_URL}/articulos`, param.product)).data;
